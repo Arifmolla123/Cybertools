@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Tools - VIP Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        :root { --accent: gold; --bg: #0d0d0d; --card: #1a1a1a; --text-muted: #888; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #000; color: #fff; overflow-x: hidden; padding-bottom: 80px; }
+
+        /* VIP না হলে পুরো মেইন কন্টেন্ট ব্লার করার জন্য ক্লাস */
+        .blur-content { filter: blur(5px); pointer-events: none; }
+
+        header { display: flex; justify-content: space-between; padding: 15px 20px; align-items: center; position: sticky; top: 0; background: #000; z-index: 100; border-bottom: 1px solid #222; }
+        .logo { color: var(--accent); font-weight: bold; letter-spacing: 2px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+        .icon-btn { font-size: 1.2rem; cursor: pointer; color: #fff; }
+
+        /* Search Bar */
+        .search-area { padding: 15px 20px 10px; position: relative; }
+        .search-area input { width: 100%; background: var(--card); border: 1px solid #333; padding: 12px 45px; border-radius: 12px; color: #fff; outline: none; font-size: 0.9rem; }
+        .search-area input:focus { border-color: var(--accent); }
+        .search-area i { position: absolute; top: 28px; color: var(--text-muted); }
+        .search-area .fa-search { left: 35px; }
+
+        .section-label { display: flex; justify-content: space-between; padding: 15px 20px 10px; font-size: 0.75rem; color: var(--accent); font-weight: bold; letter-spacing: 1px; }
+
+        /* Grid Layout */
+        .tool-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 20px 12px; }
+        .tool-card { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--card); padding: 15px 10px; border-radius: 15px; cursor: pointer; border: 1px solid gold; text-decoration: none; color: white; text-align: center; min-height: 135px; transition: 0.3s; box-shadow: 0 0 10px rgba(255, 215, 0, 0.05); }
+        .tool-card:hover { transform: translateY(-2px); box-shadow: 0 0 15px rgba(255, 215, 0, 0.15); }
+        
+        .tool-icon { background: #000; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 10px; font-size: 1.2rem; }
+        .tool-card h4 { font-size: 0.85rem; margin-bottom: 4px; font-weight: 600; }
+        .tool-card p { font-size: 0.7rem !important; color: #aaa; line-height: 1.3; }
+
+        /* Bottom Navigation */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #222; z-index: 1000; }
+        .nav-btn { text-align: center; color: var(--text-muted); text-decoration: none; flex: 1; }
+        .nav-btn.active { color: var(--accent); }
+        .nav-btn i { display: block; font-size: 1.2rem; margin-bottom: 4px; }
+        .nav-btn span { font-size: 0.75rem; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <div id="mainPageContent">
+        <header>
+            <a href="index.html" style="color: white; text-decoration: none;"><i class="fas fa-arrow-left icon-btn"></i></a>
+            <h1 class="logo"><i class="fas fa-crown"></i> PREMIUM VIP TOOLS</h1>
+            <div style="width: 20px;"></div>
+        </header>
+
+        <div class="search-area">
+            <i class="fas fa-search"></i>
+            <input type="text" id="vipSearch" placeholder="Search premium tools...">
+        </div>
+
+        <div class="section-label"><span>UNLOCKED PREMIUM TOOLS</span></div>
+        <div class="tool-list">
+            <a href="vip tools/hacking app html/app bar.html" class="tool-card">
+                <div class="tool-icon"><i class="fas fa-cubes"></i></div>
+                <h4>Premium Apps</h4>
+                <p>Premium tools and customized resource collection.</p>
+            </a>
+            <a href="vip tools/ip tracker.html" class="tool-card">
+                <div class="tool-icon"><i class="fas fa-crosshairs"></i></div>
+                <h4>IP Tracker</h4>
+                <p>Advanced real-time network geolocation lookup tool.</p>
+            </a>
+            <a href="vip tools/exploit.html" class="tool-card">
+                <div class="tool-icon"><i class="fas fa-terminal"></i></div>
+                <h4>Automation Scripts</h4>
+                <p>Get direct access to clean custom python codes.</p>
+            </a>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-btn"><i class="fas fa-home"></i><span>Home</span></a>
+            <a href="vip-tools.html" class="nav-btn active"><i class="fas fa-crown"></i><span>VIP Tools</span></a>
+            <a href="favorite.html" class="nav-btn"><i class="fas fa-star"></i><span>Favorite</span></a>
+        </nav>
+    </div>
+
+    <script>
+        // স্ক্রিনশটের মতো হুবহু কাস্টম গোল্ডেন মোডাল লজিক
+        window.addEventListener('DOMContentLoaded', () => {
+            checkVipStatus();
+        });
+
+        function checkVipStatus() {
+            if (localStorage.getItem('vip_status') === 'active') {
+                // ইউজার অলরেডি VIP হলে পেজ নরমাল থাকবে
+                document.getElementById('mainPageContent').classList.remove('blur-content');
+                return;
+            }
+
+            // যদি VIP না হয়, তবে পেজ ব্লার হবে এবং কাস্টম মোডাল তৈরি হবে
+            document.getElementById('mainPageContent').classList.add('blur-content');
+
+            let modal = document.createElement('div');
+            modal.id = 'vipLockModal';
+            modal.style.position = 'fixed';
+            modal.style.inset = '0';
+            modal.style.background = 'rgba(0,0,0,0.75)';
+            modal.style.zIndex = '99999';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.padding = '20px';
+            modal.style.backdropFilter = 'blur(3px)';
+
+            // ভাঙা চিহ্নগুলো সরিয়ে এখানে ১০০% ফ্রেশ ও স্পষ্ট বাংলা টেক্সট বসানো হয়েছে
+            modal.innerHTML = `
+                <div style="background: #0d0d0d; border: 2px solid #ffd700; padding: 30px 20px; border-radius: 25px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 0 25px rgba(255,215,0,0.25);">
+                    <i class="fas fa-crown" style="color: #ffd700; font-size: 3.5rem; margin-bottom: 15px; display:inline-block;"></i>
+                    <h3 style="color: #ffd700; font-size: 1.4rem; margin-bottom: 12px; font-weight:700; letter-spacing:1px;">VIP ACCESS LOCKED</h3>
+                    
+                    <p style="color: #e0e0e0; font-size: 0.85rem; line-height: 1.6; margin-bottom: 22px; padding: 0 5px;">
+                        Activate the VIP Key using the name/number you provided while making the payment. If you don't have the Key, click the WhatsApp button below to collect the Key from us.
+                    </p>
+
+                    <a href="https://wa.me/917865875762?text=Hello%20Arif,%20I%20want%20to%20buy%20VIP%20Key" 
+                       style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #25D366; color: #fff; padding: 13px; border-radius: 12px; font-weight: bold; font-size: 0.95rem; text-decoration: none; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(37,211,102,0.2);" 
+                       target="_blank">
+                        <i class="fab fa-whatsapp" style="font-size: 1.3rem;"></i> Buy VIP Key via WhatsApp
+                    </a>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <input type="text" id="modalName" placeholder="Registered name / Phone number..." style="background: #111; border: 1px solid #333; padding: 12px; border-radius: 10px; color: #fff; font-size: 0.85rem; outline: none; width:100%; text-align:center;">
+                        <input type="text" id="modalKey" placeholder="Paste your VIP Key...." style="background: #111; border: 1px solid #333; padding: 12px; border-radius: 10px; color: #fff; font-size: 0.85rem; outline: none; width:100%; text-align:center;">
+                        <button onclick="submitModalKey()" style="background: #ffd700; color: #000; border: none; padding: 13px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.95rem; margin-top: 5px; transition: 0.2s;">Activate VIP</button>
+                    </div>
+
+                    <button onclick="cancelVip()" style="background: transparent; border: none; color: #888; margin-top: 20px; font-size: 0.85rem; cursor: pointer; display:inline-block; transition:0.2s;">Close / Cancel</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // কী যাচাই করার লজিক
+        function submitModalKey() {
+            let nameInput = document.getElementById('modalName').value.trim();
+            let keyInput = document.getElementById('modalKey').value.trim();
+
+            if (!nameInput || !keyInput) {
+                alert("Please fill in both the Name and Key boxes!");
+                return;
+            }
+
+            const secretWord = "ARIF_KING_786"; 
+            const validKey = btoa(nameInput.toLowerCase() + secretWord).substring(0, 10).toUpperCase();
+
+            if (keyInput.toUpperCase() === validKey) {
+                localStorage.setItem('vip_status', 'active');
+                localStorage.setItem('vip_user', nameInput);
+                alert("Access Granted! Welcome to VIP Premium.");
+                
+                // মোডাল রিমুভ ও পেজ আনব্লার করা
+                document.getElementById('vipLockModal').remove();
+                document.getElementById('mainPageContent').classList.remove('blur-content');
+            } else {
+                alert("Invalid Key! The information you provided is incorrect.");
+            }
+        }
+
+        // ক্যানসেল করলে হোম পেজে ফেরত যাবে
+        function cancelVip() {
+            window.location.href = "index.html";
+        }
+
+        // কিবোর্ড ওপেন লজিক
+        const bottomNav = document.querySelector('.bottom-nav');
+        const originalHeight = window.innerHeight;
+        window.addEventListener('resize', () => {
+            if (window.innerHeight < originalHeight - 50) { bottomNav.style.display = 'none'; } 
+            else { bottomNav.style.display = 'flex'; }
+        });
+
+        // সার্চ ফিল্টার লজিক
+        document.getElementById('vipSearch').oninput = function() {
+            let val = this.value.toLowerCase();
+            document.querySelectorAll('.tool-list .tool-card').forEach(card => {
+                card.style.display = card.innerText.toLowerCase().includes(val) ? "flex" : "none";
+            });
+        };
+    </script>
+</body>
+</html>
