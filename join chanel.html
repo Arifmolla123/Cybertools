@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect With Our Community</title>
+    <!-- ⚡ Font Awesome CDN Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --primary-glow: #00f2fe;
+            --secondary-glow: #4facfe;
+            --whatsapp-color: #25d366;
+            --youtube-color: #ff0000;
+            --bg-color: #06060c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ✨ ব্যাকগ্রাউন্ডে দুটি গ্লোয়িং কালার বল (ডিজাইন সুন্দর করার জন্য) */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-glow), var(--secondary-glow));
+            filter: blur(130px);
+            opacity: 0.15;
+            z-index: -1;
+        }
+        body::before { top: -50px; left: -50px; }
+        body::after { bottom: -50px; right: -50px; }
+
+        .container {
+            max-width: 430px;
+            width: 100%;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* 📡 ব্যাক বাটন এবং হেডার */
+        .header-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .back-circle {
+            color: #fff;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        .back-circle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(-3px);
+        }
+        .header-bar h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-left: 15px;
+            background: linear-gradient(135deg, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 🛸 মেইন রাজকীয় কার্ড (Glassmorphism Effect) */
+        .premium-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 28px;
+            padding: 40px 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* কার্ডের ওপরে হালকা নিওন বর্ডার এফেক্ট */
+        .premium-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+        }
+
+        .brand-icon-box {
+            width: 65px;
+            height: 65px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+            color: var(--primary-glow);
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.02);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+        .intro-text {
+            color: #8e8e9a;
+            font-size: 0.88rem;
+            margin-bottom: 35px;
+            line-height: 1.5;
+        }
+
+        /* 🔗 সোশ্যাল বোতামের ড্যাশবোর্ড */
+        .button-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .custom-link-btn {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 18px 22px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        /* 🟢 WhatsApp বোতামের স্পেশাল এফেক্ট */
+        .custom-link-btn.whatsapp:hover {
+            border-color: rgba(37, 211, 102, 0.4);
+            background: rgba(37, 211, 102, 0.04);
+            box-shadow: 0 15px 30px rgba(37, 211, 102, 0.1);
+            transform: translateY(-3px);
+        }
+        .custom-link-btn.whatsapp .icon-circle {
+            background: rgba(37, 211, 102, 0.1);
+            color: var(--whatsapp-color);
+        }
+
+        /* 🔴 YouTube বোতামের স্পেশাল এফেক্ট */
+        .custom-link-btn.youtube:hover {
+            border-color: rgba(255, 0, 0, 0.4);
+            background: rgba(255, 0, 0, 0.04);
+            box-shadow: 0 15px 30px rgba(255, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+        .custom-link-btn.youtube .icon-circle {
+            background: rgba(255, 0, 0, 0.1);
+            color: var(--youtube-color);
+        }
+
+        /* আইকন, টেক্সট এবং অ্যারো টিউনিং */
+        .icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-right: 18px;
+            transition: 0.3s;
+        }
+        
+        .label-box {
+            text-align: left;
+            flex-grow: 1;
+        }
+        .main-label {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.1px;
+        }
+        .sub-label {
+            font-size: 0.78rem;
+            color: #686873;
+            margin-top: 3px;
+        }
+        .custom-link-btn:hover .sub-label {
+            color: #9a9aab;
+        }
+
+        .chevron-icon {
+            color: #3f3f46;
+            font-size: 0.95rem;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .custom-link-btn:hover .chevron-icon {
+            color: #fff;
+            transform: translateX(4px);
+        }
+
+        /* 📋 ক্লিন ফুটার */
+        .clean-footer {
+            margin-top: 35px;
+            font-size: 0.75rem;
+            color: #44444f;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* ✨ পেজ ওপেন হওয়ার সুন্দর অ্যানিমেশন */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 📡 হেডার বার -->
+        <div class="header-bar">
+            <a href="index.html" class="back-circle"><i class="fas fa-arrow-left"></i></a>
+            <h2>Official Hub</h2>
+        </div>
+
+        <!-- 🛸 মেইন প্রিমিয়াম প্যানেল -->
+        <div class="premium-card">
+            <div class="brand-icon-box">
+                <i class="fas fa-share-nodes"></i>
+            </div>
+            <h3>Join Our Community</h3>
+            <p class="intro-text">Get connected with us to receive the latest software updates, real-time tips, and professional video guides.</p>
+
+            <!-- 🔗 বোতামের লিস্ট -->
+            <div class="button-stack">
+                
+                <!-- 🟢 অফিশিয়াল হোয়াটসঅ্যাপ গ্রুপ -->
+                <a href="https://chat.whatsapp.com/Gu9rE3yaSDnCJutYOKPUME?s=cl&p=a&mlu=0&amv=3" target="_blank" class="custom-link-btn whatsapp">
+                    <div class="icon-circle">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="label-box">
+                        <div class="main-label">WhatsApp Group</div>
+                        <div class="sub-text sub-label">Join for instant chat support & updates</div>
+                    </div>
+                    <div class="chevron-icon">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+
+                <!-- 🔴 অফিশিয়াল ইউটিউব চ্যানেল -->
+                <a href="https://youtube.com/@hackingcyber-q4s?si=jU0Fs0oBAyZjZuIF" target="_blank" class="custom-link-btn youtube">
+                    <div class="icon-circle">
+                        <i class="fab fa-youtube"></i>
+                    </div>
+                    <div class="label-box">
+                        <div class="main-label">YouTube Channel</div>
+                        <div class="sub-text sub-label">Subscribe for step-by-step tech tutorials</div>
+                    </div>
+                    <div class="chevron-icon">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+
+            </div>
+
+            <!-- ফুটার নোটিশ -->
+            <div class="clean-footer">OFFICIAL MEMBER PORTAL © 2026</div>
+        </div>
+    </div>
+
+</body>
+</html>

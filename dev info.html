@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Administrator - Profile</title>
+    <!-- ⚡ Font Awesome Latest CDN Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --neon-green: #00ff41;
+            --cyber-blue: #00e5ff;
+            --gold: #ffd700;
+            --bg-dark: #020204;
+            --panel-bg: rgba(10, 10, 15, 0.95);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Share Tech Mono', monospace;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: linear-gradient(rgba(0, 255, 65, 0.01) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 255, 65, 0.01) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* 📡 Back Button & Header */
+        .header {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            margin-bottom: 25px;
+            flex-shrink: 0;
+        }
+        .header a {
+            color: var(--neon-green);
+            font-size: 1.3rem;
+            margin-right: 20px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: rgba(0, 255, 65, 0.05);
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .header a:hover {
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+            background: rgba(0, 255, 65, 0.1);
+        }
+        .header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
+
+        /* 🛸 Main Profile Card */
+        .profile-card {
+            background: var(--panel-bg);
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            border-radius: 24px;
+            padding: 30px 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(0, 255, 65, 0.05);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        /* 🥷 Glowing Ninja Avatar */
+        .avatar-wrapper {
+            width: 90px;
+            height: 90px;
+            background: #000;
+            border: 2px solid var(--neon-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: var(--neon-green);
+            font-size: 2.5rem;
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.3);
+            position: relative;
+        }
+        
+        /* Online Status Dot */
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            border: 2px solid var(--bg-dark);
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .admin-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255,255,255,0.1);
+        }
+
+        .admin-title {
+            color: var(--gold);
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            margin-top: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* 📝 Description Section */
+        .bio-section {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            padding: 15px;
+            margin: 25px 0;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #ccc;
+        }
+
+        /* 🛠️ Skills Grid */
+        .skills-header {
+            text-align: left;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: var(--cyber-blue);
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .skill-badge {
+            background: rgba(0, 229, 255, 0.03);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            padding: 12px 10px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            transition: 0.3s;
+        }
+        .skill-badge:hover {
+            border-color: var(--cyber-blue);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+            background: rgba(0, 229, 255, 0.06);
+        }
+        .skill-badge i {
+            font-size: 0.95rem;
+        }
+
+        /* 📡 System Footer Note */
+        .sys-note {
+            margin-top: 30px;
+            font-size: 0.7rem;
+            color: #444;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 📡 Header -->
+        <div class="header">
+            <a href="index.html"><i class="fas fa-chevron-left"></i></a>
+            <h2>CORE // <span>DEV_INFO</span></h2>
+        </div>
+
+        <!-- 🛸 Main Profile Panel -->
+        <div class="profile-card">
+            
+            <!-- Avatar Logo -->
+            <div class="avatar-wrapper">
+                <i class="fas fa-user-secret"></i>
+                <div class="status-dot"></div>
+            </div>
+
+            <!-- Name and Role -->
+            <h2 class="admin-name">Arif</h2>
+            <div class="admin-title">System Creator & Admin</div>
+
+            <!-- 📝 Your Personal Description -->
+            <div class="bio-section">
+                <span style="color: var(--neon-green); font-weight: bold;">> ABOUT_ME:</span><br>
+                Hello! I am Arif. A passionate technology enthusiast and full-stack developer. I specialize in cybersecurity, modern web architectures, and custom application development. Breaking down security barriers and engineering premium digital experiences is what drives me forward.
+            </div>
+
+            <!-- 🛠️ Skills Dashboard -->
+            <div class="skills-header"><i class="fas fa-terminal"></i> VERIFIED_SKILLS []</div>
+            
+            <div class="skills-grid">
+                <div class="skill-badge" style="color: var(--neon-green); border-color: rgba(0, 255, 65, 0.15);">
+                    <i class="fas fa-shield-halved"></i> Ethical Hacking
+                </div>
+                <div class="skill-badge">
+                    <i class="fas fa-code"></i> Web Designer
+                </div>
+                <div class="skill-badge">
+                    <i class="fas fa-mobile-alt"></i> App Development
+                </div>
+                <div class="skill-badge" style="color: var(--gold); border-color: rgba(255, 215, 0, 0.15);">
+                    <i class="fas fa-video"></i> Video Editor
+                </div>
+            </div>
+
+            <!-- Security Signature Note -->
+            <div class="sys-note">> SECURITY SIGNATURE: ARIF_KING_786</div>
+        </div>
+    </div>
+
+</body>
+</html>
