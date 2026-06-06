@@ -12,8 +12,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background-color: #000; color: #fff; overflow-x: hidden; padding-bottom: 80px; }
 
-        /*       ,      */
-        #mainPageContent { display: none; }
+        #mainPageContent { display: block; }
 
         header { display: flex; justify-content: space-between; padding: 15px 20px; align-items: center; position: sticky; top: 0; background: #000; z-index: 100; border-bottom: 1px solid #222; }
         .logo { color: var(--accent); font-weight: bold; letter-spacing: 2px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
@@ -43,9 +42,56 @@
         .nav-btn.active { color: var(--accent); }
         .nav-btn i { display: block; font-size: 1.2rem; margin-bottom: 4px; }
         .nav-btn span { font-size: 0.75rem; font-weight: 500; }
+
+        /*      -  CSS */
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; opacity: 0; pointer-events: none; transition: 0.3s ease-in-out;
+        }
+        .popup-overlay.show { opacity: 1; pointer-events: auto; }
+        
+        .popup-box {
+            background: #111; border: 2px solid #ff3333; width: 85%; max-width: 340px;
+            padding: 30px 20px; border-radius: 20px; text-align: center;
+            box-shadow: 0 0 25px rgba(255, 51, 51, 0.25);
+            transform: scale(0.7); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .popup-overlay.show .popup-box { transform: scale(1); }
+
+        .popup-icon {
+            font-size: 3rem; color: #ff3333; margin-bottom: 15px;
+            animation: pulse 1.5s infinite;
+        }
+        .popup-box h2 { font-size: 1.25rem; color: #ff3333; font-weight: 700; letter-spacing: 1px; margin-bottom: 10px; }
+        .popup-box p { font-size: 0.85rem; color: #ccc; line-height: 1.5; margin-bottom: 22px; }
+        
+        .popup-btn {
+            background: #ff3333; color: #fff; border: none; padding: 12px 30px;
+            font-size: 0.9rem; font-weight: 600; border-radius: 10px; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 51, 51, 0.3); transition: 0.2s;
+        }
+        .popup-btn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(255, 51, 51, 0.2); }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
+
+    <!--   -   -->
+    <div class="popup-overlay" id="accessDeniedPopup">
+        <div class="popup-box">
+            <div class="popup-icon"><i class="fas fa-shield-alt"></i></div>
+            <h2>ACCESS DENIED!</h2>
+            <p>Please activate your account with a valid VIP Key from the Main Menu first.</p>
+            <button class="popup-btn" onclick="redirectToVip()">ACTIVATE NOW</button>
+        </div>
+    </div>
 
     <div id="mainPageContent">
         <header>
@@ -110,44 +156,48 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        //        
         window.addEventListener('DOMContentLoaded', () => {
             checkVipStatus();
         });
 
-        //        
+        //     +   -
         function checkVipStatus() {
             let localStatus = localStorage.getItem('vip_status');
             let myUsername = localStorage.getItem('my_username');
             let deviceToken = localStorage.getItem('app_device_token'); 
 
-            //  :          
             if (localStatus === 'active' && myUsername) {
-                
+                //         
+                document.getElementById('mainPageContent').style.display = 'block';
+                document.getElementById('mainPageContent').style.pointerEvents = 'auto';
+
+                //  
                 database.ref('vip_users/' + myUsername).once('value').then((snapshot) => {
                     let userData = snapshot.val();
                     
-                    //  :        
-                    if (userData && userData.status === 'active' && userData.device_id === deviceToken) {
-                        document.getElementById('mainPageContent').style.display = 'block'; 
-                    } else {
-                        handleAccessDenied();
+                    if (!userData || userData.status !== 'active' || userData.device_id !== deviceToken) {
+                        showCustomPopup();
                     }
                 }).catch(() => {
-                    //    
-                    document.getElementById('mainPageContent').style.display = 'block';
+                    //  
                 });
+
             } else {
-                handleAccessDenied();
+                showCustomPopup();
             }
         }
 
-        //         
-        function handleAccessDenied() {
+        //   -   ( alert()     )
+        function showCustomPopup() {
+            //          
+            document.getElementById('mainPageContent').style.pointerEvents = 'none';
+            document.getElementById('accessDeniedPopup').classList.add('show');
+        }
+
+        //       
+        function redirectToVip() {
             localStorage.removeItem('vip_status');
             localStorage.removeItem('my_username');
-            
-            alert(" ACCESS DENIED!\nPlease active your account with a valid VIP Key from the Main Menu first.");
             window.location.href = "vip.html"; 
         }
 
