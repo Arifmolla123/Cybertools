@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium URL Shortener</title>
+    <title>প্রিমিয়াম ইউআরএল শর্টনার</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
@@ -19,7 +19,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background-color: var(--bg); color: #fff; display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Header Setup */
         header { 
             display: flex; 
             align-items: center; 
@@ -34,7 +33,6 @@
         header a { color: #fff; text-decoration: none; font-size: 1.2rem; }
         header h1 { font-size: 1.1rem; font-weight: 600; color: var(--accent); letter-spacing: 1px; }
 
-        /* Main Container */
         .container { padding: 25px 20px; flex: 1; max-width: 480px; margin: 0 auto; width: 100%; }
 
         .info-box {
@@ -87,7 +85,6 @@
         .action-btn:active { transform: scale(0.98); }
         .action-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
 
-        /* Result Section */
         .result-area { 
             margin-top: 30px; 
             background: var(--card); 
@@ -114,13 +111,11 @@
         .output-box span { font-size: 0.9rem; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%; }
         .copy-btn { background: transparent; border: none; color: var(--accent); cursor: pointer; font-size: 1.1rem; padding: 5px; }
 
-        /* QR Code Option */
         .qr-section { text-align: center; border-top: 1px solid #222; padding-top: 15px; margin-top: 15px; }
         .qr-section p { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; }
         .qr-img { background: #fff; padding: 8px; border-radius: 10px; display: inline-block; }
         .qr-img img { display: block; width: 120px; height: 120px; }
 
-        /* Loader Style */
         .spinner { border: 2px solid #000; border-top: 2px solid #fff; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -128,7 +123,7 @@
 <body>
 
     <header>
-        <a href="../index.html"><i class="fas fa-arrow-left"></i></a>
+        <a href="#"><i class="fas fa-arrow-left"></i></a>
         <h1>URL SHORTENER</h1>
         <div style="width: 20px;"></div>
     </header>
@@ -136,7 +131,7 @@
     <div class="container">
         <div class="info-box">
             <i class="fas fa-circle-info"></i>
-            <span>যেকোনো বড় লং লিঙ্ক বা ইউআরএল (URL) এখানে পেস্ট করে এক ক্লিকে সেটিকে অত্যন্ত ছোট এবং প্রফেশনাল লিঙ্কে রূপান্তর করে নিন।</span>
+            <span>যেকোনো বড় লিংক (Blogspot, Google, YouTube সব) শর্ট করুন। নেটওয়ার্ক এরর থাকবে না।</span>
         </div>
 
         <div class="input-group">
@@ -144,7 +139,7 @@
             <input type="url" id="longUrl" placeholder="আপনার বড় লিঙ্কটি এখানে পেস্ট করুন...">
         </div>
 
-        <button class="action-btn" id="shortenBtn" onclick="generateShortUrl()">
+        <button class="action-btn" id="shortenBtn">
             <span class="spinner" id="btnLoader"></span>
             <span id="btnText"><i class="fas fa-bolt"></i> Shorten URL</span>
         </button>
@@ -152,8 +147,8 @@
         <div class="result-area" id="resultArea">
             <div class="result-title">SHORTENED LINK</div>
             <div class="output-box">
-                <span id="shortenedUrl">https://is.gd/xyz123</span>
-                <button class="copy-btn" onclick="copyLink()" title="Copy Link"><i class="far fa-copy" id="copyIcon"></i></button>
+                <span id="shortenedUrl">https://cleanuri.com/xyz</span>
+                <button class="copy-btn" id="copyBtn" title="Copy Link"><i class="far fa-copy" id="copyIcon"></i></button>
             </div>
 
             <div class="qr-section">
@@ -166,81 +161,84 @@
     </div>
 
     <script>
+        const shortenBtn = document.getElementById('shortenBtn');
+        const longUrlInput = document.getElementById('longUrl');
+        const btnLoader = document.getElementById('btnLoader');
+        const btnText = document.getElementById('btnText');
+        const resultArea = document.getElementById('resultArea');
+        const shortenedUrlSpan = document.getElementById('shortenedUrl');
+        const qrCodeImg = document.getElementById('qrCodeImg');
+        const copyBtn = document.getElementById('copyBtn');
+        const copyIcon = document.getElementById('copyIcon');
+
         async function generateShortUrl() {
-            const longUrlInput = document.getElementById('longUrl').value.trim();
-            const shortenBtn = document.getElementById('shortenBtn');
-            const btnLoader = document.getElementById('btnLoader');
-            const btnText = document.getElementById('btnText');
-            const resultArea = document.getElementById('resultArea');
-            const shortenedUrlText = document.getElementById('shortenedUrl');
-            const qrCodeImg = document.getElementById('qrCodeImg');
+            const longUrl = longUrlInput.value.trim();
 
-            // লিঙ্ক ভ্যালিডেশন চেক
-            if (!longUrlInput) {
-                alert("দয়া করে প্রথমে একটি সঠিক লিঙ্ক পেস্ট করুন!");
+            if (!longUrl) {
+                alert("দয়া করে একটি লিংক পেস্ট করুন!");
                 return;
             }
 
-            if (!longUrlInput.startsWith('http://') && !longUrlInput.startsWith('https://')) {
-                alert("দয়া করে একটি সম্পূর্ণ লিঙ্ক পেস্ট করুন (যেমন: https://google.com)");
+            if (!longUrl.startsWith('http://') && !longUrl.startsWith('https://')) {
+                alert("লিংকটি http:// বা https:// দিয়ে শুরু করুন। যেমন: https://google.com");
                 return;
             }
 
-            // লোডার স্টার্ট
             shortenBtn.disabled = true;
             btnLoader.style.display = "inline-block";
             btnText.style.display = "none";
 
             try {
-                //is.gd ফ্রিতে রিয়েল-টাইম কাজ করা ক্রস-অরিজিন API ব্যবহার করা হয়েছে
-                const response = await fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(longUrlInput)}`);
+                // cleanuri.com API – CORS সমর্থিত, কোনো API কী লাগে না
+                const response = await fetch('https://cleanuri.com/api/v1/shorten', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url: longUrl })
+                });
+
                 const data = await response.json();
 
-                if (data.shorturl) {
-                    // রেজাল্ট দেখানো
-                    shortenedUrlText.innerText = data.shorturl;
-                    
-                    // ফ্রিতে কিউআর কোড ইমেজ জেনারেট করার এপিআই
-                    qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(data.shorturl)}`;
-                    
+                if (response.ok && data.result_url) {
+                    const shortLink = data.result_url;
+                    shortenedUrlSpan.innerText = shortLink;
+                    qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(shortLink)}`;
                     resultArea.style.display = "block";
-                } else if (data.errormessage) {
-                    alert("API Error: " + data.errormessage);
                 } else {
-                    alert("লিঙ্কটি শর্ট করতে সমস্যা হচ্ছে। আবার চেষ্টা করুন।");
+                    alert("শর্ট করতে ব্যর্থ: " + (data.error || "অজানা ত্রুটি। লিংকটি সঠিক কি না চেক করুন।"));
                 }
             } catch (error) {
                 console.error(error);
-                alert("নেটওয়ার্ক সমস্যা! দয়া করে আপনার ইন্টারনেট কানেকশন চেক করুন।");
+                alert("নেটওয়ার্ক সমস্যা! ইন্টারনেট সংযোগ চেক করুন। সমস্যা থাকলে পরে চেষ্টা করুন।");
             } finally {
-                // লোডার স্টপ
                 shortenBtn.disabled = false;
                 btnLoader.style.display = "none";
                 btnText.style.display = "inline-block";
             }
         }
 
-        // লিঙ্ক ওয়ান-ক্লিক কপি লজিক
         function copyLink() {
-            const urlText = document.getElementById('shortenedUrl').innerText;
-            const copyIcon = document.getElementById('copyIcon');
+            const urlText = shortenedUrlSpan.innerText;
+            if (!urlText || urlText === "https://cleanuri.com/xyz") {
+                alert("কপি করার মতো কোনো লিঙ্ক নেই। আগে একটি লিঙ্ক শর্ট করুন।");
+                return;
+            }
 
             navigator.clipboard.writeText(urlText).then(() => {
-                // কপি হওয়ার পর আইকন চেঞ্জ করে টিকচিহ্ন দেওয়া
                 copyIcon.className = "fas fa-check";
                 copyIcon.style.color = "#00ff41";
-                
-                alert("লিঙ্কটি কপি করা হয়েছে!");
-
-                // ২ সেকেন্ড পর আবার আগের আইকন ফিরিয়ে আনা
                 setTimeout(() => {
                     copyIcon.className = "far fa-copy";
                     copyIcon.style.color = "var(--accent)";
                 }, 2000);
-            }).catch(err => {
-                alert("কপি করা যায়নি, ম্যানুয়ালি কপি করুন।");
+            }).catch(() => {
+                alert("ম্যানুয়ালি কপি করুন: " + urlText);
             });
         }
+
+        shortenBtn.addEventListener('click', generateShortUrl);
+        copyBtn.addEventListener('click', copyLink);
     </script>
 </body>
 </html>
