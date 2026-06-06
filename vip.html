@@ -6,24 +6,21 @@
     <title>VIP Menu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* বডির হাইট লক তুলে দিয়ে স্বাভাবিক করা হলো যাতে নিচের বাটন কেটে না যায় */
         body { background: #000; color: #fff; font-family: sans-serif; padding: 20px; text-align: center; display: flex; flex-direction: column; min-height: 100vh; }
         
         .header { display: flex; align-items: center; text-align: left; margin-bottom: 20px; flex-shrink: 0; }
         .header a { color: #00ff41; font-size: 1.5rem; margin-right: 20px; text-decoration: none; }
         
-        /* VIP ব্যানার */
+        /* VIP  */
         .vip-box { border: 1px solid gold; padding: 20px 15px; border-radius: 20px; background: #0a0a0a; margin-bottom: 20px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); flex-shrink: 0; }
         .gold { color: gold; }
 
         .premium-section-title { text-align: left; font-size: 1rem; color: gold; font-weight: bold; margin: 10px 5px 15px; letter-spacing: 1px; flex-shrink: 0; }
         
-        /* ⚡ স্ক্রলিং এরিয়া ফিক্সড হাইট দিয়ে সেট করা হলো যাতে বাটন নিচে দৃশ্যমান থাকে ⚡ */
         .scrollable-tools-container { max-height: 280px; overflow-y: auto; padding: 2px; margin-bottom: 20px; border-radius: 10px; }
         .scrollable-tools-container::-webkit-scrollbar { width: 4px; }
         .scrollable-tools-container::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
 
-        /* ২ কলাম গ্রিড লেআউট */
         .tool-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; text-align: center; }
         
         .tool-card { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0a0a0a; padding: 15px 10px; border-radius: 15px; cursor: pointer; border: 1px solid #222; text-decoration: none; color: white; transition: 0.3s; min-height: 125px; }
@@ -34,15 +31,58 @@
         .tool-card h4 { font-size: 0.85rem; margin-bottom: 4px; word-break: break-word; }
         .tool-card p { font-size: 0.68rem; color: #888; line-height: 1.2; }
         
-        /* Logout Button Style - মার্জিন এবং পজিশন ঠিক করা হয়েছে */
+        /* Logout Button Style */
         .logout-btn { background: transparent; border: 1px solid #ff3e3e; color: #ff3e3e; padding: 12px 15px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; width: 100%; margin-top: 10px; flex-shrink: 0; }
         .logout-btn:hover { background: #ff3e3e; color: #fff; }
     </style>
 
+    <!--        CDN -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
     <script>
-        if (localStorage.getItem('vip_status') !== 'active') {
-            alert("Access Denied! Please unlock VIP from Home Page.");
+        //    
+        const firebaseConfig = {
+            apiKey: "AIzaSyDS2PkxK-i6I8ayI-l_f5XctS8YG1mbbI0",
+            authDomain: "admin-panel-1946a.firebaseapp.com",
+            databaseURL: "https://admin-panel-1946a-default-rtdb.firebaseio.com/",
+            projectId: "admin-panel-1946a",
+            storageBucket: "admin-panel-1946a.firebasestorage.app",
+            messagingSenderId: "78923664766",
+            appId: "1:78923664766:web:e599e323cca341ab14772f"
+        };
+
+        //   
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        //     (    )
+        let localStatus = localStorage.getItem('vip_status');
+        let myUsername = localStorage.getItem('my_username');
+
+        if (localStatus === 'active' && myUsername) {
+            database.ref('vip_users/' + myUsername).once('value').then((snapshot) => {
+                let userData = snapshot.val();
+                //           
+                if (!userData || userData.status !== 'active') {
+                    clearVipSession();
+                    window.location.href = "index.html";
+                }
+            }).catch(() => {
+                //      
+            });
+        } else {
             window.location.href = "index.html";
+        }
+
+        function clearVipSession() {
+            localStorage.removeItem('vip_status');
+            localStorage.removeItem('my_username');
+            localStorage.removeItem('vip_user');
+            localStorage.removeItem('vipUser');
+            localStorage.removeItem('vipKey');
+            localStorage.removeItem('vipStatus');
+            localStorage.removeItem('vipExpiryDate');
         }
     </script>
 </head>
@@ -59,38 +99,53 @@
         <p style="color: #888; margin: 10px 0 0;">Welcome back, <span id="vipUsername" style="color: #00ff41; font-weight: bold;">User</span>! Enjoy your premium privileges.</p>
     </div>
 
-
     <button class="logout-btn" onclick="logoutVip()">Lock VIP Menu</button>
 
     <script>
         window.onload = function() {
-    let savedUser = localStorage.getItem('vip_user');
-    if (savedUser) {
-        document.getElementById('vipUsername').innerText = savedUser.toUpperCase();
-        
-        // =================================================================
-        // 🔥 অ্যাডমিন ও সেটিংস পেজের লাইফটাইম অ্যাক্সেসের জন্য ব্যাকগ্রাউন্ড ডেটা
-        // =================================================================
-        localStorage.setItem('vipUser', savedUser);
-        localStorage.setItem('vipKey', 'AGFJA2VYQV'); // আপনার আসল কী
-        localStorage.setItem('vipStatus', 'Active');
-        localStorage.setItem('vipExpiryDate', 'LIFETIME'); 
-        // =================================================================
-    }
-}
+            let myUsername = localStorage.getItem('my_username');
+            
+            if (myUsername) {
+                //         
+                database.ref('vip_users/' + myUsername).once('value').then((snapshot) => {
+                    let userData = snapshot.val();
+                    if (userData && userData.username) {
+                        document.getElementById('vipUsername').innerText = userData.username.toUpperCase();
+                        
+                        //    (   )
+                        localStorage.setItem('vip_user', userData.username);
+                        localStorage.setItem('vipUser', userData.username);
+                        localStorage.setItem('vipKey', userData.vip_key);
+                        localStorage.setItem('vipStatus', 'Active');
+                        localStorage.setItem('vipExpiryDate', userData.expiry || 'LIFETIME');
+                    }
+                });
+            }
+        }
 
-function logoutVip() {
-    if(confirm("Are you sure you want to lock VIP access on this browser?")) {
-        localStorage.removeItem('vip_status');
-        localStorage.removeItem('vip_user');
-        
-        // লগআউট করার সাথে সাথে সেটিংসের রিকভারি কী-ও রিমুভ হয়ে যাবে সিকিউরিটির জন্য
-        localStorage.removeItem('vipUser');
-        localStorage.removeItem('vipKey');
-        
-        window.location.href = "index.html";
-    }
-}
+        //       /  
+        function logoutVip() {
+            if(confirm("Are you sure you want to lock VIP access on this browser?")) {
+                let myUsername = localStorage.getItem('my_username');
+
+                if (myUsername) {
+                    //.             
+                    database.ref('vip_users/' + myUsername).remove().then(() => {
+                        // .     (Keys)  
+                        clearVipSession();
+                        alert("[+] VIP Access Locked and Session Cleared from Cloud!");
+                        window.location.href = "index.html";
+                    }).catch((err) => {
+                        //          
+                        clearVipSession();
+                        window.location.href = "index.html";
+                    });
+                } else {
+                    clearVipSession();
+                    window.location.href = "index.html";
+                }
+            }
+        }
     </script>
 </body>
-  </html>
+</html>
