@@ -90,27 +90,28 @@
     </div>
 
     <script>
-        // 🛠️ আপনার মেইন ডাটাবেজ Key এর সাথে ম্যাচ করে ফিক্স করা ফাংশন
         function viewVipCredentials() {
             let credBox = document.getElementById('vipCredBox');
             
-            // আপনার ওরিজিনাল LocalStorage Key-সমূহ এখানে রিড করা হচ্ছে
+            // LocalStorage    
             let localStatus = localStorage.getItem('vip_status');
             let savedUser = localStorage.getItem('my_username');
-            let deviceToken = localStorage.getItem('app_device_token'); 
+            
+            //      -    
+            let savedKey = localStorage.getItem('vip_key') || localStorage.getItem('vipKey') || "********";
 
-            // টগল লজিক: বক্স খোলা থাকলে বন্ধ করবে
+            //  
             if (credBox.style.display === "block") {
                 credBox.style.display = "none";
                 return;
             }
 
-            // ভেরিফিকেশন চেক
+            //    
             if (localStatus === 'active' && savedUser) {
                 credBox.innerHTML = `
                     <div class="cred-item">[+] STATUS: <b style="color: #00ff41;">ACTIVE (VIP)</b></div>
                     <div class="cred-item">[+] USERNAME: <b>${savedUser}</b></div>
-                    <div class="cred-item" style="word-break: break-all;">[+] DEVICE ID: <b style="color: #aaa;">${deviceToken ? deviceToken : 'N/A'}</b></div>
+                    <div class="cred-item">[+] VIP KEY: <b style="color: #ffd700;">${savedKey}</b></div>
                 `;
                 credBox.style.border = "1px dashed var(--vip)";
             } else {
@@ -124,7 +125,6 @@
             credBox.style.display = "block";
         }
 
-        // 🛠️ মেইন অ্যাপের সকল সেশন ভ্যালু নিখুঁতভাবে ক্লিন করার লগআউট ফাংশন
         function logoutVipSession() {
             let savedUser = localStorage.getItem('my_username');
 
@@ -136,12 +136,11 @@
             let confirmAction = confirm("Are you sure you want to lock and log out of the VIP Menu?");
             
             if (confirmAction) {
-                // আপনার মেইন অ্যাপের সকল ডাটা মেমোরি থেকে একদম মুছে ফেলা হলো
+                //       
                 localStorage.removeItem('vip_status');
                 localStorage.removeItem('my_username');
                 localStorage.removeItem('app_device_token');
-                
-                // যদি ব্যাকআপের জন্য পুরনো কী থেকে থাকে সেগুলোও পরিষ্কার করা হলো
+                localStorage.removeItem('vip_key');
                 localStorage.removeItem('vipUser');
                 localStorage.removeItem('vipKey');
                 
@@ -151,7 +150,6 @@
                 toast.innerText = "[+] VIP Access locked successfully. All active keys wiped from session memory.";
                 toast.style.display = 'block';
 
-                // ২ সেকেন্ড পর হোম পেজে রিডাইরেক্ট হবে
                 setTimeout(() => {
                     window.location.href = "index.html";
                 }, 2000);
