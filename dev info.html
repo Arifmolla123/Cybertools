@@ -101,6 +101,7 @@
             font-size: 2.5rem;
             box-shadow: 0 0 25px rgba(0, 255, 65, 0.3);
             position: relative;
+            cursor: pointer; /* মাউস বা টাচ ফ্রেন্ডলি করার জন্য */
         }
         
         /* Online Status Dot */
@@ -209,8 +210,8 @@
         <!-- 🛸 Main Profile Panel -->
         <div class="profile-card">
             
-            <!-- Avatar Logo -->
-            <div class="avatar-wrapper">
+            <!-- Avatar Logo (গোপন বাটন ট্রিগার আইডি যুক্ত করা হয়েছে) -->
+            <div class="avatar-wrapper" id="secretAdminTrigger">
                 <i class="fas fa-user-secret"></i>
                 <div class="status-dot"></div>
             </div>
@@ -219,7 +220,7 @@
             <h2 class="admin-name">Arif</h2>
             <div class="admin-title">System Creator & Admin</div>
 
-            <!-- 📝 Your Personal Description -->
+            <!-- 📝 Personal Description -->
             <div class="bio-section">
                 <span style="color: var(--neon-green); font-weight: bold;">> ABOUT_ME:</span><br>
                 Hello! I am Arif. A passionate technology enthusiast and full-stack developer. I specialize in cybersecurity, modern web architectures, and custom application development. Breaking down security barriers and engineering premium digital experiences is what drives me forward.
@@ -247,6 +248,26 @@
             <div class="sys-note">> SECURITY SIGNATURE: ARIF_KING_786</div>
         </div>
     </div>
+
+    <!-- 🔐 SECRET BACKEND REDIRECT SCRIPT -->
+    <script>
+        let devClickCount = 0;
+        let devClickTimer;
+
+        document.getElementById('secretAdminTrigger').addEventListener('click', function() {
+            devClickCount++;
+            
+            // ৩ সেকেন্ডের মধ্যে পরবর্তী ক্লিক না করলে কাউন্টার রিসেট হয়ে যাবে
+            clearTimeout(devClickTimer);
+            devClickTimer = setTimeout(() => { devClickCount = 0; }, 3000);
+
+            // ৩ সেকেন্ডের ভেতরে টানা ৫ বার ক্লিক সম্পূর্ণ হলে অ্যাকশন নেবে
+            if (devClickCount === 5) {
+                devClickCount = 0; // রিসেট কাউন্টার
+                window.location.href = 'admin.html'; // আপনার তৈরি অ্যাডমিন প্যানেল ফাইলের পাথ এখানে দেওয়া আছে
+            }
+        });
+    </script>
 
 </body>
 </html>
