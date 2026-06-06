@@ -12,8 +12,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background-color: #000; color: #fff; overflow-x: hidden; padding-bottom: 80px; }
 
-        /* VIP না হলে পুরো মেইন কন্টেন্ট ব্লার করার জন্য ক্লাস */
-        .blur-content { filter: blur(5px); pointer-events: none; }
+        /*       ,      */
+        #mainPageContent { display: none; }
 
         header { display: flex; justify-content: space-between; padding: 15px 20px; align-items: center; position: sticky; top: 0; background: #000; z-index: 100; border-bottom: 1px solid #222; }
         .logo { color: var(--accent); font-weight: bold; letter-spacing: 2px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
@@ -91,12 +91,11 @@
         </nav>
     </div>
 
-    <!-- 🔥 ফায়ারবেস কোর এবং রিয়েলটাইম ডাটাবেজ স্ক্রিপ্ট CDN -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
     <script>
-        // 🔑 আপনার ফায়ারবেস কনফিগারেশন
+        //  
         const firebaseConfig = {
             apiKey: "AIzaSyDS2PkxK-i6I8ayI-l_f5XctS8YG1mbbI0",
             authDomain: "admin-panel-1946a.firebaseapp.com",
@@ -107,156 +106,52 @@
             appId: "1:78923664766:web:e599e323cca341ab14772f"
         };
 
-        // ফায়ারবেস ইনিশিয়ালাইজ করুন
+        //  
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        //        
         window.addEventListener('DOMContentLoaded', () => {
             checkVipStatus();
         });
 
-        // 🧠 অনলাইন ক্লাউড ও লোকাল স্ট্যাটাস চেকার
+        //        
         function checkVipStatus() {
             let localStatus = localStorage.getItem('vip_status');
             let myUsername = localStorage.getItem('my_username');
+            let deviceToken = localStorage.getItem('app_device_token'); 
 
+            //  :          
             if (localStatus === 'active' && myUsername) {
-                // লোকাল মেমোরিতে একটিভ থাকলে ডাটাবেজ থেকে লাইভ ভেরিফাই করা হচ্ছে
+                
                 database.ref('vip_users/' + myUsername).once('value').then((snapshot) => {
                     let userData = snapshot.val();
-                    if (userData && userData.status === 'active') {
-                        // যদি অনলাইন ক্লাউডেও একটিভ থাকে, তবে পেজ আনলক থাকবে
-                        document.getElementById('mainPageContent').classList.remove('blur-content');
+                    
+                    //  :        
+                    if (userData && userData.status === 'active' && userData.device_id === deviceToken) {
+                        document.getElementById('mainPageContent').style.display = 'block'; 
                     } else {
-                        // আপনি অ্যাডমিন প্যানেল থেকে কেটে দিলে এটি লক করে দেবে
-                        localStorage.removeItem('vip_status');
-                        localStorage.removeItem('my_username');
-                        showVipLockModal();
+                        handleAccessDenied();
                     }
                 }).catch(() => {
-                    // ইন্টারনেট না থাকলে ব্যাকআপ হিসেবে লোকাল মেমোরি দিয়ে চালু রাখবে
-                    document.getElementById('mainPageContent').classList.remove('blur-content');
+                    //    
+                    document.getElementById('mainPageContent').style.display = 'block';
                 });
             } else {
-                showVipLockModal();
+                handleAccessDenied();
             }
         }
 
-        // 🔒 গোল্ডেন লক মোডাল দেখানোর ফাংশন
-        function showVipLockModal() {
-            document.getElementById('mainPageContent').classList.add('blur-content');
-
-            let modal = document.createElement('div');
-            modal.id = 'vipLockModal';
-            modal.style.position = 'fixed';
-            modal.style.inset = '0';
-            modal.style.background = 'rgba(0,0,0,0.75)';
-            modal.style.zIndex = '99999';
-            modal.style.display = 'flex';
-            modal.style.justifyContent = 'center';
-            modal.style.alignItems = 'center';
-            modal.style.padding = '20px';
-            modal.style.backdropFilter = 'blur(3px)';
-
-            modal.innerHTML = `
-                <div style="background: #0d0d0d; border: 2px solid #ffd700; padding: 30px 20px; border-radius: 25px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 0 25px rgba(255,215,0,0.25);">
-                    <i class="fas fa-crown" style="color: #ffd700; font-size: 3.5rem; margin-bottom: 15px; display:inline-block;"></i>
-                    <h3 style="color: #ffd700; font-size: 1.4rem; margin-bottom: 12px; font-weight:700; letter-spacing:1px;">VIP ACCESS LOCKED</h3>
-                    
-                    <p style="color: #e0e0e0; font-size: 0.85rem; line-height: 1.6; margin-bottom: 22px; padding: 0 5px;">
-                        Activate the VIP Key using the name/number you provided while making the payment. If you don't have the Key, click the WhatsApp button below to collect the Key from us.
-                    </p>
-
-                    <a href="https://wa.me/917865875762?text=Hello%20Arif,%20I%20want%20to%20buy%20VIP%20Key" 
-                       style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #25D366; color: #fff; padding: 13px; border-radius: 12px; font-weight: bold; font-size: 0.95rem; text-decoration: none; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(37,211,102,0.2);" 
-                       target="_blank">
-                        <i class="fab fa-whatsapp" style="font-size: 1.3rem;"></i> Buy VIP Key via WhatsApp
-                    </a>
-
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        <input type="text" id="modalName" placeholder="Registered name / Phone number..." style="background: #111; border: 1px solid #333; padding: 12px; border-radius: 10px; color: #fff; font-size: 0.85rem; outline: none; width:100%; text-align:center;">
-                        <input type="text" id="modalKey" placeholder="Paste your VIP Key...." style="background: #111; border: 1px solid #333; padding: 12px; border-radius: 10px; color: #fff; font-size: 0.85rem; outline: none; width:100%; text-align:center;">
-                        <button onclick="submitModalKey()" style="background: #ffd700; color: #000; border: none; padding: 13px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.95rem; margin-top: 5px; transition: 0.2s;">Activate VIP</button>
-                    </div>
-
-                    <button onclick="cancelVip()" style="background: transparent; border: none; color: #888; margin-top: 20px; font-size: 0.85rem; cursor: pointer; display:inline-block; transition:0.2s;">Close / Cancel</button>
-                </div>
-            `;
-            document.body.appendChild(modal);
+        //         
+        function handleAccessDenied() {
+            localStorage.removeItem('vip_status');
+            localStorage.removeItem('my_username');
+            
+            alert(" ACCESS DENIED!\nPlease active your account with a valid VIP Key from the Main Menu first.");
+            window.location.href = "vip.html"; 
         }
 
-   //  --- (Device Lock)  
-function submitModalKey() {
-    let nameInput = document.getElementById('modalName').value.trim();
-    let keyInput = document.getElementById('modalKey').value.trim();
-
-    if (!nameInput || !keyInput) {
-        alert("Please fill in both the Name and Key boxes!");
-        return;
-    }
-
-    const secretWord = "ARIF_KING_786"; 
-    const validKey = btoa(nameInput.toLowerCase() + secretWord).substring(0, 10).toUpperCase();
-
-    // .    -         
-    if (keyInput.toUpperCase() === validKey) {
-        
-        // .            (   )
-        let deviceToken = localStorage.getItem('app_device_token');
-        if (!deviceToken) {
-            deviceToken = 'DEV-' + Math.random().toString(36).substring(2, 11).toUpperCase() + '-' + Date.now();
-            localStorage.setItem('app_device_token', deviceToken);
-        }
-
-        // .        /      
-        //        
-        let cleanNodeName = nameInput.replace(/[.#$\[\]]/g, ""); //   
-        
-        database.ref('vip_users/' + cleanNodeName).once('value').then((snapshot) => {
-            let existingUser = snapshot.val();
-
-            if (existingUser) {
-                //       ,       
-                if (existingUser.device_id !== deviceToken) {
-                    //                 !
-                    alert(" ACCESS DENIED!\nThis VIP Key is already registered and locked to another device. You cannot reuse it!");
-                    return; //     ,   
-                }
-            }
-
-            // .          ,       
-            localStorage.setItem('vip_status', 'active');
-            localStorage.setItem('my_username', cleanNodeName);
-
-            database.ref('vip_users/' + cleanNodeName).set({
-                username: nameInput,
-                vip_key: keyInput,
-                status: "active",
-                device_id: deviceToken, //        
-                expiry: "LIFETIME",
-                activated_at: new Date().toLocaleString()
-            }).then(() => {
-                alert("[+] Access Granted! VIP Locked to this Device Successfully.");
-                if(document.getElementById('vipLockModal')) {
-                    document.getElementById('vipLockModal').remove();
-                }
-                document.getElementById('mainPageContent').classList.remove('blur-content');
-            }).catch((err) => {
-                alert("Firebase Sync Error: " + err.message);
-            });
-
-        });
-
-    } else {
-        alert("[-] Invalid Key! The information you provided is incorrect.");
-    }
-}
-        // ক্যানসেল করলে হোম পেজে ফেরত যাবে
-        function cancelVip() {
-            window.location.href = "index.html";
-        }
-
-        // কিবোর্ড ওপেন লজিক
+        //   
         const bottomNav = document.querySelector('.bottom-nav');
         const originalHeight = window.innerHeight;
         window.addEventListener('resize', () => {
@@ -264,7 +159,7 @@ function submitModalKey() {
             else { bottomNav.style.display = 'flex'; }
         });
 
-        // সার্চ ফিল্টার লজিক
+        //   
         document.getElementById('vipSearch').oninput = function() {
             let val = this.value.toLowerCase();
             document.querySelectorAll('.tool-list .tool-card').forEach(card => {
