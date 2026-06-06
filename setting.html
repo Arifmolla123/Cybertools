@@ -37,7 +37,8 @@
 
         /* Credentials Display Terminal Box */
         .cred-display { display: none; background: #050505; border: 1px solid #333; border-radius: 8px; padding: 12px; margin-left: 30px; margin-top: 10px; font-family: monospace; font-size: 0.8rem; line-height: 1.5; }
-        .cred-item { color: #aaa; }
+        .cred-display .cred-item { color: #aaa; margin-bottom: 4px; }
+        .cred-display .cred-item:last-child { margin-bottom: 0; }
         .cred-item b { color: var(--vip); }
 
         /* Status Toast Alert */
@@ -89,16 +90,27 @@
     </div>
 
     <script>
+        // 🛠️ আপনার মেইন ডাটাবেজ Key এর সাথে ম্যাচ করে ফিক্স করা ফাংশন
         function viewVipCredentials() {
             let credBox = document.getElementById('vipCredBox');
-            let savedUser = localStorage.getItem('vipUser');
-            let savedKey = localStorage.getItem('vipKey');
+            
+            // আপনার ওরিজিনাল LocalStorage Key-সমূহ এখানে রিড করা হচ্ছে
+            let localStatus = localStorage.getItem('vip_status');
+            let savedUser = localStorage.getItem('my_username');
+            let deviceToken = localStorage.getItem('app_device_token'); 
 
-            if (savedUser && savedKey) {
+            // টগল লজিক: বক্স খোলা থাকলে বন্ধ করবে
+            if (credBox.style.display === "block") {
+                credBox.style.display = "none";
+                return;
+            }
+
+            // ভেরিফিকেশন চেক
+            if (localStatus === 'active' && savedUser) {
                 credBox.innerHTML = `
                     <div class="cred-item">[+] STATUS: <b style="color: #00ff41;">ACTIVE (VIP)</b></div>
                     <div class="cred-item">[+] USERNAME: <b>${savedUser}</b></div>
-                    <div class="cred-item">[+] ACCESS KEY: <b>${savedKey}</b></div>
+                    <div class="cred-item" style="word-break: break-all;">[+] DEVICE ID: <b style="color: #aaa;">${deviceToken ? deviceToken : 'N/A'}</b></div>
                 `;
                 credBox.style.border = "1px dashed var(--vip)";
             } else {
@@ -109,17 +121,14 @@
                 credBox.style.border = "1px dashed #ff3e3e";
             }
             
-            if (credBox.style.display === "block") {
-                credBox.style.display = "none";
-            } else {
-                credBox.style.display = "block";
-            }
+            credBox.style.display = "block";
         }
 
-        // সেটিংস থেকে লগআউট করার নিখুঁত ফাংশন
+        // 🛠️ মেইন অ্যাপের সকল সেশন ভ্যালু নিখুঁতভাবে ক্লিন করার লগআউট ফাংশন
         function logoutVipSession() {
-            // ইউজার মেম্বার কি না তা চেক করা
-            if (!localStorage.getItem('vipUser')) {
+            let savedUser = localStorage.getItem('my_username');
+
+            if (!savedUser) {
                 alert("You are not logged into any VIP account.");
                 return;
             }
@@ -127,11 +136,12 @@
             let confirmAction = confirm("Are you sure you want to lock and log out of the VIP Menu?");
             
             if (confirmAction) {
-                // ১. VIP পেজের আসল স্ট্যাটাস ও ইউজার ডিলিট করা
+                // আপনার মেইন অ্যাপের সকল ডাটা মেমোরি থেকে একদম মুছে ফেলা হলো
                 localStorage.removeItem('vip_status');
-                localStorage.removeItem('vip_user');
+                localStorage.removeItem('my_username');
+                localStorage.removeItem('app_device_token');
                 
-                // ২. সেটিংসের মেমোরি ব্যাকআপ ডাটা ক্লিয়ার করা
+                // যদি ব্যাকআপের জন্য পুরনো কী থেকে থাকে সেগুলোও পরিষ্কার করা হলো
                 localStorage.removeItem('vipUser');
                 localStorage.removeItem('vipKey');
                 
@@ -141,7 +151,7 @@
                 toast.innerText = "[+] VIP Access locked successfully. All active keys wiped from session memory.";
                 toast.style.display = 'block';
 
-                // ৩ সেকেন্ড পর হোম পেজে রিডাইরেক্ট করে দেওয়া
+                // ২ সেকেন্ড পর হোম পেজে রিডাইরেক্ট হবে
                 setTimeout(() => {
                     window.location.href = "index.html";
                 }, 2000);
