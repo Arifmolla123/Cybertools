@@ -11,7 +11,7 @@
         .header { display: flex; align-items: center; text-align: left; margin-bottom: 20px; flex-shrink: 0; }
         .header a { color: #00ff41; font-size: 1.5rem; margin-right: 20px; text-decoration: none; }
         
-        /* VIP  */
+        /* VIP ব্যানার */
         .vip-box { border: 1px solid gold; padding: 20px 15px; border-radius: 20px; background: #0a0a0a; margin-bottom: 20px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); flex-shrink: 0; }
         .gold { color: gold; }
 
@@ -36,12 +36,11 @@
         .logout-btn:hover { background: #ff3e3e; color: #fff; }
     </style>
 
-    <!--        CDN -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
     <script>
-        //    
+        // 🔑 আপনার ফায়ারবেস কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyDS2PkxK-i6I8ayI-l_f5XctS8YG1mbbI0",
             authDomain: "admin-panel-1946a.firebaseapp.com",
@@ -52,26 +51,30 @@
             appId: "1:78923664766:web:e599e323cca341ab14772f"
         };
 
-        //   
+        // ফায়ারবেস ইনিশিয়ালাইজ করুন
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        //     (    )
+        // 🛡️ অ্যাডভান্সড ক্লাউড অ্যান্ড ডিভাইস লকিং চেক গেটওয়ে
         let localStatus = localStorage.getItem('vip_status');
         let myUsername = localStorage.getItem('my_username');
+        let localDeviceToken = localStorage.getItem('app_device_token');
 
         if (localStatus === 'active' && myUsername) {
+            // ক্লাউড ডাটাবেজ থেকে লাইভ মিলিয়ে দেখা হচ্ছে
             database.ref('vip_users/' + myUsername).once('value').then((snapshot) => {
                 let userData = snapshot.val();
-                //           
-                if (!userData || userData.status !== 'active') {
+                
+                // ১. যদি সার্ভারে ডেটা না থাকে, বা স্ট্যাটাস active না থাকে, বা অন্য কোনো ডিভাইসের টোকেন লক থাকে
+                if (!userData || userData.status !== 'active' || userData.device_id !== localDeviceToken) {
                     clearVipSession();
                     window.location.href = "index.html";
                 }
             }).catch(() => {
-                //      
+                // নেটওয়ার্ক ফেইলুর হলে যেন হঠাৎ করে ইউজারকে কিক আউট না করে, তাই লোকাল সেশন ব্যাকআপ রাখবে
             });
         } else {
+            // কোনো সেশন ডেটা না থাকলে সরাসরি ব্যাক করে দেবে
             window.location.href = "index.html";
         }
 
@@ -104,39 +107,46 @@
     <script>
         window.onload = function() {
             let myUsername = localStorage.getItem('my_username');
+            let localDeviceToken = localStorage.getItem('app_device_token');
             
             if (myUsername) {
-                //         
+                // ফায়ারবেস ক্লাউড থেকে ইউজারের অরিজিনাল রেজিস্টার্ড নাম তুলে আনা
                 database.ref('vip_users/' + myUsername).once('value').then((snapshot) => {
                     let userData = snapshot.val();
-                    if (userData && userData.username) {
+                    
+                    // এখানেও ডিভাইস আইডি ডাবল চেক করা হচ্ছে সিকিউরিটির জন্য
+                    if (userData && userData.username && userData.device_id === localDeviceToken) {
                         document.getElementById('vipUsername').innerText = userData.username.toUpperCase();
                         
-                        //    (   )
+                        // ব্যাকগ্রাউন্ড ডেটা সিনক্রোনাইজেশন (অন্যান্য পেজের সামঞ্জস্যের জন্য)
                         localStorage.setItem('vip_user', userData.username);
                         localStorage.setItem('vipUser', userData.username);
                         localStorage.setItem('vipKey', userData.vip_key);
                         localStorage.setItem('vipStatus', 'Active');
                         localStorage.setItem('vipExpiryDate', userData.expiry || 'LIFETIME');
+                    } else {
+                        // ডেটা ও টোকেন মিসম্যাচ হলে সাথে সাথে পেজ ক্লিয়ার করে বের করে দেবে
+                        clearVipSession();
+                        window.location.href = "index.html";
                     }
                 });
             }
         }
 
-        //       /  
+        // 📡 ক্লাউড এবং লোকাল থেকে ইউজার লক/লগআউট করার ফাংশন
         function logoutVip() {
             if(confirm("Are you sure you want to lock VIP access on this browser?")) {
                 let myUsername = localStorage.getItem('my_username');
 
                 if (myUsername) {
-                    //.             
+                    // ১. ফায়ারবেস অনলাইন ক্লাউড থেকে ডাটাটি রিমুভ করে দেওয়া যাতে অ্যাডমিন প্যানেল ক্লিয়ার থাকে
                     database.ref('vip_users/' + myUsername).remove().then(() => {
-                        // .     (Keys)  
+                        // ২. লোকাল স্টোরেজের সমস্ত মেমোরি ডিলিট করা
                         clearVipSession();
                         alert("[+] VIP Access Locked and Session Cleared from Cloud!");
                         window.location.href = "index.html";
                     }).catch((err) => {
-                        //          
+                        // এরর আসলেও সেফটির জন্য লোকাল ডেটা ক্লিয়ার করে রিডাইরেক্ট করবে
                         clearVipSession();
                         window.location.href = "index.html";
                     });

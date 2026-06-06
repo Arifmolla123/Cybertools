@@ -185,56 +185,72 @@
             document.body.appendChild(modal);
         }
 
-        // 🚀 ফায়ারবেস ক্লাউড কী ভেরিফিকেশন এবং ডাটা সাবমিট লজিক
-        function submitModalKey() {
-            let nameInput = document.getElementById('modalName').value.trim();
-            let keyInput = document.getElementById('modalKey').value.trim();
+   //  --- (Device Lock)  
+function submitModalKey() {
+    let nameInput = document.getElementById('modalName').value.trim();
+    let keyInput = document.getElementById('modalKey').value.trim();
 
-            if (!nameInput || !keyInput) {
-                alert("Please fill in both the Name and Key boxes!");
-                return;
-            }
+    if (!nameInput || !keyInput) {
+        alert("Please fill in both the Name and Key boxes!");
+        return;
+    }
 
-            // আপনার আগের সিক্রেট অ্যালগরিদম কী ব্যাকআপ রাখা হলো
-            const secretWord = "ARIF_KING_786"; 
-            const validKey = btoa(nameInput.toLowerCase() + secretWord).substring(0, 10).toUpperCase();
+    const secretWord = "ARIF_KING_786"; 
+    const validKey = btoa(nameInput.toLowerCase() + secretWord).substring(0, 10).toUpperCase();
 
-            if (keyInput.toUpperCase() === validKey) {
-                // ইউজার আইডি ইউনিক করার জন্য স্পেস ও স্পেশাল ক্যারেক্টার ক্লিন করা
-                let cleanUserId = nameInput.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-                // ১. লোকাল ফোনে স্ট্যাটাস সেভ
-                localStorage.setItem('vip_status', 'active');
-                localStorage.setItem('my_username', cleanUserId);
-
-                // ২. অনলাইন ক্লাউড ডাটাবেজে লাইভ ডাটা পাঠানো
-                database.ref('vip_users/' + cleanUserId).set({
-                    username: nameInput,
-                    vip_key: keyInput,
-                    status: "active",
-                    expiry: "LIFETIME",
-                    activatedAt: new Date().toLocaleString()
-                }).then(() => {
-                    alert("[+] Access Granted! Synced with Cloud Server successfully.");
-                    
-                    // মোডাল রিমুভ ও পেজ আনব্লার করা
-                    if(document.getElementById('vipLockModal')) {
-                        document.getElementById('vipLockModal').remove();
-                    }
-                    document.getElementById('mainPageContent').classList.remove('blur-content');
-                }).catch((error) => {
-                    alert("Cloud sync failed but local access granted: " + error.message);
-                    if(document.getElementById('vipLockModal')) {
-                        document.getElementById('vipLockModal').remove();
-                    }
-                    document.getElementById('mainPageContent').classList.remove('blur-content');
-                });
-
-            } else {
-                alert("[-] Invalid Key! The information you provided is incorrect.");
-            }
+    // .    -         
+    if (keyInput.toUpperCase() === validKey) {
+        
+        // .            (   )
+        let deviceToken = localStorage.getItem('app_device_token');
+        if (!deviceToken) {
+            deviceToken = 'DEV-' + Math.random().toString(36).substring(2, 11).toUpperCase() + '-' + Date.now();
+            localStorage.setItem('app_device_token', deviceToken);
         }
 
+        // .        /      
+        //        
+        let cleanNodeName = nameInput.replace(/[.#$\[\]]/g, ""); //   
+        
+        database.ref('vip_users/' + cleanNodeName).once('value').then((snapshot) => {
+            let existingUser = snapshot.val();
+
+            if (existingUser) {
+                //       ,       
+                if (existingUser.device_id !== deviceToken) {
+                    //                 !
+                    alert(" ACCESS DENIED!\nThis VIP Key is already registered and locked to another device. You cannot reuse it!");
+                    return; //     ,   
+                }
+            }
+
+            // .          ,       
+            localStorage.setItem('vip_status', 'active');
+            localStorage.setItem('my_username', cleanNodeName);
+
+            database.ref('vip_users/' + cleanNodeName).set({
+                username: nameInput,
+                vip_key: keyInput,
+                status: "active",
+                device_id: deviceToken, //        
+                expiry: "LIFETIME",
+                activated_at: new Date().toLocaleString()
+            }).then(() => {
+                alert("[+] Access Granted! VIP Locked to this Device Successfully.");
+                if(document.getElementById('vipLockModal')) {
+                    document.getElementById('vipLockModal').remove();
+                }
+                document.getElementById('mainPageContent').classList.remove('blur-content');
+            }).catch((err) => {
+                alert("Firebase Sync Error: " + err.message);
+            });
+
+        });
+
+    } else {
+        alert("[-] Invalid Key! The information you provided is incorrect.");
+    }
+}
         // ক্যানসেল করলে হোম পেজে ফেরত যাবে
         function cancelVip() {
             window.location.href = "index.html";
