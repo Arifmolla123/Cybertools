@@ -16,7 +16,6 @@
 
         .profile-container { padding: 30px 20px; text-align: center; max-width: 400px; margin: 0 auto; }
         
-        /* Profile Image Setup */
         .avatar-wrapper { position: relative; width: 110px; height: 110px; margin: 0 auto 20px; }
         .avatar-preview { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); background: #111; }
         .file-input-label { position: absolute; bottom: 0; right: 0; background: var(--accent); color: #000; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #000; font-size: 0.9rem; }
@@ -25,19 +24,16 @@
         .status-badge { display: inline-block; background: #111; border: 1px solid #333; padding: 5px 15px; border-radius: 20px; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 30px; font-weight: bold; }
         .status-badge.vip { border-color: gold; color: gold; text-shadow: 0 0 5px rgba(255,215,0,0.3); }
 
-        /* Input Form */
-        .input-group { text-align: text; margin-bottom: 20px; }
+        .input-group { text-align: left; margin-bottom: 20px; }
         .input-group label { display: block; font-size: 0.75rem; color: var(--accent); font-weight: bold; margin-bottom: 8px; margin-left: 5px; text-align: left; }
         .input-group input { width: 100%; background: var(--card); border: 1px solid #222; padding: 12px 15px; border-radius: 12px; color: #fff; font-size: 1rem; outline: none; transition: 0.3s; text-align: center; }
         .input-group input:focus { border-color: var(--accent); }
 
-        /* লক মেসেজ নোটিশ স্টাইল */
         .lock-msg { font-size: 0.75rem; color: var(--red); margin-top: 8px; display: none; text-align: center; font-weight: bold; font-family: monospace; }
 
         .save-btn { width: 100%; background: var(--accent); color: #000; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .save-btn:hover { background: #00cc33; transform: translateY(-1px); }
         
-        /* লক থাকলে বাটনের স্টাইল */
         .save-btn:disabled { background: #222; color: #555; cursor: not-allowed; transform: none; }
     </style>
 </head>
@@ -69,7 +65,6 @@
     </div>
 
     <script>
-        // পেজ লোড হলে আগের সেভ করা ডেটা এবং লকিং স্ট্যাটাস দেখাবে
         window.onload = function() {
             let savedName = localStorage.getItem('user_profile_name');
             let savedImage = localStorage.getItem('user_profile_image');
@@ -82,18 +77,15 @@
                 document.getElementById('avatar').src = savedImage;
             }
 
-            // ভিআইপি চেক করে ব্যাজ চেঞ্চ করা
             let badge = document.getElementById('statusBadge');
             if (vipStatus === 'active') {
                 badge.innerText = "⚡ VIP MEMBER";
                 badge.classList.add('vip');
             }
 
-            // লক স্ট্যাটাস চেক করা
             checkNameLock();
         }
 
-        // নাম পরিবর্তন করার ১ সপ্তাহের লক চেকিং ফাংশন
         function checkNameLock() {
             let nameInput = document.getElementById('usernameInput');
             let saveBtn = document.getElementById('saveButton');
@@ -104,29 +96,22 @@
             if (lastChange) {
                 let currentTime = new Date().getTime();
                 let timePassed = currentTime - parseInt(lastChange);
-                
-                // ১ সপ্তাহ = ৭ দিন * ২৪ ঘণ্টা * ৬০ মিনিট * ৬০ সেকেন্ড * ১০০০ মিলিমেকেন্ড
                 let oneWeek = 7 * 24 * 60 * 60 * 1000;
 
                 if (timePassed < oneWeek) {
                     let timeLeft = oneWeek - timePassed;
-
-                    // দিন, ঘণ্টা এবং মিনিট হিসাব
                     let days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
                     let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
 
-                    // ইনপুট এবং বাটন লক করে দেওয়া হলো
                     nameInput.disabled = true;
                     saveBtn.disabled = true;
                     nameInput.style.color = "var(--red)";
                     nameInput.style.borderColor = "var(--red)";
 
-                    // লাল এরর মেসেজ শো করানো
                     lockNotice.innerHTML = `<i class="fas fa-lock"></i> Locked! Change allowed after ${days}d ${hours}h ${minutes}m`;
                     lockNotice.style.display = "block";
                 } else {
-                    // ১ সপ্তাহ হয়ে গেলে লক খুলে যাবে
                     nameInput.disabled = false;
                     saveBtn.disabled = false;
                     lockNotice.style.display = "none";
@@ -134,7 +119,6 @@
             }
         }
 
-        // ইমেজকে টেক্সট ফরম্যাটে (Base64) রূপান্তর করার লজিক
         document.getElementById('imageInput').onchange = function(e) {
             let file = e.target.files[0];
             if (file) {
@@ -146,7 +130,7 @@
             }
         };
 
-        // প্রোফাইল ডাটা মেমোরিতে সেভ করা
+        // ✅ এখানে রিডাইরেক্ট সরানো হয়েছে
         function saveProfile() {
             let nameInput = document.getElementById('usernameInput').value.trim();
             let avatarSrc = document.getElementById('avatar').src;
@@ -156,20 +140,15 @@
                 return;
             }
 
-            // নাম, ছবি এবং সেভ করার বর্তমান সময় স্টোর করা হচ্ছে
             localStorage.setItem('user_profile_name', nameInput);
             localStorage.setItem('user_profile_image', avatarSrc);
             localStorage.setItem('name_last_saved_time', new Date().getTime().toString());
 
             alert("Profile Updated Successfully! Name locked for 1 week.");
             
-            // ইনস্ট্যান্ট লক স্ক্রিন আপডেট করার জন্য ফাংশন রান করা হলো
             checkNameLock();
             
-            // ১ সেকেন্ড পর হোম পেজে রিডাইরেক্ট হবে
-            setTimeout(() => {
-                window.location.href = "index.html";
-            }, 1000);
+            // ❌ রিডাইরেক্ট করা হয়নি – ইউজার নিজে চ্যাটে যাবে
         }
     </script>
 </body>
