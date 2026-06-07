@@ -47,10 +47,49 @@
         /* Developer Footer Branding */
         .dev-footer { margin-top: auto; padding: 15px; font-size: 0.75rem; color: #555; letter-spacing: 1px; font-weight: bold; text-transform: uppercase; text-align: center; }
 
+        /*   -  - CSS */
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; opacity: 0; pointer-events: none; transition: 0.3s ease;
+        }
+        .popup-overlay.show { opacity: 1; pointer-events: auto; }
+        
+        .popup-box {
+            background: #0d0d0d; border: 1px solid #ff3e3e; width: 85%; max-width: 340px;
+            padding: 25px 20px; border-radius: 15px; text-align: center;
+            box-shadow: 0 0 20px rgba(255, 62, 62, 0.2);
+            transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .popup-overlay.show .popup-box { transform: scale(1); }
+        .popup-icon { font-size: 2.5rem; color: #ff3e3e; margin-bottom: 12px; }
+        .popup-box h3 { font-size: 1.1rem; color: #fff; margin-bottom: 8px; font-weight: 600; }
+        .popup-box p { font-size: 0.8rem; color: #888; line-height: 1.4; margin-bottom: 20px; }
+        
+        .popup-buttons { display: flex; justify-content: center; gap: 12px; }
+        .p-btn { border: none; padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100px; }
+        .btn-yes { background: #ff3e3e; color: #fff; }
+        .btn-yes:hover { background: #d62c2c; box-shadow: 0 0 10px rgba(255, 62, 62, 0.4); }
+        .btn-no { background: #222; color: #aaa; border: 1px solid #333; }
+        .btn-no:hover { background: #333; color: #fff; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
+
+    <div class="popup-overlay" id="logoutConfirmPopup">
+        <div class="popup-box">
+            <div class="popup-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <h3>TERMINATE SESSION?</h3>
+            <p>Are you sure you want to lock and log out of the VIP Menu?</p>
+            <div class="popup-buttons">
+                <button class="p-btn btn-yes" onclick="confirmLogoutAction()">YES</button>
+                <button class="p-btn btn-no" onclick="closeLogoutPopup()">NO</button>
+            </div>
+        </div>
+    </div>
 
     <div class="header">
         <a href="#" onclick="window.history.back(); return false;"><i class="fas fa-arrow-left"></i></a> 
@@ -76,7 +115,7 @@
                 <i class="fas fa-sign-out-alt" style="color: #ff3e3e;"></i> <span>Logout VIP Session</span>
             </div>
             <div class="row-desc">Instantly log out and terminate the premium session on this browser.</div>
-            <button class="btn logout-btn" onclick="logoutVipSession()">
+            <button class="btn logout-btn" onclick="showLogoutPopup()">
                 <i class="fas fa-lock"></i> Lock VIP Menu
             </button>
         </div>
@@ -92,12 +131,9 @@
     <script>
         function viewVipCredentials() {
             let credBox = document.getElementById('vipCredBox');
-            
             let localStatus = localStorage.getItem('vip_status');
             let savedUser = localStorage.getItem('my_username');
-            
-            // 🛠️ এখন এটি শুধুমাত্র আপনার আসল সেভ করা VIP চাবিটিই রিড করবে
-            let savedKey = localStorage.getItem('vip_key');
+            let savedKey = localStorage.getItem('vip_key') || localStorage.getItem('vipKey') || localStorage.getItem('app_device_token');
 
             if (credBox.style.display === "block") {
                 credBox.style.display = "none";
@@ -105,13 +141,11 @@
             }
 
             if (localStatus === 'active' && savedUser) {
-                // মেমোরিতে কি (Key) থাকলে দেখাবে, না থাকলে সুন্দর মেসেজ দেবে (উল্টোপাল্টা আইডি দেখাবে না)
-                let keyResult = savedKey ? savedKey : "NOT_SAVED_IN_THIS_SESSION";
-
+                let keyResult = savedKey ? savedKey : "SESSION_VERIFIED_OK";
                 credBox.innerHTML = `
                     <div class="cred-item">[+] STATUS: <b style="color: #00ff41;">ACTIVE (VIP)</b></div>
                     <div class="cred-item">[+] USERNAME: <b>${savedUser}</b></div>
-                    <div class="cred-item">[+] VIP KEY: <b style="color: #ffd700;">${keyResult}</b></div>
+                    <div class="cred-item">[+] VIP KEY: <b style="color: #ffd700; font-family: monospace;">${keyResult}</b></div>
                 `;
                 credBox.style.border = "1px dashed var(--vip)";
             } else {
@@ -125,34 +159,41 @@
             credBox.style.display = "block";
         }
 
-        function logoutVipSession() {
+        //   -      
+        function showLogoutPopup() {
             let savedUser = localStorage.getItem('my_username');
-
             if (!savedUser) {
                 alert("You are not logged into any VIP account.");
                 return;
             }
+            document.getElementById('logoutConfirmPopup').classList.add('show');
+        }
 
-            let confirmAction = confirm("Are you sure you want to lock and log out of the VIP Menu?");
+        function closeLogoutPopup() {
+            document.getElementById('logoutConfirmPopup').classList.remove('show');
+        }
+
+        //   YES        
+        function confirmLogoutAction() {
+            closeLogoutPopup();
             
-            if (confirmAction) {
-                localStorage.removeItem('vip_status');
-                localStorage.removeItem('my_username');
-                localStorage.removeItem('app_device_token');
-                localStorage.removeItem('vip_key');
-                localStorage.removeItem('vipUser');
-                localStorage.removeItem('vipKey');
-                
-                document.getElementById('vipCredBox').style.display = 'none';
-                
-                let toast = document.getElementById('statusToast');
-                toast.innerText = "[+] VIP Access locked successfully. All active keys wiped from session memory.";
-                toast.style.display = 'block';
+            //    
+            localStorage.removeItem('vip_status');
+            localStorage.removeItem('my_username');
+            localStorage.removeItem('app_device_token');
+            localStorage.removeItem('vip_key');
+            localStorage.removeItem('vipUser');
+            localStorage.removeItem('vipKey');
+            
+            document.getElementById('vipCredBox').style.display = 'none';
+            
+            let toast = document.getElementById('statusToast');
+            toast.innerText = "[+] VIP Access locked successfully. All active keys wiped from session memory.";
+            toast.style.display = 'block';
 
-                setTimeout(() => {
-                    window.location.href = "index.html";
-                }, 2000);
-            }
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 2000);
         }
     </script>
 </body>
