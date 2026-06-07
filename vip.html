@@ -170,6 +170,7 @@
                     localStorage.setItem('vip_status', 'active');
                     localStorage.setItem('my_username', cleanNodeName);
                     localStorage.setItem('vip_user', nameInput);
+                    localStorage.setItem('vip_key', keyInput); // 🔥 এই নতুন লাইনটি এখানে অ্যাড করা হয়েছে
 
                     database.ref('vip_users/' + cleanNodeName).set({
                         username: nameInput,

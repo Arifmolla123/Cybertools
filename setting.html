@@ -93,25 +93,25 @@
         function viewVipCredentials() {
             let credBox = document.getElementById('vipCredBox');
             
-            // LocalStorage    
             let localStatus = localStorage.getItem('vip_status');
             let savedUser = localStorage.getItem('my_username');
             
-            //      -    
-            let savedKey = localStorage.getItem('vip_key') || localStorage.getItem('vipKey') || "********";
+            // 🛠️ এখন এটি শুধুমাত্র আপনার আসল সেভ করা VIP চাবিটিই রিড করবে
+            let savedKey = localStorage.getItem('vip_key');
 
-            //  
             if (credBox.style.display === "block") {
                 credBox.style.display = "none";
                 return;
             }
 
-            //    
             if (localStatus === 'active' && savedUser) {
+                // মেমোরিতে কি (Key) থাকলে দেখাবে, না থাকলে সুন্দর মেসেজ দেবে (উল্টোপাল্টা আইডি দেখাবে না)
+                let keyResult = savedKey ? savedKey : "NOT_SAVED_IN_THIS_SESSION";
+
                 credBox.innerHTML = `
                     <div class="cred-item">[+] STATUS: <b style="color: #00ff41;">ACTIVE (VIP)</b></div>
                     <div class="cred-item">[+] USERNAME: <b>${savedUser}</b></div>
-                    <div class="cred-item">[+] VIP KEY: <b style="color: #ffd700;">${savedKey}</b></div>
+                    <div class="cred-item">[+] VIP KEY: <b style="color: #ffd700;">${keyResult}</b></div>
                 `;
                 credBox.style.border = "1px dashed var(--vip)";
             } else {
@@ -136,7 +136,6 @@
             let confirmAction = confirm("Are you sure you want to lock and log out of the VIP Menu?");
             
             if (confirmAction) {
-                //       
                 localStorage.removeItem('vip_status');
                 localStorage.removeItem('my_username');
                 localStorage.removeItem('app_device_token');
