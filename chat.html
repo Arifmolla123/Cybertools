@@ -57,6 +57,7 @@
             userId = crypto.randomUUID ? crypto.randomUUID() : 'user_' + Date.now();
             localStorage.setItem('chatUserId', userId);
         }
+        localStorage.setItem(`lastSeen_${userId}`, Date.now().toString());
 
         // Debug logs
         console.log("Chat page loaded");
