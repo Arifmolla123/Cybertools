@@ -25,7 +25,6 @@
             border: none; 
             border-radius: 0;
         }
-        /* কম্প্যাক্ট হেডার */
         .chat-header { 
             background: #1a1a1a; 
             padding: 6px 15px; 
@@ -59,7 +58,11 @@
             font-size: 0.7rem; 
         }
         .profile-badge img { width: 24px; height: 24px; border-radius: 50%; }
-        
+        .vip-icon {
+            color: gold;
+            font-size: 0.8rem;
+            margin-left: 4px;
+        }
         .messages-area { 
             flex: 1; 
             overflow-y: auto; 
@@ -76,7 +79,15 @@
         .message-content { background: #1e1e1e; padding: 8px 14px; border-radius: 20px; max-width: 70%; }
         .message.own { flex-direction: row-reverse; }
         .message.own .message-content { background: #1a2a1a; border: 1px solid #00ff4133; }
-        .message-name { font-weight: bold; font-size: 0.8rem; color: #00ff41; display: flex; gap: 8px; align-items: center; }
+        .message-name { 
+            font-weight: bold; 
+            font-size: 0.8rem; 
+            color: #00ff41; 
+            display: flex; 
+            gap: 8px; 
+            align-items: center; 
+            flex-wrap: wrap;
+        }
         .message-time { font-size: 0.65rem; color: #888; }
         .message-text { font-size: 0.9rem; margin-top: 4px; word-wrap: break-word; }
         .input-area { 
@@ -139,10 +150,16 @@
                 const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
                 const div = document.createElement('div');
                 div.className = `message ${isOwn ? 'own' : ''}`;
+                // VIP ব্যাজ দেখাবে যদি মেসেজের isVip সত্য হয় (সবার জন্য)
+                const showVipBadge = (msg.isVip === true);
                 div.innerHTML = `
                     <div class="message-avatar"><img src="${escapeHtml(msg.senderPhoto) || DEFAULT_PHOTO}" onerror="this.src='${DEFAULT_PHOTO}'"></div>
                     <div class="message-content">
-                        <div class="message-name">${escapeHtml(msg.senderName)} <span class="message-time">${time}</span></div>
+                        <div class="message-name">
+                            ${escapeHtml(msg.senderName)}
+                            ${showVipBadge ? '<i class="fas fa-crown vip-icon"></i>' : ''}
+                            <span class="message-time">${time}</span>
+                        </div>
                         <div class="message-text">${escapeHtml(msg.text)}</div>
                     </div>
                 `;
@@ -150,7 +167,7 @@
             });
         }
 
-        // ----- প্রোফাইল -----
+        // ----- প্রোফাইল ও VIP স্ট্যাটাস -----
         let userName = localStorage.getItem('user_profile_name');
         let userPhoto = localStorage.getItem('user_profile_image') || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
         let userId = localStorage.getItem('chatUserId');
@@ -166,12 +183,16 @@
             localStorage.setItem('user_profile_image', DEFAULT_PHOTO);
         }
 
+        // বর্তমান ইউজার VIP কিনা (মেসেজে isVip ফিল্ড সেট করার জন্য)
+        const isVipUser = localStorage.getItem('vip_status') === 'active';
+
         // ----- DOM এলিমেন্টস -----
         const warningDiv = document.getElementById('profileWarning');
         const sendBtn = document.getElementById('sendBtn');
         const msgInput = document.getElementById('msgInput');
         const profileImg = document.getElementById('profileBadgeImg');
         const profileNameSpan = document.getElementById('profileBadgeName');
+        const vipContainer = document.getElementById('vipIconContainer');
         const messagesDiv = document.getElementById('messages');
 
         function updateUI() {
@@ -181,52 +202,46 @@
                 msgInput.disabled = true;
                 profileImg.src = DEFAULT_PHOTO;
                 profileNameSpan.innerText = "No Profile";
+                if (vipContainer) vipContainer.innerHTML = "";
             } else {
                 warningDiv.style.display = "none";
                 sendBtn.disabled = false;
                 msgInput.disabled = false;
                 profileImg.src = userPhoto;
                 profileNameSpan.innerText = userName.length > 15 ? userName.slice(0,12)+".." : userName;
+                // নিজের প্রোফাইলে VIP মুকুট দেখাবে (শুধু নিজের কাছে)
+                if (vipContainer) {
+                    vipContainer.innerHTML = isVipUser ? '<i class="fas fa-crown vip-icon"></i>' : '';
+                }
             }
         }
         updateUI();
 
         // ----- অটো-স্ক্রোল লজিক (WhatsApp-এর মতো) -----
-        let autoScroll = true;   // শুরুতে চালু থাকবে
+        let autoScroll = true;
 
         messagesDiv.addEventListener('scroll', () => {
             const isNearBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 50;
             autoScroll = isNearBottom;
         });
 
-        // ----- কীবোর্ড ওপেন/বন্ধ হ্যান্ডলিং (মোবাইলের জন্য) -----
         function scrollToBottom() {
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        // যখন ইনপুট ফিল্ড ফোকাস পায়, তখন একটু delay দিয়ে স্ক্রোল করি (কীবোর্ড আসার পর)
         msgInput.addEventListener('focus', () => {
             setTimeout(() => {
-                if (autoScroll) scrollToBottom();
-                else {
-                    // এমনকি autoScroll বন্ধ থাকলেও, যাতে টাইপ করার সময় শেষ মেসেজ দেখা যায়
-                    scrollToBottom();
-                    // কিন্তু ইউজার উপরে থাকলে তার অবস্থান রিসেট না করাই ভালো। তাই আমরা শুধু focus এ নিচে নিয়ে যাব।
-                }
-                // সবার জন্য ফোকাসে স্ক্রোল নিচে (WhatsApp-এর মতো)
                 scrollToBottom();
             }, 300);
         });
 
-        // যখন কীবোর্ড বন্ধ হয় (ইনপুট ব্লার), কোনও অ্যাকশন নেওয়ার দরকার নেই
-        // কিন্তু রিসাইজ ইভেন্টেও স্ক্রোল ঠিক রাখতে:
         window.addEventListener('resize', () => {
             setTimeout(() => {
                 if (autoScroll) scrollToBottom();
             }, 100);
         });
 
-        // ক্যাশ লোড দেখাও (দ্রুত)
+        // ক্যাশ লোড দেখাও
         renderFromCache();
 
         // ফায়ারবেস থেকে রিয়েল টাইম মেসেজ লোড ও ক্যাশ আপডেট
@@ -240,13 +255,13 @@
                     senderId: data.senderId,
                     senderName: data.senderName,
                     senderPhoto: data.senderPhoto,
-                    timestamp: data.timestamp ? data.timestamp.toDate().getTime() : null
+                    timestamp: data.timestamp ? data.timestamp.toDate().getTime() : null,
+                    isVip: data.isVip === true
                 });
             });
             allMessages = firestoreMessages;
             updateCache(allMessages);
             
-            // UI রেন্ডার
             messagesDiv.innerHTML = "";
             if (allMessages.length === 0) {
                 messagesDiv.innerHTML = '<div style="text-align:center; color:#555; padding:40px;">✨ No messages yet. Be the first to chat!</div>';
@@ -257,19 +272,22 @@
                 const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
                 const div = document.createElement('div');
                 div.className = `message ${isOwn ? 'own' : ''}`;
+                // VIP ব্যাজ সবাই দেখতে পাবে যদি মেসেজের isVip সত্য হয়
+                const showVipBadge = (msg.isVip === true);
                 div.innerHTML = `
                     <div class="message-avatar"><img src="${escapeHtml(msg.senderPhoto) || DEFAULT_PHOTO}" onerror="this.src='${DEFAULT_PHOTO}'"></div>
                     <div class="message-content">
-                        <div class="message-name">${escapeHtml(msg.senderName)} <span class="message-time">${time}</span></div>
+                        <div class="message-name">
+                            ${escapeHtml(msg.senderName)}
+                            ${showVipBadge ? '<i class="fas fa-crown vip-icon"></i>' : ''}
+                            <span class="message-time">${time}</span>
+                        </div>
                         <div class="message-text">${escapeHtml(msg.text)}</div>
                     </div>
                 `;
                 messagesDiv.appendChild(div);
             });
-            // অটো-স্ক্রোল শুধু তখনই যদি autoScroll সত্যি হয়
-            if (autoScroll) {
-                scrollToBottom();
-            }
+            if (autoScroll) scrollToBottom();
         }, (error) => {
             console.error("Snapshot error:", error);
             if (messagesDiv.innerHTML.includes("Loading")) {
@@ -277,7 +295,7 @@
             }
         });
 
-        // মেসেজ পাঠানো
+        // মেসেজ পাঠানো (isVip ফিল্ড যোগ করা)
         async function sendMessage() {
             let currentName = localStorage.getItem('user_profile_name');
             let currentPhoto = localStorage.getItem('user_profile_image') || DEFAULT_PHOTO;
@@ -293,13 +311,12 @@
                     senderId: userId,
                     senderName: currentName,
                     senderPhoto: (currentPhoto.length > 500000) ? DEFAULT_PHOTO : currentPhoto,
-                    timestamp: serverTimestamp()
+                    timestamp: serverTimestamp(),
+                    isVip: isVipUser   // VIP স্ট্যাটাস সংরক্ষণ
                 });
                 msgInput.value = "";
                 msgInput.focus();
-                if (autoScroll) {
-                    scrollToBottom();
-                }
+                if (autoScroll) scrollToBottom();
             } catch (error) {
                 console.error("Send failed:", error);
                 alert("Failed to send: " + error.message);
@@ -328,6 +345,7 @@
         <div class="profile-badge">
             <img id="profileBadgeImg" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
             <span id="profileBadgeName">Profile</span>
+            <span id="vipIconContainer"></span>
         </div>
     </div>
     <div id="profileWarning" class="warning-banner">⚠️ Profile not set! <a href="profile.html" style="color:#00ff41;">Click here to create profile</a></div>
@@ -335,6 +353,8 @@
     <div class="input-area">
         <input id="msgInput" placeholder="Type a message...">
         <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+    </div>
+    <div class="info-footer">👑 VIP badge appears on messages from VIP users (visible to everyone) | Smart scroll</div>
 </div>
 </body>
 </html>
