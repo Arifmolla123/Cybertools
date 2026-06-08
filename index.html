@@ -125,7 +125,10 @@
                 <a href="dev info.html"><i class="fas fa-user-ninja"></i> Developer info</a>
                  <a href="join chanel.html"><i class="fas fa-users"></i> Join Now</a>
            <a href="setting.html"> <i class="fas fa-cog"></i> Settings </a>
-           <a href="chat.html"><i class="fas fa-sms"></i> Chat</a>
+       <a href="chat.html" id="chatBtn">
+    <i class="fas fa-sms"></i> Chat 
+    <span id="unreadBadge" style="background: #ff4444; color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.7rem; margin-left: 8px; display: none;">0</span>
+</a>
 
  </div>
         </div>
@@ -343,4 +346,53 @@
         }
     </script>
 </body>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBe-BaRSbhOW8R4xrINojCxS2e_3w1Fshw",
+    authDomain: "cyber-toolbox-chat.firebaseapp.com",
+    projectId: "cyber-toolbox-chat",
+    storageBucket: "cyber-toolbox-chat.firebasestorage.app",
+    messagingSenderId: "715093305796",
+    appId: "1:715093305796:web:11a4e2b50e5505d7e5dc91"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  let userId = localStorage.getItem('chatUserId');
+  if (!userId) {
+    userId = crypto.randomUUID ? crypto.randomUUID() : 'user_' + Date.now();
+    localStorage.setItem('chatUserId', userId);
+  }
+
+  const lastSeenKey = `lastSeen_${userId}`;
+  let lastSeen = localStorage.getItem(lastSeenKey) || 0;
+
+  const messagesRef = collection(db, "groups", "cyberToolGroup", "messages");
+  const q = query(messagesRef, where("timestamp", ">", new Date(parseInt(lastSeen))));
+
+  const badgeSpan = document.getElementById('unreadBadge');
+  let unreadCount = 0;
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    unreadCount = snapshot.size;
+    if (unreadCount > 0) {
+      badgeSpan.style.display = 'inline-block';
+      badgeSpan.innerText = unreadCount > 99 ? '99+' : unreadCount;
+    } else {
+      badgeSpan.style.display = 'none';
+    }
+  });
+
+  // চ্যাট লিংকে ক্লিক করলে বর্তমান সময় lastSeen হিসেবে সেভ হবে
+  const chatLink = document.getElementById('chatBtn');
+  if (chatLink) {
+    chatLink.addEventListener('click', () => {
+      localStorage.setItem(lastSeenKey, Date.now().toString());
+    });
+  }
+</script>
     </html>
