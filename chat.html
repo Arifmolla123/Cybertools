@@ -49,7 +49,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Get profile from localStorage
+        // লোকাল স্টোরেজ থেকে প্রোফাইল ডেটা নাও
         let userName = localStorage.getItem('user_profile_name');
         let userPhoto = localStorage.getItem('user_profile_image') || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
         let userId = localStorage.getItem('chatUserId');
@@ -57,46 +57,37 @@
             userId = crypto.randomUUID ? crypto.randomUUID() : 'user_' + Date.now();
             localStorage.setItem('chatUserId', userId);
         }
+        // lastSeen আপডেট (হোম পেজের ব্যাজের জন্য)
         localStorage.setItem(`lastSeen_${userId}`, Date.now().toString());
 
-        // Debug logs
-        console.log("Chat page loaded");
-        console.log("userName:", userName);
-        console.log("userId:", userId);
-
+        // UI আপডেট
         const warningDiv = document.getElementById('profileWarning');
         const sendBtn = document.getElementById('sendBtn');
         const msgInput = document.getElementById('msgInput');
         const profileImg = document.getElementById('profileBadgeImg');
         const profileNameSpan = document.getElementById('profileBadgeName');
 
-        function updateProfileUI() {
-            if (!userName || userName.trim() === "") {
-                warningDiv.style.display = "block";
-                sendBtn.disabled = true;
-                msgInput.disabled = true;
-                profileImg.src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
-                profileNameSpan.innerText = "No Profile";
-                console.log("No profile, message blocked");
-            } else {
-                warningDiv.style.display = "none";
-                sendBtn.disabled = false;
-                msgInput.disabled = false;
-                profileImg.src = userPhoto;
-                profileNameSpan.innerText = userName.length > 15 ? userName.slice(0,12)+".." : userName;
-                console.log("Profile OK, can send");
-            }
+        if (!userName || userName.trim() === "") {
+            warningDiv.style.display = "block";
+            sendBtn.disabled = true;
+            msgInput.disabled = true;
+            profileImg.src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+            profileNameSpan.innerText = "No Profile";
+        } else {
+            warningDiv.style.display = "none";
+            sendBtn.disabled = false;
+            msgInput.disabled = false;
+            profileImg.src = userPhoto;
+            profileNameSpan.innerText = userName.length > 15 ? userName.slice(0,12)+".." : userName;
         }
-        updateProfileUI();
 
         const groupId = "cyberToolGroup";
         const messagesRef = collection(db, "groups", groupId, "messages");
         const q = query(messagesRef, orderBy("timestamp", "asc"));
         const messagesDiv = document.getElementById("messages");
 
-        // Real-time listener
+        // মেসেজ লোড (রিয়েল টাইম)
         onSnapshot(q, (snapshot) => {
-            console.log("Messages updated, total:", snapshot.size);
             messagesDiv.innerHTML = "";
             if (snapshot.empty) {
                 messagesDiv.innerHTML = '<div style="text-align:center; color:#555; padding:40px;">✨ No messages yet. Be the first to chat!</div>';
@@ -118,35 +109,31 @@
                 messagesDiv.appendChild(div);
             });
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }, (error) => {
-            console.error("Snapshot error:", error);
-            messagesDiv.innerHTML = '<div style="color:#ff5555; padding:20px;">Database connection error. Check your rules.</div>';
         });
 
-        // Send message function
+        // মেসেজ পাঠানো
         async function sendMessage() {
-            console.log("sendMessage called");
-            if (!userName || userName.trim() === "") {
+            // সেন্ড বাটনে ক্লিক করলে আবার প্রোফাইল চেক (নাম পরিবর্তন হলে আপডেট নিতে)
+            let currentName = localStorage.getItem('user_profile_name');
+            let currentPhoto = localStorage.getItem('user_profile_image') || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+            if (!currentName || currentName.trim() === "") {
                 alert("Please set your profile first (name & photo) in the profile page!");
                 return;
             }
             const text = msgInput.value.trim();
             if (text === "") return;
-            console.log("Sending message:", text);
             try {
-                const docRef = await addDoc(messagesRef, {
+                await addDoc(messagesRef, {
                     text: text,
                     senderId: userId,
-                    senderName: userName,
-                    senderPhoto: userPhoto,
+                    senderName: currentName,
+                    senderPhoto: currentPhoto,
                     timestamp: serverTimestamp()
                 });
-                console.log("Message saved successfully, id:", docRef.id);
                 msgInput.value = "";
                 msgInput.focus();
             } catch (error) {
-                console.error("Send failed:", error);
-                alert("Failed to send message: " + error.message);
+                alert("Failed to send: " + error.message);
             }
         }
 
@@ -171,7 +158,7 @@
     <div id="profileWarning" class="warning-banner">⚠️ Profile not set! <a href="profile.html" style="color:#00ff41;">Click here to create profile</a></div>
     <div id="messages" class="messages-area"><div style="text-align:center; color:#555; padding:40px;">Loading...</div></div>
     <div class="input-area"><input id="msgInput" placeholder="Type a message..."><button id="sendBtn"><i class="fas fa-paper-plane"></i></button></div>
-    <div class="info-footer">🔒 Messages are permanent | Admin can delete from panel</div>
+    <div class="info-footer">🔒 Profile required to send messages</div>
 </div>
 </body>
 </html>
