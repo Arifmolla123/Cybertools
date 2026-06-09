@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ব্রেকিং নিউজ স্টুডিও</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0f1c;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            padding: 20px;
+            color: white;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #FFD966, #FF6B6B);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .sub {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #aab4d0;
+            font-size: 0.9rem;
+        }
+        .controls {
+            background: rgba(20, 30, 45, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: space-between;
+        }
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .control-group label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            color: #bdd4ff;
+            font-weight: bold;
+        }
+        select, textarea {
+            width: 100%;
+            background: #0b1122;
+            border: 1px solid #2a3a60;
+            border-radius: 20px;
+            padding: 10px 14px;
+            color: white;
+            font-size: 0.9rem;
+            font-family: monospace;
+        }
+        textarea {
+            resize: vertical;
+            margin-top: 5px;
+        }
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .radio-group label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: none;
+            font-size: 0.85rem;
+            font-weight: normal;
+        }
+        input[type="radio"] {
+            accent-color: #ff5e5b;
+        }
+        .file-btn {
+            background: #1e2f44;
+            border: 1px dashed #7f9fbf;
+            border-radius: 30px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .file-btn:hover {
+            background: #2a405a;
+        }
+        button {
+            background: #2a4c6e;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(95deg, #dd3b38, #b12a27);
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 12px;
+        }
+        .canvas-wrapper {
+            background: #03060c;
+            border-radius: 24px;
+            padding: 15px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+            margin-top: 10px;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
+            background: black;
+            box-shadow: 0 0 0 2px #2a3a60;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.7rem;
+            color: #7a8aaa;
+        }
+        @media (max-width: 800px) {
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>NEWS GENERETOR</h1>
+    <div class="sub">Attitude + hacking</div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>🎭 অ্যাটিটিউড সিলেক্ট করুন</label>
+            <select id="attitudeSelect">
+                <option value="">-- নিজে লিখুন বা সিলেক্ট করুন --</option>
+                <option value="আমি আইন নই, আমি শাসন। বাকিরা শুধু দর্শক।">🔥 আমি আইন নই, আমি শাসন</option>
+                <option value="রুলস ভাঙার জন্যই আমি বিখ্যাত, ডাউনটা আমার জন্য নয়।">💀 রুলস ব্রেকার</option>
+                <option value="আমার মতো অ্যাটিটিউড আর কারও নেই — সেটা ফ্যাক্ট।">👑 ইউনিক অ্যাটিটিউড</option>
+                <option value="তোমরা যা ভাবো, আমি তার উল্টোটা করি।">🌀 রিভার্স গিয়ার</option>
+                <option value="সফলতা আমার পেছনে ছোটে, আমি কাউকে ফলো করি না।">🏆 অপরাজিত</option>
+                <option value="আমি সর্বকালের সেরা, বাকিরা মাত্র সংখ্যা।">⭐ দ্য গ্রেটেস্ট</option>
+                <option value="আমার অ্যাটিটিউডের সামনে সবার মাথা নত।">🙇 লিজেন্ডারি</option>
+                <option value="আমি যা চাই, তাই হয়। বাকি সব গল্প।">✨ ম্যানিফেস্ট</option>
+            </select>
+            <label style="margin-top: 12px;">✍️ অ্যাটিটিউড টেক্সট (এডিট করতে পারেন)</label>
+            <textarea id="attitudeText" rows="2" placeholder="আপনার অ্যাটিটিউড লিখুন..."></textarea>
+        </div>
+
+        <div class="control-group">
+            <label>💻 হ্যাকিং সিলেক্ট করুন</label>
+            <select id="hackingSelect">
+                <option value="">-- নিজে লিখুন বা সিলেক্ট করুন --</option>
+                <option value="হ্যাকিং ইজ আর্ট, আমরা সিস্টেম রিক্রিয়েট করি।">🎨 হ্যাকিং আর্ট</option>
+                <option value="ফায়ারওয়াল? ধন্যবাদ, ওটা শুধু চ্যালেঞ্জ ছিল।">🔥 ফায়ারওয়াল ব্রেকার</option>
+                <option value="রুট এক্সেস পেয়ে গেছি — পুরো নিয়ন্ত্রণ এখন হাতে।">⚡ রুট এক্সেস</option>
+                <option value="ডার্ক ওয়েবে আজকের ট্রেন্ডিং: আপনার অজানা তথ্য।">🌑 ডার্ক ওয়েব</option>
+                <option value="সাইবার আক্রমণ ভার্চুয়াল নয়, এটা অ্যাটিটিউড।">🎯 সাইবার অ্যাটিটিউড</option>
+                <option value="সব সিস্টেমের পেছনের গল্প হ্যাক করা যায়, সময় লাগে মাত্র।">⏳ টাইমলেস হ্যাক</option>
+                <option value="আমি সিস্টেম ভাঙি, আইডি তৈরি করি, লজিক রিফাইন করি।">🛠️ আর্কিটেক্ট</option>
+                <option value="অ্যানোনিমাস মোড অন — কেউ ট্রেস করতে পারবে না।">👻 অ্যানোনিমাস</option>
+            </select>
+            <label style="margin-top: 12px;">🔐 হ্যাকিং টেক্সট (এডিট করতে পারেন)</label>
+            <textarea id="hackingText" rows="2" placeholder="আপনার হ্যাকিং লাইন লিখুন..."></textarea>
+        </div>
+
+        <div class="control-group">
+            <label>🖼️ ইমেজ ফ্রেম সাইজ</label>
+            <div class="radio-group">
+                <label><input type="radio" name="ratio" value="wide" checked> ওয়াইড</label>
+                <label><input type="radio" name="ratio" value="square"> স্কয়ার</label>
+                <label><input type="radio" name="ratio" value="portrait"> পোর্ট্রেট</label>
+            </div>
+            <label style="margin-top: 10px;">📸 ছবি আপলোড করুন</label>
+            <div class="file-btn" onclick="document.getElementById('imageInput').click()">
+                📸 ক্লিক করুন (JPG/PNG)
+            </div>
+            <input type="file" id="imageInput" accept="image/jpeg, image/png" style="display:none">
+            <div class="button-group">
+                <button id="downloadBtn" class="btn-primary">📸 ডাউনলোড ছবি</button>
+                <button id="randomBtn">✨ র‍্যান্ডম উদাহরণ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="canvas-wrapper">
+        <canvas id="newsCanvas" width="1280" height="720"></canvas>
+    </div>
+    <div class="footer">© CYBER TOOLS - NEWS GENERETOR</div>
+</div>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('newsCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        const attitudeSelect = document.getElementById('attitudeSelect');
+        const hackingSelect = document.getElementById('hackingSelect');
+        const attitudeText = document.getElementById('attitudeText');
+        const hackingText = document.getElementById('hackingText');
+        const ratioRadios = document.querySelectorAll('input[name="ratio"]');
+        const imageInput = document.getElementById('imageInput');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const randomBtn = document.getElementById('randomBtn');
+
+        let currentImage = null;
+        let currentRatio = 'wide';
+
+        attitudeSelect.addEventListener('change', function() {
+            if (this.value) attitudeText.value = this.value;
+        });
+        hackingSelect.addEventListener('change', function() {
+            if (this.value) hackingText.value = this.value;
+        });
+
+        function getImageRect(ratio) {
+            if (ratio === 'wide') return { x: 720, y: 160, w: 500, h: 280 };
+            if (ratio === 'square') return { x: 740, y: 180, w: 440, h: 440 };
+            return { x: 760, y: 120, w: 380, h: 500 };
+        }
+
+        function drawImageCover(img, dx, dy, dw, dh) {
+            if (!img) return;
+            const iw = img.width, ih = img.height;
+            const ir = iw / ih, tr = dw / dh;
+            let drawW, drawH, offX, offY;
+            if (ir > tr) {
+                drawH = dh;
+                drawW = iw * (dh / ih);
+                offX = dx + (dw - drawW) / 2;
+                offY = dy;
+            } else {
+                drawW = dw;
+                drawH = ih * (dw / iw);
+                offX = dx;
+                offY = dy + (dh - drawH) / 2;
+            }
+            ctx.drawImage(img, offX, offY, drawW, drawH);
+        }
+
+        function renderCanvas() {
+            let attitude = attitudeText.value.trim();
+            if (attitude === "") attitude = "আমার অ্যাটিটিউড = সবার উপরে";
+            let hacking = hackingText.value.trim();
+            if (hacking === "") hacking = "সাইবার অ্যাটাক : এক্সেস গ্রান্টেড";
+
+            ctx.clearRect(0, 0, 1280, 720);
+            const grad = ctx.createLinearGradient(0, 0, 0, 720);
+            grad.addColorStop(0, '#0a1022');
+            grad.addColorStop(1, '#10182f');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 1280, 720);
+
+            // Top red bar
+            ctx.fillStyle = '#c41212';
+            ctx.fillRect(0, 0, 1280, 68);
+            ctx.fillStyle = '#8b0000';
+            ctx.fillRect(0, 58, 1280, 10);
+
+            ctx.font = 'bold 44px "Segoe UI", "Inter", sans-serif';
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillText('🔴 BREAKING NEWS', 40, 52);
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            ctx.font = 'bold 19px monospace';
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillText(`⏱️ LIVE · ${timeStr}`, 1080, 52);
+
+            // Main text box
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = 'rgba(0,0,0,0.6)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+            ctx.fillRect(40, 100, 650, 250);
+            ctx.strokeStyle = '#ff5e5b';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(40, 100, 650, 250);
+
+            ctx.textBaseline = 'top';
+            
+            // Attitude (gold)
+            ctx.font = 'bold 36px "Segoe UI", "Inter", sans-serif';
+            ctx.fillStyle = '#FFE484';
+            let attLines = [];
+            let words = attitude.split(' ');
+            let line = '';
+            const maxW = 590;
+            for (let w of words) {
+                let test = line + (line ? ' ' : '') + w;
+                if (ctx.measureText(test).width > maxW && line !== '') {
+                    attLines.push(line);
+                    line = w;
+                } else {
+                    line = test;
+                }
+            }
+            attLines.push(line);
+            let yPos = 125;
+            for (let i = 0; i < attLines.length; i++) {
+                ctx.fillText(attLines[i], 60, yPos + i * 46);
+            }
+            let attHeight = attLines.length * 46;
+
+            // Hacking (red)
+            ctx.font = 'bold 30px "Courier New", monospace';
+            ctx.fillStyle = '#FF6B6B';
+            let hackWords = hacking.split(' ');
+            let hackLines = [];
+            let hLine = '';
+            for (let w of hackWords) {
+                let test = hLine + (hLine ? ' ' : '') + w;
+                if (ctx.measureText(test).width > maxW && hLine !== '') {
+                    hackLines.push(hLine);
+                    hLine = w;
+                } else {
+                    hLine = test;
+                }
+            }
+            hackLines.push(hLine);
+            let hackY = yPos + attHeight + 12;
+            for (let i = 0; i < hackLines.length; i++) {
+                ctx.fillText(hackLines[i], 60, hackY + i * 38);
+            }
+
+            // Image frame
+            const rect = getImageRect(currentRatio);
+            ctx.shadowBlur = 6;
+            ctx.fillStyle = '#121a2a';
+            ctx.fillRect(rect.x - 5, rect.y - 5, rect.w + 10, rect.h + 10);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+            ctx.strokeStyle = '#ff4a42';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+
+            if (currentImage && currentImage.complete && currentImage.naturalWidth > 0) {
+                drawImageCover(currentImage, rect.x, rect.y, rect.w, rect.h);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 13px monospace';
+                ctx.fillText('cyber tools', rect.x + 10, rect.y + 25);
+            } else {
+                ctx.fillStyle = '#2a3855';
+                ctx.font = 'bold 26px "Segoe UI"';
+                ctx.fillStyle = '#b9ceff';
+                ctx.textAlign = 'center';
+                ctx.fillText('📸 ছবি নেই', rect.x + rect.w / 2, rect.y + rect.h / 2 - 12);
+                ctx.font = '18px sans-serif';
+                ctx.fillStyle = '#9ab0dd';
+                ctx.fillText('ছবি আপলোড করুন', rect.x + rect.w / 2, rect.y + rect.h / 2 + 22);
+                ctx.textAlign = 'left';
+            }
+
+            // ----- নিচের টিকার (নিউজ চ্যানেলের মতো) -----
+            ctx.fillStyle = '#0f1422';
+            ctx.fillRect(0, 660, 1280, 60);
+            ctx.fillStyle = '#ff2a2a';
+            ctx.fillRect(0, 658, 1280, 5);
+            ctx.font = 'bold 22px "Segoe UI"';
+            ctx.fillStyle = '#FFE484';
+            ctx.fillText('📢 সর্বশেষ আপডেট', 30, 700);
+            ctx.font = '600 20px monospace';
+            ctx.fillStyle = '#ffffff';
+            // রিয়েল টিকার লেখা (কোনো অ্যাটিটিউড বা হ্যাকিং শব্দ নেই)
+            let tickerText = `সরাসরি সংবাদ কেন্দ্র থেকে: আরও তথ্য আসছে। বিশেষ প্রতিনিধির রিপোর্ট অনুযায়ী পরিস্থিতি গুরুত্বপূর্ণ। বিস্তারিত জানতে চোখ রাখুন আমাদের এই চ্যানেলে। `;
+            // টিকার লুপের জন্য ডায়নামিক করতে, তবে স্ট্যাটিক রাখলাম
+            let displayText = tickerText;
+            if (displayText.length > 85) displayText = displayText.slice(0, 85) + '...';
+            ctx.fillText(displayText, 270, 702);
+            ctx.font = 'bold 14px monospace';
+            ctx.fillStyle = '#aaaaff';
+            ctx.fillText('● লাইভ', 1150, 698);
+            
+            ctx.shadowBlur = 0;
+            ctx.textAlign = 'left';
+        }
+
+        function update() { renderCanvas(); }
+
+        function handleImage(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    currentImage = img;
+                    renderCanvas();
+                };
+                img.onerror = () => {
+                    currentImage = null;
+                    renderCanvas();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function randomExample() {
+            const attitudes = [
+                "আমি আইন নই, আমি শাসন। বাকিরা শুধু দর্শক।",
+                "রুলস ভাঙার জন্যই আমি বিখ্যাত, ডাউনটা আমার জন্য নয়।",
+                "আমার মতো অ্যাটিটিউড আর কারও নেই — সেটা ফ্যাক্ট।",
+                "তোমরা যা ভাবো, আমি তার উল্টোটা করি।",
+                "সফলতা আমার পেছনে ছোটে, আমি কাউকে ফলো করি না।"
+            ];
+            const hackings = [
+                "হ্যাকিং ইজ আর্ট, আমরা সিস্টেম রিক্রিয়েট করি।",
+                "ফায়ারওয়াল? ধন্যবাদ, ওটা শুধু চ্যালেঞ্জ ছিল।",
+                "রুট এক্সেস পেয়ে গেছি — পুরো নিয়ন্ত্রণ এখন হাতে।",
+                "ডার্ক ওয়েবে আজকের ট্রেন্ডিং: আপনার অজানা তথ্য।",
+                "সাইবার আক্রমণ ভার্চুয়াল নয়, এটা অ্যাটিটিউড।"
+            ];
+            attitudeText.value = attitudes[Math.floor(Math.random() * attitudes.length)];
+            hackingText.value = hackings[Math.floor(Math.random() * hackings.length)];
+            renderCanvas();
+        }
+
+        function download() {
+            try {
+                const link = document.createElement('a');
+                link.download = 'breaking_news.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch(e) { alert("ডাউনলোড ব্যর্থ, তবে ডান-ক্লিক করে ছবি সেভ করতে পারেন।"); }
+        }
+
+        attitudeText.addEventListener('input', update);
+        hackingText.addEventListener('input', update);
+        ratioRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.checked) currentRatio = e.target.value;
+                update();
+            });
+        });
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) handleImage(e.target.files[0]);
+            else { currentImage = null; update(); }
+        });
+        downloadBtn.addEventListener('click', download);
+        randomBtn.addEventListener('click', randomExample);
+
+        attitudeText.value = "আমার অ্যাটিটিউড = সরাসরি ইতিহাস";
+        hackingText.value = "সাইবার স্ট্রাইক: ফায়ারওয়াল ডাউন";
+        currentRatio = 'wide';
+        currentImage = null;
+        renderCanvas();
+    })();
+</script>
+</body>
+</html>
