@@ -63,6 +63,17 @@
             font-size: 0.8rem;
             margin-left: 4px;
         }
+        .status-badge {
+            font-size: 0.6rem;
+            margin-left: 6px;
+            color: #888;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .status-online {
+            color: #00ff41;
+        }
         .messages-area { 
             flex: 1; 
             overflow-y: auto; 
@@ -107,6 +118,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getDatabase, ref, onValue, set, onDisconnect, serverTimestamp as rtdbServerTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBe-BaRSbhOW8R4xrINojCxS2e_3w1Fshw",
@@ -118,6 +130,7 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const rtdb = getDatabase(app);
         const messagesRef = collection(db, "groups", "cyberToolGroup", "messages");
         const q = query(messagesRef, orderBy("timestamp", "asc"));
 
@@ -137,36 +150,6 @@
             } catch(e) {}
         }
 
-        function renderFromCache() {
-            const messagesDiv = document.getElementById('messages');
-            if (!messagesDiv) return;
-            if (cachedMessages.length === 0) {
-                messagesDiv.innerHTML = '<div style="text-align:center; color:#555; padding:40px;">Loading messages...</div>';
-                return;
-            }
-            messagesDiv.innerHTML = "";
-            cachedMessages.forEach(msg => {
-                const isOwn = msg.senderId === userId;
-                const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
-                const div = document.createElement('div');
-                div.className = `message ${isOwn ? 'own' : ''}`;
-                // VIP ব্যাজ দেখাবে যদি মেসেজের isVip সত্য হয় (সবার জন্য)
-                const showVipBadge = (msg.isVip === true);
-                div.innerHTML = `
-                    <div class="message-avatar"><img src="${escapeHtml(msg.senderPhoto) || DEFAULT_PHOTO}" onerror="this.src='${DEFAULT_PHOTO}'"></div>
-                    <div class="message-content">
-                        <div class="message-name">
-                            ${escapeHtml(msg.senderName)}
-                            ${showVipBadge ? '<i class="fas fa-crown vip-icon"></i>' : ''}
-                            <span class="message-time">${time}</span>
-                        </div>
-                        <div class="message-text">${escapeHtml(msg.text)}</div>
-                    </div>
-                `;
-                messagesDiv.appendChild(div);
-            });
-        }
-
         // ----- প্রোফাইল ও VIP স্ট্যাটাস -----
         let userName = localStorage.getItem('user_profile_name');
         let userPhoto = localStorage.getItem('user_profile_image') || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
@@ -183,8 +166,64 @@
             localStorage.setItem('user_profile_image', DEFAULT_PHOTO);
         }
 
-        // বর্তমান ইউজার VIP কিনা (মেসেজে isVip ফিল্ড সেট করার জন্য)
         const isVipUser = localStorage.getItem('vip_status') === 'active';
+
+        // ----- অনলাইন স্ট্যাটাস ট্র্যাকিং (Realtime Database) -----
+        const userStatusRef = ref(rtdb, `users/${userId}/status`);
+        // নিজের স্ট্যাটাস অনলাইন ও লাস্টসিন সেট করা
+        set(userStatusRef, {
+            online: true,
+            lastSeen: rtdbServerTimestamp()
+        }).catch(console.error);
+        // কানেকশন চলে গেলে অটোমেটিক অফলাইন হবে
+        onDisconnect(userStatusRef).set({
+            online: false,
+            lastSeen: rtdbServerTimestamp()
+        });
+
+        // সব ইউজারের স্ট্যাটাস লাইভ লিসেন করা
+        const allStatusRef = ref(rtdb, 'users');
+        const userStatusMap = new Map(); // userId -> { online, lastSeen }
+        onValue(allStatusRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach(uid => {
+                    if (data[uid] && data[uid].status) {
+                        userStatusMap.set(uid, data[uid].status);
+                    } else if (data[uid]) {
+                        userStatusMap.set(uid, data[uid]);
+                    }
+                });
+            }
+            // UI আপডেট: যেহেতু মেসেজ রেন্ডার ইতিমধ্যে রিয়েল টাইমে হয়, স্ট্যাটাস দেখাতে মেসেজ রি-রেন্ডার দরকার
+            // তাই আমরা কেবল বিদ্যমান মেসেজ এলিমেন্টগুলো আপডেট করার চেয়ে, onSnapshot আবার রেন্ডার করে।
+            // onSnapshot আগে থেকেই কাজ করছে, তাই স্ট্যাটাস লিসেনার শুধু স্ট্যাটাস ম্যাপ আপডেট করে, পরে রেন্ডার ফাংশন ব্যবহার করবে।
+            // কিন্তু বিদ্যমান রেন্ডার ফাংশন (onSnapshot) স্ট্যাটাস ম্যাপ পড়বে। সেজন্য নিচে রেন্ডার কল করা হচ্ছে।
+            // তবে অতিরিক্ত কল এড়াতে আমরা শুধু মেসেজ লিস্ট রি-রেন্ডার করব না, বরং প্রতিটি মেসেজে স্ট্যাটাস দেখানোর জন্য একটি ফাংশন ব্যবহার করব।
+            // আমরা যখন মেসেজ রেন্ডার করি, তখন স্ট্যাটাস ম্যাপ থেকে স্ট্যাটাস নেব।
+        });
+
+        function getStatusHtml(userIdToCheck) {
+            const status = userStatusMap.get(userIdToCheck);
+            if (!status) return '';
+            if (status.online === true) {
+                return `<span class="status-badge status-online"><i class="fas fa-circle" style="font-size: 0.5rem;"></i> Online</span>`;
+            } else if (status.lastSeen) {
+                let lastSeenDate = new Date(status.lastSeen);
+                if (isNaN(lastSeenDate)) return '';
+                const now = new Date();
+                const diffMs = now - lastSeenDate;
+                const diffMins = Math.floor(diffMs / 60000);
+                if (diffMins < 1) return `<span class="status-badge">Just now</span>`;
+                else if (diffMins < 60) return `<span class="status-badge">Last seen ${diffMins} min ago</span>`;
+                else {
+                    const hours = Math.floor(diffMins / 60);
+                    if (hours < 24) return `<span class="status-badge">Last seen ${hours} hour${hours>1?'s':''} ago</span>`;
+                    else return `<span class="status-badge">Last seen ${lastSeenDate.toLocaleDateString()}</span>`;
+                }
+            }
+            return '';
+        }
 
         // ----- DOM এলিমেন্টস -----
         const warningDiv = document.getElementById('profileWarning');
@@ -209,43 +248,62 @@
                 msgInput.disabled = false;
                 profileImg.src = userPhoto;
                 profileNameSpan.innerText = userName.length > 15 ? userName.slice(0,12)+".." : userName;
-                // নিজের প্রোফাইলে VIP মুকুট দেখাবে (শুধু নিজের কাছে)
-                if (vipContainer) {
-                    vipContainer.innerHTML = isVipUser ? '<i class="fas fa-crown vip-icon"></i>' : '';
-                }
+                if (vipContainer) vipContainer.innerHTML = isVipUser ? '<i class="fas fa-crown vip-icon"></i>' : '';
             }
         }
         updateUI();
 
-        // ----- অটো-স্ক্রোল লজিক (WhatsApp-এর মতো) -----
+        // ----- অটো-স্ক্রোল লজিক -----
         let autoScroll = true;
-
         messagesDiv.addEventListener('scroll', () => {
             const isNearBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 50;
             autoScroll = isNearBottom;
         });
+        function scrollToBottom() { messagesDiv.scrollTop = messagesDiv.scrollHeight; }
+        msgInput.addEventListener('focus', () => setTimeout(() => scrollToBottom(), 300));
+        window.addEventListener('resize', () => setTimeout(() => { if (autoScroll) scrollToBottom(); }, 100));
 
-        function scrollToBottom() {
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        // ----- রেন্ডার ফাংশন (ক্যাশ ও লাইভ উভয়ের জন্য) -----
+        function renderMessages(messagesArray, isLive = false) {
+            if (!messagesDiv) return;
+            if (messagesArray.length === 0) {
+                messagesDiv.innerHTML = '<div style="text-align:center; color:#555; padding:40px;">✨ No messages yet. Be the first to chat!</div>';
+                return;
+            }
+            // পারফরম্যান্সের জন্য শুধু মেসেজ এলিমেন্ট তৈরি করা
+            const fragment = document.createDocumentFragment();
+            messagesArray.forEach(msg => {
+                const isOwn = msg.senderId === userId;
+                const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
+                const showVipBadge = (msg.isVip === true);
+                const statusHtml = getStatusHtml(msg.senderId);
+                const div = document.createElement('div');
+                div.className = `message ${isOwn ? 'own' : ''}`;
+                div.innerHTML = `
+                    <div class="message-avatar"><img src="${escapeHtml(msg.senderPhoto) || DEFAULT_PHOTO}" onerror="this.src='${DEFAULT_PHOTO}'"></div>
+                    <div class="message-content">
+                        <div class="message-name">
+                            ${escapeHtml(msg.senderName)}
+                            ${showVipBadge ? '<i class="fas fa-crown vip-icon"></i>' : ''}
+                            <span class="message-time">${time}</span>
+                            ${statusHtml}
+                        </div>
+                        <div class="message-text">${escapeHtml(msg.text)}</div>
+                    </div>
+                `;
+                fragment.appendChild(div);
+            });
+            messagesDiv.innerHTML = '';
+            messagesDiv.appendChild(fragment);
+            if (autoScroll) scrollToBottom();
         }
 
-        msgInput.addEventListener('focus', () => {
-            setTimeout(() => {
-                scrollToBottom();
-            }, 300);
-        });
-
-        window.addEventListener('resize', () => {
-            setTimeout(() => {
-                if (autoScroll) scrollToBottom();
-            }, 100);
-        });
-
-        // ক্যাশ লোড দেখাও
-        renderFromCache();
+        // ক্যাশ থেকে দেখানো (লাইভ ডাটা না আসা পর্যন্ত)
+        if (cachedMessages.length) renderMessages(cachedMessages);
+        else messagesDiv.innerHTML = '<div style="text-align:center; color:#555; padding:40px;">Loading messages...</div>';
 
         // ফায়ারবেস থেকে রিয়েল টাইম মেসেজ লোড ও ক্যাশ আপডেট
-        let allMessages = [...cachedMessages];
+        let allMessages = [];
         onSnapshot(q, (snapshot) => {
             const firestoreMessages = [];
             snapshot.forEach(doc => {
@@ -261,41 +319,13 @@
             });
             allMessages = firestoreMessages;
             updateCache(allMessages);
-            
-            messagesDiv.innerHTML = "";
-            if (allMessages.length === 0) {
-                messagesDiv.innerHTML = '<div style="text-align:center; color:#555; padding:40px;">✨ No messages yet. Be the first to chat!</div>';
-                return;
-            }
-            allMessages.forEach(msg => {
-                const isOwn = msg.senderId === userId;
-                const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
-                const div = document.createElement('div');
-                div.className = `message ${isOwn ? 'own' : ''}`;
-                // VIP ব্যাজ সবাই দেখতে পাবে যদি মেসেজের isVip সত্য হয়
-                const showVipBadge = (msg.isVip === true);
-                div.innerHTML = `
-                    <div class="message-avatar"><img src="${escapeHtml(msg.senderPhoto) || DEFAULT_PHOTO}" onerror="this.src='${DEFAULT_PHOTO}'"></div>
-                    <div class="message-content">
-                        <div class="message-name">
-                            ${escapeHtml(msg.senderName)}
-                            ${showVipBadge ? '<i class="fas fa-crown vip-icon"></i>' : ''}
-                            <span class="message-time">${time}</span>
-                        </div>
-                        <div class="message-text">${escapeHtml(msg.text)}</div>
-                    </div>
-                `;
-                messagesDiv.appendChild(div);
-            });
-            if (autoScroll) scrollToBottom();
+            renderMessages(allMessages, true);
         }, (error) => {
             console.error("Snapshot error:", error);
-            if (messagesDiv.innerHTML.includes("Loading")) {
-                messagesDiv.innerHTML = '<div style="color:#ff5555; padding:20px;">Database error. Check rules/index.</div>';
-            }
+            messagesDiv.innerHTML = '<div style="color:#ff5555; padding:20px;">Database error. Check rules/index.</div>';
         });
 
-        // মেসেজ পাঠানো (isVip ফিল্ড যোগ করা)
+        // মেসেজ পাঠানো
         async function sendMessage() {
             let currentName = localStorage.getItem('user_profile_name');
             let currentPhoto = localStorage.getItem('user_profile_image') || DEFAULT_PHOTO;
@@ -312,7 +342,7 @@
                     senderName: currentName,
                     senderPhoto: (currentPhoto.length > 500000) ? DEFAULT_PHOTO : currentPhoto,
                     timestamp: serverTimestamp(),
-                    isVip: isVipUser   // VIP স্ট্যাটাস সংরক্ষণ
+                    isVip: isVipUser
                 });
                 msgInput.value = "";
                 msgInput.focus();
@@ -324,9 +354,7 @@
         }
 
         sendBtn.onclick = sendMessage;
-        msgInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") sendMessage();
-        });
+        msgInput.addEventListener("keypress", (e) => { if (e.key === "Enter") sendMessage(); });
 
         function escapeHtml(str) {
             if (!str) return "";
@@ -354,7 +382,7 @@
         <input id="msgInput" placeholder="Type a message...">
         <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
     </div>
-    <div class="info-footer">👑 VIP badge appears on messages from VIP users (visible to everyone) | Smart scroll</div>
+    <div class="info-footer">👑 VIP badge | 🟢 Online status & last seen (real‑time) | Smart scroll</div>
 </div>
 </body>
 </html>
