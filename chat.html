@@ -6,109 +6,29 @@
     <title>Cyber Tools - Group Chat</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ... (আগের মতোই CSS) ... */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { 
-            background: #0a0a0a; 
-            color: #eee; 
-            height: 100vh; 
-            width: 100vw;
-            overflow: hidden;
-            padding: 0;
-            margin: 0;
-        }
-        .chat-container { 
-            width: 100%; 
-            height: 100vh; 
-            background: #111; 
-            display: flex; 
-            flex-direction: column; 
-            border: none; 
-            border-radius: 0;
-        }
-        .chat-header { 
-            background: #1a1a1a; 
-            padding: 6px 15px; 
-            border-bottom: 2px solid #00ff41; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            flex-shrink: 0;
-        }
-        .logo { 
-            background: #00ff41; 
-            width: 32px; 
-            height: 32px; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: #000; 
-            font-size: 1rem;
-        }
+        body { background: #0a0a0a; color: #eee; height: 100vh; width: 100vw; overflow: hidden; padding: 0; margin: 0; }
+        .chat-container { width: 100%; height: 100vh; background: #111; display: flex; flex-direction: column; border: none; }
+        .chat-header { background: #1a1a1a; padding: 6px 15px; border-bottom: 2px solid #00ff41; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .logo { background: #00ff41; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-size: 1rem; }
         .title { flex: 1; }
         .title h2 { font-size: 1rem; margin: 0; line-height: 1.2; }
         .title p { font-size: 0.6rem; color: #aaa; margin: 0; }
-        .profile-badge { 
-            background: #222; 
-            padding: 2px 8px; 
-            border-radius: 40px; 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-            font-size: 0.7rem; 
-        }
+        .profile-badge { background: #222; padding: 2px 8px; border-radius: 40px; display: flex; align-items: center; gap: 6px; font-size: 0.7rem; }
         .profile-badge img { width: 24px; height: 24px; border-radius: 50%; }
-        .vip-icon {
-            color: gold;
-            font-size: 0.8rem;
-            margin-left: 4px;
-        }
-        .status-badge {
-            font-size: 0.6rem;
-            margin-left: 6px;
-            color: #888;
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-        }
-        .status-online {
-            color: #00ff41;
-        }
-        .messages-area { 
-            flex: 1; 
-            overflow-y: auto; 
-            padding: 16px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            background: #0c0c0c;
-            -webkit-overflow-scrolling: touch;
-        }
+        .vip-icon { color: gold; font-size: 0.8rem; margin-left: 4px; }
+        .messages-area { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #0c0c0c; -webkit-overflow-scrolling: touch; }
         .message { display: flex; align-items: flex-start; gap: 12px; animation: fadeIn 0.2s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
         .message-avatar img { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #00ff41; object-fit: cover; background: #222; }
         .message-content { background: #1e1e1e; padding: 8px 14px; border-radius: 20px; max-width: 70%; }
         .message.own { flex-direction: row-reverse; }
         .message.own .message-content { background: #1a2a1a; border: 1px solid #00ff4133; }
-        .message-name { 
-            font-weight: bold; 
-            font-size: 0.8rem; 
-            color: #00ff41; 
-            display: flex; 
-            gap: 8px; 
-            align-items: center; 
-            flex-wrap: wrap;
-        }
+        .message-name { font-weight: bold; font-size: 0.8rem; color: #00ff41; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .message-time { font-size: 0.65rem; color: #888; }
         .message-text { font-size: 0.9rem; margin-top: 4px; word-wrap: break-word; }
-        .input-area { 
-            display: flex; 
-            gap: 12px; 
-            padding: 10px 16px; 
-            background: #1a1a1a; 
-            border-top: 1px solid #2a2a2a; 
-            flex-shrink: 0;
-        }
+        .input-area { display: flex; gap: 12px; padding: 10px 16px; background: #1a1a1a; border-top: 1px solid #2a2a2a; flex-shrink: 0; }
         .input-area input { flex: 1; background: #222; border: none; padding: 10px 16px; border-radius: 40px; color: white; outline: none; font-size: 0.9rem; }
         .input-area button { background: #00ff41; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; color: black; font-size: 1rem; }
         .warning-banner { background: #330000; color: #ff8888; text-align: center; padding: 6px; font-size: 0.75rem; }
@@ -118,7 +38,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getDatabase, ref, onValue, set, onDisconnect, serverTimestamp as rtdbServerTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBe-BaRSbhOW8R4xrINojCxS2e_3w1Fshw",
@@ -130,7 +49,6 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const rtdb = getDatabase(app);
         const messagesRef = collection(db, "groups", "cyberToolGroup", "messages");
         const q = query(messagesRef, orderBy("timestamp", "asc"));
 
@@ -168,63 +86,6 @@
 
         const isVipUser = localStorage.getItem('vip_status') === 'active';
 
-        // ----- অনলাইন স্ট্যাটাস ট্র্যাকিং (Realtime Database) -----
-        const userStatusRef = ref(rtdb, `users/${userId}/status`);
-        // নিজের স্ট্যাটাস অনলাইন ও লাস্টসিন সেট করা
-        set(userStatusRef, {
-            online: true,
-            lastSeen: rtdbServerTimestamp()
-        }).catch(console.error);
-        // কানেকশন চলে গেলে অটোমেটিক অফলাইন হবে
-        onDisconnect(userStatusRef).set({
-            online: false,
-            lastSeen: rtdbServerTimestamp()
-        });
-
-        // সব ইউজারের স্ট্যাটাস লাইভ লিসেন করা
-        const allStatusRef = ref(rtdb, 'users');
-        const userStatusMap = new Map(); // userId -> { online, lastSeen }
-        onValue(allStatusRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                Object.keys(data).forEach(uid => {
-                    if (data[uid] && data[uid].status) {
-                        userStatusMap.set(uid, data[uid].status);
-                    } else if (data[uid]) {
-                        userStatusMap.set(uid, data[uid]);
-                    }
-                });
-            }
-            // UI আপডেট: যেহেতু মেসেজ রেন্ডার ইতিমধ্যে রিয়েল টাইমে হয়, স্ট্যাটাস দেখাতে মেসেজ রি-রেন্ডার দরকার
-            // তাই আমরা কেবল বিদ্যমান মেসেজ এলিমেন্টগুলো আপডেট করার চেয়ে, onSnapshot আবার রেন্ডার করে।
-            // onSnapshot আগে থেকেই কাজ করছে, তাই স্ট্যাটাস লিসেনার শুধু স্ট্যাটাস ম্যাপ আপডেট করে, পরে রেন্ডার ফাংশন ব্যবহার করবে।
-            // কিন্তু বিদ্যমান রেন্ডার ফাংশন (onSnapshot) স্ট্যাটাস ম্যাপ পড়বে। সেজন্য নিচে রেন্ডার কল করা হচ্ছে।
-            // তবে অতিরিক্ত কল এড়াতে আমরা শুধু মেসেজ লিস্ট রি-রেন্ডার করব না, বরং প্রতিটি মেসেজে স্ট্যাটাস দেখানোর জন্য একটি ফাংশন ব্যবহার করব।
-            // আমরা যখন মেসেজ রেন্ডার করি, তখন স্ট্যাটাস ম্যাপ থেকে স্ট্যাটাস নেব।
-        });
-
-        function getStatusHtml(userIdToCheck) {
-            const status = userStatusMap.get(userIdToCheck);
-            if (!status) return '';
-            if (status.online === true) {
-                return `<span class="status-badge status-online"><i class="fas fa-circle" style="font-size: 0.5rem;"></i> Online</span>`;
-            } else if (status.lastSeen) {
-                let lastSeenDate = new Date(status.lastSeen);
-                if (isNaN(lastSeenDate)) return '';
-                const now = new Date();
-                const diffMs = now - lastSeenDate;
-                const diffMins = Math.floor(diffMs / 60000);
-                if (diffMins < 1) return `<span class="status-badge">Just now</span>`;
-                else if (diffMins < 60) return `<span class="status-badge">Last seen ${diffMins} min ago</span>`;
-                else {
-                    const hours = Math.floor(diffMins / 60);
-                    if (hours < 24) return `<span class="status-badge">Last seen ${hours} hour${hours>1?'s':''} ago</span>`;
-                    else return `<span class="status-badge">Last seen ${lastSeenDate.toLocaleDateString()}</span>`;
-                }
-            }
-            return '';
-        }
-
         // ----- DOM এলিমেন্টস -----
         const warningDiv = document.getElementById('profileWarning');
         const sendBtn = document.getElementById('sendBtn');
@@ -253,7 +114,7 @@
         }
         updateUI();
 
-        // ----- অটো-স্ক্রোল লজিক -----
+        // ----- অটো-স্ক্রোল -----
         let autoScroll = true;
         messagesDiv.addEventListener('scroll', () => {
             const isNearBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 50;
@@ -263,20 +124,17 @@
         msgInput.addEventListener('focus', () => setTimeout(() => scrollToBottom(), 300));
         window.addEventListener('resize', () => setTimeout(() => { if (autoScroll) scrollToBottom(); }, 100));
 
-        // ----- রেন্ডার ফাংশন (ক্যাশ ও লাইভ উভয়ের জন্য) -----
-        function renderMessages(messagesArray, isLive = false) {
-            if (!messagesDiv) return;
-            if (messagesArray.length === 0) {
+        // ----- প্রথমে ক্যাশ থেকে দেখাও -----
+        function renderMessages(messagesArray) {
+            messagesDiv.innerHTML = "";
+            if (!messagesArray.length) {
                 messagesDiv.innerHTML = '<div style="text-align:center; color:#555; padding:40px;">✨ No messages yet. Be the first to chat!</div>';
                 return;
             }
-            // পারফরম্যান্সের জন্য শুধু মেসেজ এলিমেন্ট তৈরি করা
-            const fragment = document.createDocumentFragment();
             messagesArray.forEach(msg => {
                 const isOwn = msg.senderId === userId;
                 const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '';
                 const showVipBadge = (msg.isVip === true);
-                const statusHtml = getStatusHtml(msg.senderId);
                 const div = document.createElement('div');
                 div.className = `message ${isOwn ? 'own' : ''}`;
                 div.innerHTML = `
@@ -286,23 +144,20 @@
                             ${escapeHtml(msg.senderName)}
                             ${showVipBadge ? '<i class="fas fa-crown vip-icon"></i>' : ''}
                             <span class="message-time">${time}</span>
-                            ${statusHtml}
                         </div>
                         <div class="message-text">${escapeHtml(msg.text)}</div>
                     </div>
                 `;
-                fragment.appendChild(div);
+                messagesDiv.appendChild(div);
             });
-            messagesDiv.innerHTML = '';
-            messagesDiv.appendChild(fragment);
             if (autoScroll) scrollToBottom();
         }
 
-        // ক্যাশ থেকে দেখানো (লাইভ ডাটা না আসা পর্যন্ত)
+        // ক্যাশ থেকে রেন্ডার (পুরনো মেসেজ দেখাবে)
         if (cachedMessages.length) renderMessages(cachedMessages);
         else messagesDiv.innerHTML = '<div style="text-align:center; color:#555; padding:40px;">Loading messages...</div>';
 
-        // ফায়ারবেস থেকে রিয়েল টাইম মেসেজ লোড ও ক্যাশ আপডেট
+        // ফায়ারবেস থেকে রিয়েল টাইম আপডেট (নতুন মেসেজ ও পুরনোগুলো সঠিকভাবে দেখাবে)
         let allMessages = [];
         onSnapshot(q, (snapshot) => {
             const firestoreMessages = [];
@@ -319,7 +174,7 @@
             });
             allMessages = firestoreMessages;
             updateCache(allMessages);
-            renderMessages(allMessages, true);
+            renderMessages(allMessages);
         }, (error) => {
             console.error("Snapshot error:", error);
             messagesDiv.innerHTML = '<div style="color:#ff5555; padding:20px;">Database error. Check rules/index.</div>';
@@ -330,7 +185,7 @@
             let currentName = localStorage.getItem('user_profile_name');
             let currentPhoto = localStorage.getItem('user_profile_image') || DEFAULT_PHOTO;
             if (!currentName || currentName.trim() === "") {
-                alert("Please set your profile first (name & photo) in the profile page!");
+                alert("Please set your profile first!");
                 return;
             }
             const text = msgInput.value.trim();
@@ -352,24 +207,16 @@
                 alert("Failed to send: " + error.message);
             }
         }
-
         sendBtn.onclick = sendMessage;
         msgInput.addEventListener("keypress", (e) => { if (e.key === "Enter") sendMessage(); });
-
-        function escapeHtml(str) {
-            if (!str) return "";
-            return str.replace(/[&<>]/g, (m) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
-        }
+        function escapeHtml(str) { return str?.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])) || ""; }
     </script>
 </head>
 <body>
 <div class="chat-container">
     <div class="chat-header">
         <div class="logo"><i class="fas fa-shield-haltered"></i></div>
-        <div class="title">
-            <h2>Cyber Tools Community</h2>
-            <p>Real‑time group chat</p>
-        </div>
+        <div class="title"><h2>Cyber Tools Community</h2><p>Real‑time group chat</p></div>
         <div class="profile-badge">
             <img id="profileBadgeImg" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
             <span id="profileBadgeName">Profile</span>
@@ -382,7 +229,7 @@
         <input id="msgInput" placeholder="Type a message...">
         <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
     </div>
-    <div class="info-footer">👑 VIP badge | 🟢 Online status & last seen (real‑time) | Smart scroll</div>
+    <div class="info-footer">👑 VIP badge appears on all devices for VIP users | Smart scroll</div>
 </div>
 </body>
 </html>
