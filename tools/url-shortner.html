@@ -1,244 +1,412 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>প্রিমিয়াম ইউআরএল শর্টনার</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title> URL Shortener | Sp.me</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
-        :root { 
-            --accent: #00ff41; 
-            --bg: #000000; 
-            --card: #121212; 
-            --border: #222222;
-            --text-muted: #888888; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg); color: #fff; display: flex; flex-direction: column; min-height: 100vh; }
-
-        header { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 15px 20px; 
-            background: #000; 
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        header a { color: #fff; text-decoration: none; font-size: 1.2rem; }
-        header h1 { font-size: 1.1rem; font-weight: 600; color: var(--accent); letter-spacing: 1px; }
-
-        .container { padding: 25px 20px; flex: 1; max-width: 480px; margin: 0 auto; width: 100%; }
-
-        .info-box {
-            background: rgba(0, 255, 65, 0.03);
-            border: 1px dashed var(--accent);
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            color: #ccc;
-            line-height: 1.5;
-            margin-bottom: 25px;
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-        }
-        .info-box i { color: var(--accent); font-size: 1.1rem; margin-top: 2px; }
-
-        .input-group { position: relative; margin-bottom: 20px; }
-        .input-group i { position: absolute; left: 15px; top: 15px; color: var(--text-muted); font-size: 1.1rem; }
-        
-        .input-group input { 
-            width: 100%; 
-            background: var(--card); 
-            border: 1px solid var(--border); 
-            padding: 14px 15px 14px 45px; 
-            border-radius: 12px; 
-            color: #fff; 
-            outline: none; 
-            font-size: 0.9rem; 
-            transition: 0.3s;
-        }
-        .input-group input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(0, 255, 65, 0.1); }
-
-        .action-btn { 
-            width: 100%; 
-            background: var(--accent); 
-            color: #000; 
-            border: none; 
-            padding: 14px; 
-            border-radius: 12px; 
-            font-weight: 700; 
-            font-size: 0.95rem; 
-            cursor: pointer; 
-            transition: 0.2s;
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Roboto', sans-serif;
+            min-height: 100vh;
+            padding: 40px 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
         }
-        .action-btn:active { transform: scale(0.98); }
-        .action-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
 
-        .result-area { 
-            margin-top: 30px; 
-            background: var(--card); 
-            border: 1px solid var(--border); 
-            border-radius: 15px; 
-            padding: 20px; 
-            display: none; 
-            animation: fadeIn 0.4s ease;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(2px);
+            border-radius: 40px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+            max-width: 800px;
+            width: 100%;
+            padding: 35px 30px;
+            transition: 0.3s;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .result-title { font-size: 0.8rem; color: var(--accent); font-weight: 700; letter-spacing: 0.5px; margin-bottom: 10px; }
-        
-        .output-box {
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #0f2027, #2c5364);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .sub {
+            color: #4a627a;
+            margin-bottom: 28px;
+            border-left: 4px solid #2c5364;
+            padding-left: 15px;
+            font-weight: 500;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1e2f4a;
+            font-size: 0.85rem;
+        }
+
+        .url-input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 40px;
+            transition: 0.2s;
+            background: white;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #2c5364;
+            box-shadow: 0 0 0 3px rgba(44,83,100,0.2);
+        }
+
+        .button-group {
             display: flex;
-            background: #000;
-            border: 1px solid #222;
-            padding: 12px 15px;
-            border-radius: 10px;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+
+        .btn {
+            background: linear-gradient(95deg, #1f4e6e, #2c5364);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-secondary {
+            background: #94a3b8;
+        }
+
+        .btn-secondary:hover {
+            background: #6c7e97;
+            transform: translateY(-2px);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        .result-card {
+            background: #f8fafc;
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 25px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .result-item {
+            background: white;
+            border-radius: 24px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 15px;
+            gap: 12px;
         }
-        .output-box span { font-size: 0.9rem; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%; }
-        .copy-btn { background: transparent; border: none; color: var(--accent); cursor: pointer; font-size: 1.1rem; padding: 5px; }
 
-        .qr-section { text-align: center; border-top: 1px solid #222; padding-top: 15px; margin-top: 15px; }
-        .qr-section p { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; }
-        .qr-img { background: #fff; padding: 8px; border-radius: 10px; display: inline-block; }
-        .qr-img img { display: block; width: 120px; height: 120px; }
+        .short-link {
+            flex: 2;
+            font-weight: bold;
+            word-break: break-all;
+        }
 
-        .spinner { border: 2px solid #000; border-top: 2px solid #fff; border-radius: 50%; width: 18px; height: 18px; animation: spin 0.8s linear infinite; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .short-link a {
+            color: #1f4e6e;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: #eef2ff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+            color: #1f4e6e;
+        }
+
+        .copy-btn:hover {
+            background: #d9e6f5;
+        }
+
+        .original-link {
+            font-size: 0.8rem;
+            color: #5a6e8a;
+            word-break: break-all;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .info-box {
+            background: #eef2ff;
+            border-radius: 24px;
+            padding: 18px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #2d3748;
+        }
+
+        .info-box h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: #1e2f4a;
+        }
+
+        .info-box ol {
+            margin-left: 20px;
+            line-height: 1.6;
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 550px) {
+            .glass-card { padding: 25px 20px; }
+            .result-item { flex-direction: column; align-items: flex-start; }
+            .copy-btn { width: 100%; text-align: center; }
+        }
     </style>
 </head>
 <body>
+<div class="glass-card">
+    <h1> URL Shortener</h1>
+    <div class="sub">Shorten large links, share easily — copy with one click</div>
 
-    <header>
-        <a href="#"><i class="fas fa-arrow-left"></i></a>
-        <h1>URL SHORTENER</h1>
-        <div style="width: 20px;"></div>
-    </header>
-
-    <div class="container">
-        <div class="info-box">
-            <i class="fas fa-circle-info"></i>
-            <span>যেকোনো বড় লিংক (Blogspot, Google, YouTube সব) শর্ট করুন। নেটওয়ার্ক এরর থাকবে না।</span>
-        </div>
-
-        <div class="input-group">
-            <i class="fas fa-link"></i>
-            <input type="url" id="longUrl" placeholder="আপনার বড় লিঙ্কটি এখানে পেস্ট করুন...">
-        </div>
-
-        <button class="action-btn" id="shortenBtn">
-            <span class="spinner" id="btnLoader"></span>
-            <span id="btnText"><i class="fas fa-bolt"></i> Shorten URL</span>
-        </button>
-
-        <div class="result-area" id="resultArea">
-            <div class="result-title">SHORTENED LINK</div>
-            <div class="output-box">
-                <span id="shortenedUrl">https://cleanuri.com/xyz</span>
-                <button class="copy-btn" id="copyBtn" title="Copy Link"><i class="far fa-copy" id="copyIcon"></i></button>
-            </div>
-
-            <div class="qr-section">
-                <p>Scan this QR code to open the short link</p>
-                <div class="qr-img">
-                    <img id="qrCodeImg" src="" alt="QR Code">
-                </div>
-            </div>
-        </div>
+    <div class="input-group">
+        <label>🔗 Give your long link</label>
+        <input type="text" id="longUrl" class="url-input" placeholder="https://example.com/Very/Long/Link">
     </div>
 
-    <script>
-        const shortenBtn = document.getElementById('shortenBtn');
+    <div class="button-group">
+        <button class="btn" id="shortenBtn">⚡ Shorten</button>
+        <button class="btn btn-secondary" id="clearAllBtn">🗑️ Delete history</button>
+    </div>
+
+    <div id="historyContainer" class="result-card">
+        <div style="text-align: center; padding: 20px; color: #94a3b8;">✨ Your shortened link will appear here.</div>
+    </div>
+
+    <hr>
+
+    <div class="info-box">
+        <h3>📘 How to use?</h3>
+        <ol>
+            <li>Enter your long link in the box. (https:// Start with) </li>
+            <li><strong>“Shorten”</strong> Click the button. </li>
+            <li>Your short link will be created below. <strong>“Copy link”</strong> Clicking the button will copy it to the clipboard.</li>
+            <li>Send the short link to anyone. When they click on the link, they will be taken to the real link.</li>
+            <li>All the links you create are stored here (the browser's localStorage). <strong>“Delete history”</strong> You can delete it by clicking the button.</li>
+       
+        </ol>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const STORAGE_KEY = 'smart_shortener_history';
+        let historyList = [];
+
         const longUrlInput = document.getElementById('longUrl');
-        const btnLoader = document.getElementById('btnLoader');
-        const btnText = document.getElementById('btnText');
-        const resultArea = document.getElementById('resultArea');
-        const shortenedUrlSpan = document.getElementById('shortenedUrl');
-        const qrCodeImg = document.getElementById('qrCodeImg');
-        const copyBtn = document.getElementById('copyBtn');
-        const copyIcon = document.getElementById('copyIcon');
+        const shortenBtn = document.getElementById('shortenBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const historyContainer = document.getElementById('historyContainer');
 
-        async function generateShortUrl() {
-            const longUrl = longUrlInput.value.trim();
-
-            if (!longUrl) {
-                alert("দয়া করে একটি লিংক পেস্ট করুন!");
-                return;
+        // 🔄 লোকাল স্টোরেজ থেকে ইতিহাস লোড
+        function loadHistory() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    historyList = JSON.parse(stored);
+                } catch(e) { historyList = []; }
+            } else {
+                historyList = [];
             }
-
-            if (!longUrl.startsWith('http://') && !longUrl.startsWith('https://')) {
-                alert("লিংকটি http:// বা https:// দিয়ে শুরু করুন। যেমন: https://google.com");
-                return;
-            }
-
-            shortenBtn.disabled = true;
-            btnLoader.style.display = "inline-block";
-            btnText.style.display = "none";
-
-            try {
-                // cleanuri.com API – CORS সমর্থিত, কোনো API কী লাগে না
-                const response = await fetch('https://cleanuri.com/api/v1/shorten', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ url: longUrl })
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.result_url) {
-                    const shortLink = data.result_url;
-                    shortenedUrlSpan.innerText = shortLink;
-                    qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(shortLink)}`;
-                    resultArea.style.display = "block";
-                } else {
-                    alert("শর্ট করতে ব্যর্থ: " + (data.error || "অজানা ত্রুটি। লিংকটি সঠিক কি না চেক করুন।"));
-                }
-            } catch (error) {
-                console.error(error);
-                alert("নেটওয়ার্ক সমস্যা! ইন্টারনেট সংযোগ চেক করুন। সমস্যা থাকলে পরে চেষ্টা করুন।");
-            } finally {
-                shortenBtn.disabled = false;
-                btnLoader.style.display = "none";
-                btnText.style.display = "inline-block";
-            }
+            renderHistory();
         }
 
-        function copyLink() {
-            const urlText = shortenedUrlSpan.innerText;
-            if (!urlText || urlText === "https://cleanuri.com/xyz") {
-                alert("কপি করার মতো কোনো লিঙ্ক নেই। আগে একটি লিঙ্ক শর্ট করুন।");
+        function saveHistory() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(historyList));
+        }
+
+        function renderHistory() {
+            if (!historyList.length) {
+                historyContainer.innerHTML = `<div style="text-align: center; padding: 20px; color: #94a3b8;">✨ No links have been shortened yet.</div>`;
                 return;
             }
+            let html = '';
+            // নতুন থেকে পুরাতন (reverse order দেখাতে)
+            [...historyList].reverse().forEach(item => {
+                html += `
+                    <div class="result-item">
+                        <div class="short-link">
+                            🔗 <a href="${item.shortUrl}" target="_blank">${item.shortUrl}</a>
+                        </div>
+                        <button class="copy-btn" data-url="${item.shortUrl}">📋 Copy link</button>
+                        <div class="original-link">Original link: ${truncate(item.original, 80)}</div>
+                    </div>
+                `;
+            });
+            historyContainer.innerHTML = html;
 
-            navigator.clipboard.writeText(urlText).then(() => {
-                copyIcon.className = "fas fa-check";
-                copyIcon.style.color = "#00ff41";
-                setTimeout(() => {
-                    copyIcon.className = "far fa-copy";
-                    copyIcon.style.color = "var(--accent)";
-                }, 2000);
-            }).catch(() => {
-                alert("ম্যানুয়ালি কপি করুন: " + urlText);
+            // কপি বাটনে ইভেন্ট লিসেনার যোগ
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const url = btn.getAttribute('data-url');
+                    copyToClipboard(url);
+                });
             });
         }
 
-        shortenBtn.addEventListener('click', generateShortUrl);
-        copyBtn.addEventListener('click', copyLink);
-    </script>
+        function truncate(str, len) {
+            if (str.length <= len) return str;
+            return str.slice(0, len) + '...';
+        }
+
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                alert('✅ Link copied!\n\n' + text);
+            } catch(e) {
+                alert('❌ Copy failed, but you can copy manually:\n' + text);
+            }
+        }
+
+        // 🔗 মূল শর্ট ফাংশন (Spoo.me API V1 ব্যবহার করে)
+        async function shortenUrl() {
+            let original = longUrlInput.value.trim();
+            if (!original) {
+                alert('Please provide a link (with https:// or http://)');
+                return;
+            }
+
+            // প্রোটোকল না থাকলে যোগ করে দেই
+            if (!original.startsWith('http://') && !original.startsWith('https://')) {
+                original = 'https://' + original;
+            }
+
+            // চেক: ইতিহাসে ইতিমধ্যে আছে কিনা
+            const already = historyList.find(item => item.original === original);
+            if (already) {
+                alert(`This link has already been shortened:\n${already.shortUrl}`);
+                return;
+            }
+
+            // লোডার ইফেক্ট
+            const btn = shortenBtn;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span class="loader"></span> Shorting...`;
+            btn.disabled = true;
+
+            try {
+                // Spoo.me API V1 কল (কোনো API Key লাগে না)
+                const apiUrl = `https://spoo.me/api/v1/shorten`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        long_url: original
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const shortUrl = data.short_url;
+
+                if (!shortUrl) {
+                    throw new Error('API response did not contain a short URL.');
+                }
+
+                // নতুন এন্ট্রি যোগ
+                historyList.unshift({
+                    original: original,
+                    shortUrl: shortUrl,
+                    timestamp: Date.now()
+                });
+                saveHistory();
+                renderHistory();
+                longUrlInput.value = '';
+                alert('✅ Success! Short link created. Copy from the list below.');
+            } catch (err) {
+                console.error(err);
+                alert(`❌ Failed to short. (${err.message})\n\nMake sure the link is correct and the network is fine.`);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function clearAllHistory() {
+            if (confirm('Delete all short link history? (This will only delete your browser data, previous short links will no longer work.)')) {
+                historyList = [];
+                saveHistory();
+                renderHistory();
+                alert('The history has been completely deleted.');
+            }
+        }
+
+        shortenBtn.addEventListener('click', shortenUrl);
+        clearAllBtn.addEventListener('click', clearAllHistory);
+        loadHistory();
+
+        // এন্টার কী চাপলেও শর্ট হবে
+        longUrlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') shortenUrl();
+        });
+    })();
+</script>
 </body>
 </html>
