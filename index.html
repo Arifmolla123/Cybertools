@@ -334,7 +334,7 @@
 
      // Share Feature - Custom social share dialog
 function shareApp() {
-    var downloadLink = "https://cyber24.netlify.app/share-app.html";
+    var downloadLink = "cybertools12.netlify.app/share-app.html";
     var shareText = "Download Cyber Tools, this tool has all in all hacking tools.:";
     
     // কাস্টম শেয়ার ডায়ালগ তৈরি
@@ -351,7 +351,7 @@ function shareApp() {
     
     modal.innerHTML = `
         <div style="background: #1a1a1a; border-radius: 25px; max-width: 320px; width: 100%; padding: 20px; text-align: center; border: 1px solid #00ff41;">
-            <h3 style="color: #00ff41; margin-bottom: 15px;"><i class="fas fa-share-alt"></i> Share the app. </h3>
+            <h3 style="color: #00ff41; margin-bottom: 15px;"><i class="fas fa-share-alt"></i> Share the app</h3>
             <div style="display: flex; justify-content: space-around; margin: 20px 0;">
                 <a href="https://wa.me/?text=${encodeURIComponent(shareText + ' ' + downloadLink)}" target="_blank" style="background: #25D366; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; text-decoration: none;"><i class="fab fa-whatsapp"></i></a>
                 <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(downloadLink)}" target="_blank" style="background: #1877F2; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; text-decoration: none;"><i class="fab fa-facebook-f"></i></a>
@@ -359,9 +359,9 @@ function shareApp() {
             </div>
             <div style="margin: 15px 0;">
                 <input type="text" value="${downloadLink}" id="copyLinkInput" readonly style="width: 100%; padding: 8px; background: #000; border: 1px solid #444; border-radius: 8px; color: #fff; text-align: center;">
-                <button onclick="navigator.clipboard.writeText('${downloadLink}'); alert('লিংক কপি হয়েছে!');" style="margin-top: 8px; background: #444; border: none; padding: 6px 12px; border-radius: 20px; color: #fff; cursor: pointer;"><i class="fas fa-copy"></i> কপি লিংক</button>
+                <button onclick="navigator.clipboard.writeText('${downloadLink}'); alert('Link copied!');" style="margin-top: 8px; background: #444; border: none; padding: 6px 12px; border-radius: 20px; color: #fff; cursor: pointer;"><i class="fas fa-copy"></i> Copy link</button>
             </div>
-            <button onclick="document.getElementById('shareModal').remove()" style="background: none; border: none; color: #aaa; margin-top: 10px; cursor: pointer;">বন্ধ করুন</button>
+            <button onclick="document.getElementById('shareModal').remove()" style="background: none; border: none; color: #aaa; margin-top: 10px; cursor: pointer;">Close</button>
         </div>
     `;
     document.body.appendChild(modal);
