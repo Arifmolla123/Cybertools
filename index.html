@@ -96,6 +96,13 @@
         .nav-btn span { font-size: 0.7rem; }
     </style>
 </head>
+<script>
+  // সার্ভিস ওয়ার্কার রেজিস্টার করান
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+      .then(() => console.log('✅ Service Worker Registered'));
+  }
+</script>
 <body>
 
     <div class="overlay" id="overlay"></div>
