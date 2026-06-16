@@ -97,11 +97,36 @@
     </style>
 </head>
 <script>
+// ফুলস্ক্রিন ফোর্স করা
+function goFullScreen() {
+    let el = document.documentElement;
+    if (el.requestFullscreen) {
+        el.requestFullscreen().catch(() => {});
+    } else if (el.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen();
+    } else if (el.msRequestFullscreen) {
+        el.msRequestFullscreen();
+    }
+}
+
+// লোড হওয়ার পর এবং ২ সেকেন্ড পর আবার চেষ্টা
+window.addEventListener('load', () => {
+    goFullScreen();
+    setTimeout(goFullScreen, 2000);
+});
+
+// ইউজার যেকোনো জায়গায় ক্লিক করলেও ফুলস্ক্রিন হবে
+document.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+        goFullScreen();
+    }
+});
   // সার্ভিস ওয়ার্কার রেজিস্টার করান
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js')
       .then(() => console.log('✅ Service Worker Registered'));
   }
+  
 </script>
 <body>
 
