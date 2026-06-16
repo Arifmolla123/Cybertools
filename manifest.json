@@ -1,0 +1,28 @@
+{
+  "name": "Cyber Tools",
+  "short_name": "CyberTools",
+  "description": "VIP ইউজারদের জন্য সাইবার নিরাপত্তা টুলস",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0f1e",
+  "theme_color": "#0f6bff",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/image/logo.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/image/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/image/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
