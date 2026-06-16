@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyber Tools - Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="manifest" href="/manifest.json">
 <style>
         /* --- Internal CSS --- */
         :root { --accent: #00ff41; --bg: #0d0d0d; --card: #1a1a1a; --text-muted: #888; }
@@ -98,18 +97,7 @@
 </head>
 <script>
 
-// ইউজার যেকোনো জায়গায় ক্লিক করলেও ফুলস্ক্রিন হবে
-document.addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-        goFullScreen();
-    }
-});
-  // সার্ভিস ওয়ার্কার রেজিস্টার করান
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-      .then(() => console.log('✅ Service Worker Registered'));
-  }
-  
+ 
 </script>
 <body>
 
