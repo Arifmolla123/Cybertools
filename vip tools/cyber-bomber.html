@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Cyber Bomber</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0d0b08;
+            font-family: 'Orbitron', sans-serif;
+            overflow: hidden;
+        }
+
+        /* ===== GOLDEN GLOW ORBS ===== */
+        .bg-orb {
+            position: fixed;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.12), transparent 70%);
+            top: -120px;
+            right: -120px;
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+            animation: floatOrb 9s ease-in-out infinite alternate;
+        }
+
+        .bg-orb2 {
+            position: fixed;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(255, 200, 50, 0.08), transparent 70%);
+            bottom: -100px;
+            left: -100px;
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+            animation: floatOrb 11s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 40px) scale(1.25); }
+        }
+
+        /* ===== MAIN CARD – GOLDEN BORDER ===== */
+        .card {
+            position: relative;
+            z-index: 10;
+            width: 92%;
+            max-width: 520px;
+            padding: 48px 36px;
+            background: rgba(13, 11, 8, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 215, 0, 0.15) inset, 0 0 60px rgba(255, 215, 0, 0.05);
+            text-align: center;
+            transition: box-shadow 0.4s ease, border-color 0.4s;
+        }
+
+        .card:hover {
+            box-shadow: 0 30px 80px rgba(255, 215, 0, 0.12), 0 0 0 2px rgba(255, 215, 0, 0.3) inset, 0 0 100px rgba(255, 215, 0, 0.08);
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        /* ===== TITLE – GOLDEN ===== */
+        .title {
+            font-weight: 900;
+            font-size: clamp(2.2rem, 10vw, 3.6rem);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5), 0 0 80px rgba(255, 215, 0, 0.2);
+            margin-bottom: 6px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .title::after {
+            content: 'CYBER BOMBER';
+            position: absolute;
+            left: 2px;
+            top: -1px;
+            color: #ffb800;
+            opacity: 0.3;
+            z-index: -1;
+            animation: glitchMove 2.8s infinite alternate;
+        }
+
+        @keyframes glitchMove {
+            0% { transform: translate(-2px, 1px); }
+            100% { transform: translate(3px, -2px); }
+        }
+
+        .subtitle {
+            font-weight: 500;
+            font-size: 0.75rem;
+            letter-spacing: 8px;
+            color: rgba(255, 215, 0, 0.25);
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.08);
+            padding-bottom: 14px;
+        }
+
+        .subtitle span {
+            color: #ffd700;
+            opacity: 0.5;
+        }
+
+        /* ===== BUTTON GROUP ===== */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        /* ===== BUTTON – GOLDEN THEME ===== */
+        .btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 18px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 18px;
+            background: rgba(255, 215, 0, 0.03);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 18px;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .led {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffd700;
+            box-shadow: 0 0 18px #ffd700;
+            animation: pulseLed 1.6s infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes pulseLed {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.25; transform: scale(0.7); }
+        }
+
+        .btn-server1 {
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            color: #ffd700;
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.15);
+        }
+        .btn-server1 .led {
+            background: #ffd700;
+            box-shadow: 0 0 22px #ffd700;
+        }
+        .btn-server1:hover {
+            background: #ffd700;
+            color: #0d0b08;
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.5);
+            transform: translateY(-3px) scale(1.02);
+            border-color: #ffd700;
+        }
+        .btn-server1:hover .led {
+            background: #0d0b08;
+            box-shadow: 0 0 30px #0d0b08;
+        }
+
+        .btn-server2 {
+            border: 1px solid rgba(255, 180, 0, 0.25);
+            color: #ffb800;
+            text-shadow: 0 0 12px rgba(255, 180, 0, 0.15);
+        }
+        .btn-server2 .led {
+            background: #ffb800;
+            box-shadow: 0 0 22px #ffb800;
+        }
+        .btn-server2:hover {
+            background: #ffb800;
+            color: #0d0b08;
+            box-shadow: 0 0 60px rgba(255, 180, 0, 0.5);
+            transform: translateY(-3px) scale(1.02);
+            border-color: #ffb800;
+        }
+        .btn-server2:hover .led {
+            background: #0d0b08;
+            box-shadow: 0 0 30px #0d0b08;
+        }
+
+        .btn:active {
+            transform: scale(0.94) !important;
+            transition-duration: 0.06s;
+        }
+
+        /* ===== STATUS ===== */
+        .status {
+            margin-top: 36px;
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            color: rgba(255, 215, 0, 0.15);
+            border-top: 1px solid rgba(255, 215, 0, 0.06);
+            padding-top: 18px;
+        }
+
+        .status span {
+            color: rgba(255, 215, 0, 0.3);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .card {
+                padding: 32px 18px;
+            }
+            .btn {
+                font-size: 0.95rem;
+                padding: 14px 16px;
+            }
+            .led {
+                width: 10px;
+                height: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-orb"></div>
+    <div class="bg-orb2"></div>
+
+    <div class="card">
+
+        <h1 class="title">CYBER BOMBER</h1>
+        <div class="subtitle"><span>✦</span> DEVELOPER  ARIF<span>✦</span></div>
+
+        <div class="btn-group">
+
+            <!-- Server 1 – Instant redirect -->
+            <button class="btn btn-server1" onclick="window.location.href='https://messege-3tdd.onrender.com'">
+                <span class="led"></span>
+                Server 1
+                <span style="font-size:1.6rem; opacity:0.5;">➜</span>
+            </button>
+
+            <!-- Server 2 – Instant redirect -->
+            <button class="btn btn-server2" onclick="window.location.href='https://hard-bomber.onrender.com/'">
+                <span class="led"></span>
+                Server 2
+                <span style="font-size:1.6rem; opacity:0.5;">➜</span>
+            </button>
+
+        </div>
+
+        <div class="status">
+            <span>⏣</span> system ready · encrypted link
+        </div>
+
+    </div>
+
+</body>
+</html>
