@@ -27,10 +27,31 @@
         .cat-scroll { display: flex; gap: 15px; overflow-x: auto; padding: 0 20px 15px; }
         .cat-scroll::-webkit-scrollbar { display: none; }
         
-        /* Category Links and Box */
-        .cat-link { text-decoration: none; color: inherit; display: inline-block; }
-        .cat-box { min-width: 90px; background: var(--card); padding: 15px; border-radius: 15px; text-align: center; cursor: pointer; }
-        .cat-box i { color: var(--accent); font-size: 1.5rem; margin-bottom: 8px; display: block; }
+   /* Category Links and Box */
+.cat-link { text-decoration: none; color: inherit; display: inline-block; }
+
+.cat-box { 
+    min-width: 90px; 
+    background: var(--card); 
+    padding: 15px; 
+    border-radius: 15px; 
+    text-align: center; 
+    cursor: pointer; 
+    
+    /* ⬇️ ক্যাটাগরির বর্ডার ও হালকা গ্লো ⬇️ */
+    border: 1px solid rgba(0, 229, 255, 0.25); /* সুন্দর সায়ান/ব্লু সাইবার বর্ডার */
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.1);  /* হালকা ব্যাকগ্রাউন্ড গ্লো */
+    transition: all 0.3s ease-in-out;           /* অ্যানিমেশন স্মুথ করার জন্য */
+}
+
+/* 📱 ক্যাটাগরিতে আঙুল দিয়ে টাচ (Click/Touch) করলে যা ঘটবে */
+.cat-box:hover, .cat-box:active {
+    border-color: #00e5ff;                       /* টাচ করলে বর্ডার পুরো উজ্জ্বল নীল হবে */
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.45); /* গ্লোয়িং লাইট আরও বাড়বে */
+    transform: translateY(-3px);                 /* কার্ডটি হালকা ওপরে উঠবে */
+}
+
+.cat-box i { color: var(--accent); font-size: 1.5rem; margin-bottom: 8px; display: block; }
 
         /* --- ⚡ আপডেটেড গ্রিড টুল-লিস্ট লেআউট (পাশাপাশি ২টি কার্ড) ⚡ --- */
         .tool-list { 
@@ -40,38 +61,47 @@
             padding: 0 20px 12px; 
         }
         
-        .tool-card { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            background: var(--card); 
-            padding: 15px 10px; 
-            border-radius: 15px; 
-            cursor: pointer; 
-            border: 1px solid #222; 
-            text-decoration: none; 
-            color: white; 
-            text-align: center;
-            min-height: 125px;
-        }
-        .tool-card:hover { border-color: var(--accent); }
+   .tool-card { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    background: var(--card); 
+    padding: 15px 10px; 
+    border-radius: 15px; 
+    cursor: pointer; 
+    text-decoration: none; 
+    color: white; 
+    text-align: center;
+    min-height: 125px;
+    
+    /* ⬇️ এখানে বর্ডার এবং গ্লোয়িং ইফেক্ট বসানো হয়েছে ⬇️ */
+    border: 1px solid rgba(0, 255, 65, 0.3); /* আগের border: 1px solid #222; বদলে এই নিয়ন গ্রিন দেওয়া হলো */
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.15); /* হালকা সাইবার গ্লো */
+    transition: all 0.3s ease-in-out; /* অ্যানিমেশন স্মুথ করার জন্য */
+}
+        .tool-card:hover { 
+    /* ⬇️ মাউস নিলে বর্ডার ও গ্লো বাড়ানোর কোড ⬇️ */
+    border-color: #00ff41;                       /* হোভার করলে বর্ডার একদম উজ্জ্বল সবুজ হবে */
+    box-shadow: 0 0 25px rgba(0, 255, 65, 0.45); /* গ্লোয়িং লাইট আরও বাড়বে */
+    transform: translateY(-4px);                 /* কার্ডটি হালকা ওপরে উঠবে, দেখতে ওপি লাগবে */
+}
         
-        .tool-icon { 
-            background: #000; 
-            width: 45px; 
-            height: 45px; 
-            border-radius: 10px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: var(--accent); 
-            margin-right: 0; 
-            margin-bottom: 10px; 
-        }
-        
-        .tool-card h4 { font-size: 0.85rem; margin-bottom: 4px; word-break: break-word; }
-        .tool-card p { font-size: 0.68rem !important; color: #888; line-height: 1.2; }
+  .tool-icon { 
+    background: #000; 
+    width: 45px; 
+    height: 45px; 
+    border-radius: 10px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    color: var(--accent); 
+    margin-right: 0; 
+    margin-bottom: 10px; 
+}
+
+.tool-card h4 { font-size: 0.85rem; margin-bottom: 4px; word-break: break-word; }
+.tool-card p { font-size: 0.68rem !important; color: #888; line-height: 1.2; }
 
         /* Side Drawer */
         .drawer { position: fixed; left: -280px; width: 280px; height: 100%; background: var(--bg); transition: 0.3s; z-index: 200; padding: 25px; border-right: 1px solid #222; }
@@ -146,10 +176,10 @@
 
     <div class="section-label"><span>CATEGORIES</span></div>
     <div class="cat-scroll">
-        <a href="network.html" class="cat-link"><div class="cat-box"><i class="fas fa-wifi"></i><span>Network</span></div></a>
-        <a href="security.html" class="cat-link"><div class="cat-box"><i class="fas fa-shield-alt"></i><span>Security</span></div></a>
-        <a href="web.html" class="cat-link"><div class="cat-box"><i class="fas fa-code"></i><span>Web </span></div></a>
-        <a href="system.html" class="cat-link"><div class="cat-box"><i class="fas fa-terminal"></i><span>System</span></div></a>
+        <a href="category-tools-list/network.html" class="cat-link"><div class="cat-box"><i class="fas fa-wifi"></i><span>Network</span></div></a>
+        <a href="category-tools-list/security.html" class="cat-link"><div class="cat-box"><i class="fas fa-shield-alt"></i><span>Security</span></div></a>
+        <a href="category-tools-list/web.html" class="cat-link"><div class="cat-box"><i class="fas fa-code"></i><span>Web </span></div></a>
+        <a href="category-tools-list/system.html" class="cat-link"><div class="cat-box"><i class="fas fa-terminal"></i><span>System</span></div></a>
     </div>
 
     <div class="section-label"><span>TOOLS</span></div>
@@ -163,13 +193,13 @@
             <h4>News Generetor</h4><p>Here you can generate news with your own photos.</p>
         </a>
           <a href="tools/age.html" class="tool-card">
-            <div class="tool-icon" style="color: #ffae00;"><i class="fas fa-birthday-cake"></i></div>
+            <div class="tool-icon" style="color: #ffae00;"><i class="fas fa-calculator"></i></div>
             <h4>Age Calculator</h4>
             <p>Calculate exact age and next birthday</p>
         </a>
 
         <a href="tools/day-finder.html" class="tool-card">
-            <div class="tool-icon" style="color: #00d2ff;"><i class="fas fa-calendar-alt"></i></div>
+            <div class="tool-icon" style="color: #00d2ff;"><i class="fas fa-calendar-day"></i></div>
             <h4>Day Finder</h4>
             <p>Find which day it was on any date</p>
         </a>
