@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Network Analyzer - Cyber Hub</title>
+    <title>System Diagnostics - Cyber Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap');
         
         :root { 
             --neon-green: #00ff41; 
-            --deep-green: #00cc33; 
+            --deep-green: #00cc33; /* গাঢ় সবুজ বর্ডারের জন্য নতুন ভ্যারিয়েবল */
             --bg-dark: #030306; 
             --panel-bg: rgba(10, 16, 26, 0.85); 
             --glow-color: rgba(0, 255, 65, 0.3);
@@ -32,6 +32,7 @@
         
         .container { max-width: 500px; margin: 0 auto; }
         
+        /* হেডারে গাঢ় সবুজ বর্ডার */
         .header { 
             display: flex; 
             align-items: center; 
@@ -39,7 +40,7 @@
             background: var(--panel-bg); 
             padding: 16px 20px; 
             border-radius: 16px; 
-            border: 2px solid var(--deep-green); 
+            border: 2px solid var(--deep-green); /* বর্ডার মোটা এবং গাঢ় সবুজ করা হয়েছে */
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(0, 255, 65, 0.1);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -81,6 +82,7 @@
         
         .tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
         
+        /* কার্ডে গাঢ় সবুজ বর্ডার */
         .tool-card { 
             display: flex; 
             flex-direction: column; 
@@ -90,7 +92,7 @@
             padding: 24px 16px; 
             border-radius: 20px; 
             cursor: pointer; 
-            border: 2px solid var(--deep-green); 
+            border: 2px solid var(--deep-green); /* ডিফল্ট বর্ডার গাঢ় সবুজ এবং ২ পিক্সেল মোটা */
             text-decoration: none; 
             color: white; 
             text-align: center; 
@@ -117,6 +119,7 @@
         
         .tool-card:hover::before { transform: translateX(100%); }
         
+        /* হোভার করলে বর্ডার উজ্জ্বল নিয়ন কালার হবে */
         .tool-card:hover, .tool-card:active { 
             border-color: var(--neon-green); 
             box-shadow: 0 0 35px rgba(0, 255, 65, 0.35), inset 0 0 15px rgba(0, 255, 65, 0.15); 
@@ -177,14 +180,26 @@
     <div class="container">
         <div class="header">
             <a id="backBtn"><i class="fas fa-chevron-left"></i></a>
-            <h2>Network // <span>Network Analyzer</span></h2>
+            <h2>System // <span>System Diagnostics</span></h2>
         </div>
         
         <div class="tools-grid">
-            <a href="../tools/news- generetor.html" class="tool-card">
-                <div class="tool-icon"><i class="fas fa-newspaper"></i></div>
-                <h4>News Generator</h4>
-                <p>Fetch latest technology and global security feeds instantly.</p>
+            <a href="../tools/device-info.html" class="tool-card">
+                <div class="tool-icon"><i class="fas fa-microchip"></i></div>
+                <h4>Device Info</h4>
+                <p>Analyze kernel hardware, active OS, and browser diagnostics.</p>
+            </a>
+            
+            <a href="../tools/age.html" class="tool-card">
+                <div class="tool-icon"><i class="fas fa-calculator"></i></div>
+                <h4>Age Calculator</h4>
+                <p>Calculate deep chronometrical metrics and exact milestones.</p>
+            </a>
+            
+            <a href="../tools/day-finder.html" class="tool-card">
+                <div class="tool-icon"><i class="fas fa-calendar-day"></i></div>
+                <h4>Day Finder</h4>
+                <p>Extract exact chronological days for historical queries.</p>
             </a>
         </div>
     </div>
