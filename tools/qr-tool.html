@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Tools - QR Code Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.0.3/qrcode.min.js"></script>
+<style>
+        :root { --accent: #00ff41; --bg: #0d0d0d; --card: #1a1a1a; --text-muted: #888; --border: #222; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #000; color: #fff; overflow-x: hidden; padding-bottom: 30px; }
+
+        header { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: #000; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        header a { color: #fff; text-decoration: none; font-size: 1.2rem; }
+        header h1 { font-size: 1rem; font-weight: 600; color: var(--accent); letter-spacing: 1px; }
+
+        .container { padding: 20px; max-width: 480px; margin: 0 auto; }
+
+        .mode-switch { display: flex; gap: 10px; margin-bottom: 20px; background: var(--card); padding: 6px; border-radius: 14px; border: 1px solid var(--border); }
+        .mode-btn { flex: 1; text-align: center; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); transition: all 0.2s; }
+        .mode-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(0,255,65,0.3); }
+
+        .mode-section { display: none; }
+        .mode-section.active { display: block; }
+
+        .card { background: var(--card); border-radius: 15px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(0, 255, 65, 0.3); box-shadow: 0 0 15px rgba(0, 255, 65, 0.15); }
+        .card h3 { color: var(--accent); font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
+        .upload-zone { background: #111; border: 2px dashed #333; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s; margin-bottom: 15px; }
+        .upload-zone:hover { border-color: var(--accent); background: rgba(0, 255, 65, 0.02); }
+        .upload-zone i { color: var(--accent); font-size: 1.4rem; margin-bottom: 6px; display: block; }
+        .upload-zone span { font-size: 0.85rem; color: #ccc; font-weight: 500; }
+        .upload-zone p { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+        #imageInput { display: none; }
+
+        .divider { display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 0.75rem; font-weight: bold; margin-bottom: 15px; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #1c1c1c; }
+        .divider:not(:empty)::before { margin-right: .5em; }
+        .divider:not(:empty)::after { margin-left: .5em; }
+
+        .scanner-card { background: #111; border: 1px solid var(--border); border-radius: 15px; overflow: hidden; position: relative; }
+        #reader { width: 100% !important; border: none !important; background: #000; }
+        #reader button { background: var(--accent) !important; color: #000 !important; border: none !important; padding: 10px 20px !important; border-radius: 8px !important; font-weight: 700 !important; font-size: 0.85rem !important; cursor: pointer !important; margin: 10px 0 !important; text-transform: uppercase; }
+        #reader select { background: #222 !important; color: #fff !important; border: 1px solid #444 !important; padding: 8px !important; border-radius: 8px !important; margin: 10px 0 !important; outline: none; }
+        .scan-window-hint { text-align: center; padding: 12px; font-size: 0.8rem; color: var(--text-muted); border-top: 1px solid #1c1c1c; background: #0d0d0d; }
+
+        .result-area { background: var(--card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; display: none; animation: fadeIn 0.4s ease; margin-top: 15px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .result-title { font-size: 0.8rem; color: var(--accent); font-weight: 700; letter-spacing: 0.5px; margin-bottom: 12px; }
+        .output-box { background: #000; border: 1px solid #222; padding: 15px; border-radius: 10px; font-size: 0.9rem; color: #fff; word-break: break-all; line-height: 1.5; margin-bottom: 15px; max-height: 150px; overflow-y: auto; }
+        .btn-group { display: flex; gap: 10px; }
+        .action-btn { flex: 1; background: #222; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .action-btn.primary { background: var(--accent); color: #000; border: none; font-weight: 700; }
+        .action-btn:active { transform: scale(0.98); }
+
+        .tab-switch { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .tab-btn { flex: 1; min-width: 70px; background: #111; border: 1px solid #222; color: #888; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+        .tab-btn.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(0,255,65,0.2); }
+
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; }
+        .input-group input, .input-group textarea, .input-group select { width: 100%; background: #000; border: 1px solid #222; padding: 12px; border-radius: 10px; color: #fff; outline: none; font-size: 0.9rem; }
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--accent); }
+        .input-group textarea { resize: vertical; min-height: 80px; }
+        .field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+
+        .options-row { display: flex; gap: 10px; align-items: center; margin: 15px 0; }
+        .options-row label { font-size: 0.8rem; color: var(--text-muted); }
+        .options-row select { background: #000; border: 1px solid #222; color: #fff; padding: 8px 10px; border-radius: 8px; outline: none; width: auto; }
+
+        .btn-generate { width: 100%; background: var(--accent); color: #000; border: none; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 5px; transition: all 0.2s; }
+        .btn-generate:hover { box-shadow: 0 0 20px rgba(0,255,65,0.4); }
+
+        .result-card { text-align: center; display: none; }
+        .result-card.show { display: block; }
+        #qrcode-box { background: #fff; display: inline-block; padding: 16px; border-radius: 12px; margin: 10px 0; }
+        .result-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .result-actions button { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; font-size: 0.85rem; }
+        .result-actions button:hover { background: rgba(0,255,65,0.1); }
+
+        .hint { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+
+        .file-drop { border: 1.5px dashed #333; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; color: var(--text-muted); font-size: 0.85rem; transition: all 0.2s; }
+        .file-drop:hover { border-color: var(--accent); color: var(--accent); }
+        #imgPreviewWrap { text-align: center; margin-top: 12px; display: none; }
+        #imgPreviewWrap.show { display: block; }
+        #imgPreview { max-width: 100%; max-height: 180px; border-radius: 10px; border: 1px solid #222; }
+        .img-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; }
+        .radio-row { display: flex; gap: 15px; margin: 12px 0; font-size: 0.8rem; color: var(--text-muted); flex-wrap: wrap; }
+        .radio-row label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .api-key-box { margin-top: 10px; }
+        .api-key-box a { color: var(--accent); text-decoration: none; }
+        .status-msg { font-size: 0.75rem; margin-top: 8px; text-align: center; }
+        .status-msg.err { color: #ff4d4d; }
+        .status-msg.ok { color: var(--accent); }
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html"><i class="fas fa-arrow-left"></i></a>
+        <h1>QR CODE SCAN/GENERET</h1>
+        <div style="width: 20px;"></div>
+    </header>
+
+    <div class="container">
+
+        <div class="mode-switch">
+            <div class="mode-btn active" data-mode="scan" onclick="switchMode('scan')"><i class="fas fa-camera"></i> Scan</div>
+            <div class="mode-btn" data-mode="generate" onclick="switchMode('generate')"><i class="fas fa-qrcode"></i> Generate</div>
+        </div>
+
+<!-- ================= SCAN MODE ================= -->
+        <div class="mode-section active" id="mode-scan">
+
+            <div class="upload-zone" onclick="document.getElementById('imageInput').click()">
+                <i class="fas fa-images"></i>
+                <span>Upload from Gallery</span>
+                <p>ডাউনলোড করা QR কোডের ছবি সিলেক্ট করুন</p>
+                <input type="file" id="imageInput" accept="image/*">
+            </div>
+
+            <div class="divider">OR USE LIVE CAMERA</div>
+
+            <div class="scanner-card">
+                <div id="reader"></div>
+                <div class="scan-window-hint">
+                    <i class="fas fa-expand"></i> কোডটি ক্যামেরার সামনে সোজা করে ধরুন
+                </div>
+            </div>
+
+            <div class="result-area" id="resultArea">
+                <div class="result-title"><i class="fas fa-square-poll-horizontal"></i> SCAN RESULT</div>
+                <div class="output-box" id="resultText">এখানে স্ক্যান করা ডাটা দেখা যাবে...</div>
+                <div class="btn-group">
+                    <button class="action-btn" onclick="copyResult()">
+                        <i class="far fa-copy" id="copyIcon"></i> Copy Text
+                    </button>
+                    <button class="action-btn primary" id="openLinkBtn" onclick="openLink()" style="display: none;">
+                        <i class="fas fa-external-link-alt"></i> Open Website
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= GENERATE MODE ================= -->
+        <div class="mode-section" id="mode-generate">
+
+            <div class="card">
+                <h3><i class="fas fa-layer-group"></i> Choose Type</h3>
+                <div class="tab-switch">
+                    <div class="tab-btn active" data-type="text" onclick="switchTab('text')">Text/URL</div>
+                    <div class="tab-btn" data-type="wifi" onclick="switchTab('wifi')">Wi-Fi</div>
+                    <div class="tab-btn" data-type="contact" onclick="switchTab('contact')">Contact</div>
+                    <div class="tab-btn" data-type="image" onclick="switchTab('image')">Image</div>
+                </div>
+
+                <!-- Text / URL Form -->
+                <div class="form-section active" id="form-text">
+                    <div class="input-group">
+                        <label>Text or URL</label>
+                        <textarea id="textInput" placeholder="https://example.com or any text"></textarea>
+                    </div>
+                </div>
+
+                <!-- Wi-Fi Form -->
+                <div class="form-section" id="form-wifi">
+                    <div class="input-group">
+                        <label>Network Name (SSID)</label>
+                        <input type="text" id="wifiSsid" placeholder="My Wi-Fi Network">
+                    </div>
+                    <div class="field-pair">
+                        <div class="input-group">
+                            <label>Password</label>
+                            <input type="text" id="wifiPass" placeholder="Password">
+                        </div>
+                        <div class="input-group">
+                            <label>Security</label>
+                            <select id="wifiSec">
+                                <option value="WPA">WPA/WPA2</option>
+                                <option value="WEP">WEP</option>
+                                <option value="nopass">None</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="form-section" id="form-contact">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" id="contactName" placeholder="Arif">
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="contactPhone" placeholder="+91 XXXXXXXXXX">
+                    </div>
+                    <div class="input-group">
+                        <label>Email (optional)</label>
+                        <input type="text" id="contactEmail" placeholder="arif@example.com">
+                    </div>
+                </div>
+                 <!-- ========== IMAGE FORM (UPDATED) ========== -->
+                <div class="form-section" id="form-image">
+                    <!-- NEW: Image URL input (no API key needed) -->
+                    <div class="input-group">
+                        <label>Image URL (direct link) <span style="color:var(--accent);">★ No API key needed</span></label>
+                        <input type="url" id="imageUrlInput" placeholder="https://example.com/photo.jpg">
+                        <p class="hint">পেস্ট করুন সরাসরি ইমেজ লিংক – এটি QR-এ এনকোড হবে এবং স্ক্যান করলে ইমেজ দেখাবে।</p>
+                    </div>
+
+                    <div class="divider">— OR Upload an image —</div>
+
+                    <div class="input-group">
+                        <label>Upload Image</label>
+                        <div class="file-drop" onclick="document.getElementById('imgFileInput').click()">
+                            <i class="fas fa-cloud-upload-alt" style="font-size:1.4rem; display:block; margin-bottom:6px;"></i>
+                            Tap to choose an image
+                        </div>
+                        <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
+                    </div>
+
+                    <div id="imgPreviewWrap">
+                        <img id="imgPreview" src="">
+                        <div class="img-meta" id="imgMeta"></div>
+                    </div>
+
+                    <!-- Only visible when an image is uploaded -->
+                    <div class="radio-row" id="uploadModeRow" style="display:none;">
+                        <label><input type="radio" name="imgMode" value="upload" checked> Upload &amp; link (requires API key)</label>
+                        <label><input type="radio" name="imgMode" value="embed"> Embed directly (tiny images only)</label>
+                    </div>
+
+                    <div class="input-group api-key-box" id="apiKeyBox" style="display:none;">
+                        <label>ImgBB API Key (free)</label>
+                        <input type="text" id="imgbbKey" placeholder="Paste your free imgbb API key">
+                        <p class="hint">Get a free key from <a href="https://api.imgbb.com/" target="_blank">api.imgbb.com</a> — only needed if you choose "Upload & link".</p>
+                    </div>
+
+                    <div class="status-msg" id="imgStatus"></div>
+                </div>
+
+                <div class="options-row">
+                    <label>Size:</label>
+                    <select id="qrSize">
+                        <option value="200">200 x 200</option>
+                        <option value="300" selected>300 x 300</option>
+                        <option value="400">400 x 400</option>
+                    </select>
+                </div>
+
+                <button class="btn-generate" onclick="generateQR()"><i class="fas fa-bolt"></i> Generate QR Code</button>
+                <div class="status-msg err" id="genError" style="display:none;"></div>
+                <p class="hint">Everything runs in your browser — nothing is sent to any server (except image uploads, sent only to imgbb).</p>
+            </div>
+
+            <div class="card result-card" id="resultCard">
+                <h3><i class="fas fa-check-circle"></i> Your QR Code</h3>
+                <div id="qrcode-box"></div>
+                <div class="result-actions">
+                    <button onclick="downloadQR()"><i class="fas fa-download"></i> Download</button>
+                    <button onclick="resetQR()"><i class="fas fa-redo"></i> New</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+    /* ============ MODE SWITCH ============ */
+    let scannerStarted = false;
+
+    function switchMode(mode) {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector(`.mode-btn[data-mode="${mode}"]`).classList.add('active');
+
+        document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(`mode-${mode}`).classList.add('active');
+
+        if (mode === 'scan' && !scannerStarted) {
+            initScanner();
+            scannerStarted = true;
+        }
+    }
+
+    /* ============ SCANNER ============ */
+    let html5QrcodeScanner;
+    let html5QrCodeObject;
+    let scannedResultData = "";
+
+    function handleScanSuccess(decodedText) {
+        scannedResultData = decodedText;
+        const resultArea = document.getElementById('resultArea');
+        const resultText = document.getElementById('resultText');
+        const openLinkBtn = document.getElementById('openLinkBtn');
+
+        resultText.innerText = decodedText;
+        resultArea.style.display = "block";
+        resultArea.scrollIntoView({ behavior: 'smooth' });
+
+        if (decodedText.startsWith('http://') || decodedText.startsWith('https://')) {
+            openLinkBtn.style.display = "flex";
+        } else {
+            openLinkBtn.style.display = "none";
+        }
+    }
+
+    function initScanner() {
+        html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 15, qrbox: { width: 230, height: 230 }, rememberLastUsedCamera: true }, false
+        );
+        html5QrcodeScanner.render(handleScanSuccess, (err) => {});
+        html5QrCodeObject = new Html5Qrcode("reader");
+    }
+
+    document.getElementById('imageInput').addEventListener('change', e => {
+        if (e.target.files.length == 0) return;
+        const imageFile = e.target.files[0];
+        html5QrCodeObject.scanFile(imageFile, true)
+            .then(decodedText => handleScanSuccess(decodedText))
+            .catch(err => {
+                alert("❌ এই ছবিতে কোনো সঠিক QR বা বারকোড পাওয়া যায়নি! দয়া করে পরিষ্কার ছবি আপলোড করুন।");
+            });
+    });
+
+    function copyResult() {
+        if (!scannedResultData) return;
+        const copyIcon = document.getElementById('copyIcon');
+        navigator.clipboard.writeText(scannedResultData).then(() => {
+            copyIcon.className = "fas fa-check";
+            copyIcon.style.color = "#00ff41";
+            alert("ডাটা ক্লিপবোর্ডে কপি করা হয়েছে!");
+            setTimeout(() => {
+                copyIcon.className = "far fa-copy";
+                copyIcon.style.color = "#fff";
+            }, 2000);
+        }).catch(err => {
+            alert("কপি করা যায়নি!");
+        });
+    }
+
+    function openLink() {
+        if (scannedResultData.startsWith('http://') || scannedResultData.startsWith('https://')) {
+            window.open(scannedResultData, '_blank');
+        }
+    }
+
+    /* ============ GENERATOR ============ */
+    let selectedImageFile = null;
+    let selectedImageDataUrl = null;
+
+    // Show/hide API key box and radio row based on file selection
+    document.getElementById('imgFileInput').addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            document.getElementById('uploadModeRow').style.display = 'flex';
+            // Default to upload mode
+            document.querySelector('input[name="imgMode"][value="upload"]').checked = true;
+            document.getElementById('apiKeyBox').style.display = 'block';
+        } else {
+            document.getElementById('uploadModeRow').style.display = 'none';
+            document.getElementById('apiKeyBox').style.display = 'none';
+        }
+    });
+
+    // Radio change: show/hide API key box
+    document.querySelectorAll('input[name="imgMode"]').forEach(r => {
+        r.addEventListener('change', () => {
+            const mode = document.querySelector('input[name="imgMode"]:checked').value;
+            document.getElementById('apiKeyBox').style.display = (mode === 'upload') ? 'block' : 'none';
+        });
+    });
+
+    function handleImageSelect(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        selectedImageFile = file;
+
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            selectedImageDataUrl = ev.target.result;
+            document.getElementById('imgPreview').src = selectedImageDataUrl;
+            document.getElementById('imgPreviewWrap').classList.add('show');
+            const kb = (file.size / 1024).toFixed(1);
+            document.getElementById('imgMeta').innerText = `${file.name} — ${kb} KB`;
+            document.getElementById('imgStatus').innerText = '';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function switchTab(type) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector(`.tab-btn[data-type="${type}"]`).classList.add('active');
+
+        document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+        document.getElementById(`form-${type}`).classList.add('active');
+
+        document.getElementById('resultCard').classList.remove('show');
+    }
+
+    function getActiveType() {
+        return document.querySelector('#mode-generate .tab-btn.active').dataset.type;
+    }
+
+    function showGenError(msg) {
+        const genErr = document.getElementById('genError');
+        genErr.style.display = 'block';
+        genErr.innerText = msg;
+    }
+
+    function buildQRData() {
+        const type = getActiveType();
+
+        if (type === 'text') {
+            const val = document.getElementById('textInput').value.trim();
+            if (!val) { showGenError('অনুগ্রহ করে টেক্সট বা URL লিখুন।'); return null; }
+            return val;
+        }
+
+        if (type === 'wifi') {
+            const ssid = document.getElementById('wifiSsid').value.trim();
+            const pass = document.getElementById('wifiPass').value.trim();
+            const sec = document.getElementById('wifiSec').value;
+            if (!ssid) { showGenError('অনুগ্রহ করে Wi-Fi নাম দিন।'); return null; }
+            return `WIFI:T:${sec};S:${ssid};P:${pass};;`;
+        }
+
+        if (type === 'contact') {
+            const name = document.getElementById('contactName').value.trim();
+            const phone = document.getElementById('contactPhone').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            if (!name || !phone) { showGenError('অনুগ্রহ করে নাম এবং ফোন নাম্বার দিন।'); return null; }
+            return `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}\nEND:VCARD`;
+        }
+
+        return null;
+    }
+
+    function makeQrObject(data, errorLevel) {
+        errorLevel = errorLevel || 'M';
+        let lastErr = null;
+        for (let type = 1; type <= 40; type++) {
+            try {
+                const qr = qrcode(type, errorLevel);
+                qr.addData(data);
+                qr.make();
+                return qr;
+            } catch (e) {
+                lastErr = e;
+            }
+        }
+        throw lastErr || new Error('Could not generate QR code for this data.');
+    }
+
+    // ========== RENDER QR (manual canvas) ==========
+    function renderQR(data, size) {
+        const genErr = document.getElementById('genError');
+        genErr.style.display = 'none';
+        genErr.innerText = '';
+
+        try {
+            const qr = makeQrObject(data, 'M');
+            const moduleCount = qr.getModuleCount();
+            const cellSize = Math.max(1, Math.floor(size / moduleCount));
+            const margin = 4;
+
+            const canvas = document.createElement('canvas');
+            const totalSize = moduleCount * cellSize + margin * 2;
+            canvas.width = totalSize;
+            canvas.height = totalSize;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, totalSize, totalSize);
+
+            for (let row = 0; row < moduleCount; row++) {
+                for (let col = 0; col < moduleCount; col++) {
+                    const isDark = qr.isDark(row, col);
+                    ctx.fillStyle = isDark ? '#000000' : '#ffffff';
+                    ctx.fillRect(
+                        margin + col * cellSize,
+                        margin + row * cellSize,
+                        cellSize,
+                        cellSize
+                    );
+                }
+            }
+
+            const dataUrl = canvas.toDataURL('image/png');
+
+            const box = document.getElementById('qrcode-box');
+            box.innerHTML = '';
+            const img = document.createElement('img');
+            img.id = 'qrImg';
+            img.src = dataUrl;
+            img.alt = 'QR Code';
+            img.style.display = 'block';
+            img.style.width = totalSize + 'px';
+            img.style.height = totalSize + 'px';
+            box.appendChild(img);
+
+            document.getElementById('resultCard').classList.add('show');
+            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (e) {
+            genErr.style.display = 'block';
+            genErr.innerText = 'QR তৈরি করা যায়নি: ' + e.message;
+        }
+    }
+
+    async function generateQR() {
+        const genErr = document.getElementById('genError');
+        genErr.style.display = 'none';
+        genErr.innerText = '';
+
+        try {
+            const type = getActiveType();
+            const size = parseInt(document.getElementById('qrSize').value, 10);
+
+            if (type === 'image') {
+                await generateImageQR(size);
+                return;
+            }
+
+            const data = buildQRData();
+            if (!data) return;
+            renderQR(data, size);
+        } catch (e) {
+            showGenError('একটি সমস্যা হয়েছে: ' + e.message);
+        }
+    }
+
+    async function generateImageQR(size) {
+        const statusEl = document.getElementById('imgStatus');
+        statusEl.className = 'status-msg';
+        statusEl.innerText = '';
+
+        // ----- PRIORITY: If Image URL is provided, use it directly (no API key) -----
+        const imageUrl = document.getElementById('imageUrlInput').value.trim();
+        if (imageUrl) {
+            // Simple URL validation
+            try {
+                new URL(imageUrl);
+            } catch (_) {
+                statusEl.className = 'status-msg err';
+                statusEl.innerText = '❌ Please enter a valid image URL (e.g., https://...).';
+                return;
+            }
+            renderQR(imageUrl, size);
+            return;
+        }
+
+        // ----- If no URL, check for uploaded file -----
+        if (!selectedImageFile) {
+            statusEl.className = 'status-msg err';
+            statusEl.innerText = '⚠️ Please either provide an Image URL or upload an image.';
+            return;
+        }
+
+        const mode = document.querySelector('input[name="imgMode"]:checked').value;
+
+        if (mode === 'embed') {
+            const approxBytes = Math.ceil((selectedImageDataUrl.length * 3) / 4);
+            if (approxBytes > 1800) {
+                statusEl.className = 'status-msg err';
+                statusEl.innerText = `❌ Image is too large to embed directly (${(approxBytes/1024).toFixed(1)} KB). Use URL input or "Upload & link".`;
+                return;
+            }
+            renderQR(selectedImageDataUrl, size);
+            return;
+        }
+
+        // ----- Upload & link (requires API key) -----
+        const apiKey = document.getElementById('imgbbKey').value.trim();
+        if (!apiKey) {
+            statusEl.className = 'status-msg err';
+            statusEl.innerText = '⚠️ Please enter your free imgbb API key (or use Image URL input instead).';
+            return;
+        }
+
+        statusEl.className = 'status-msg';
+        statusEl.innerHTML = '<i class="fas fa-spinner spin"></i> Uploading image... (please wait)';
+
+        try {
+            const base64Data = selectedImageDataUrl.split(',')[1];
+            const formData = new FormData();
+            formData.append('image', base64Data);
+
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(apiKey)}`, {
+                method: 'POST',
+                body: formData
+            });
+            const json = await res.json();
+
+            if (!json.success) {
+                throw new Error(json.error?.message || 'Upload failed');
+            }
+
+            const uploadedUrl = json.data.url;
+            statusEl.className = 'status-msg ok';
+            statusEl.innerText = '✅ Image uploaded! QR code now points to your image URL.';
+            renderQR(uploadedUrl, size);
+        } catch (err) {
+            statusEl.className = 'status-msg err';
+            statusEl.innerText = '❌ Upload failed: ' + err.message + '. Please check API key or use Image URL input.';
+        }
+    }
+
+    function downloadQR() {
+        const img = document.getElementById('qrImg');
+        if (!img || !img.src) {
+            alert('QR code not ready yet.');
+            return;
+        }
+        const link = document.createElement('a');
+        link.download = 'qrcode-cybertools.png';
+        link.href = img.src;
+        link.click();
+    }
+
+    function resetQR() {
+        document.getElementById('resultCard').classList.remove('show');
+        document.getElementById('qrcode-box').innerHTML = '';
+        document.getElementById('textInput').value = '';
+        document.getElementById('wifiSsid').value = '';
+        document.getElementById('wifiPass').value = '';
+        document.getElementById('contactName').value = '';
+        document.getElementById('contactPhone').value = '';
+        document.getElementById('contactEmail').value = '';
+        document.getElementById('imageUrlInput').value = '';
+
+        selectedImageFile = null;
+        selectedImageDataUrl = null;
+        document.getElementById('imgFileInput').value = '';
+        document.getElementById('imgPreviewWrap').classList.remove('show');
+        document.getElementById('imgMeta').innerText = '';
+        document.getElementById('imgStatus').innerText = '';
+        document.getElementById('uploadModeRow').style.display = 'none';
+        document.getElementById('apiKeyBox').style.display = 'none';
+    }
+
+    /* ============ INIT ============ */
+    window.addEventListener('DOMContentLoaded', () => {
+        initScanner();
+        scannerStarted = true;
+    });
+</script>
+
+</body>
+</html>
