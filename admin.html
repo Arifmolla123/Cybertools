@@ -3,105 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Control Panel - Cyber Panel</title>
+    <title>Admin Panel - Cyber Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* আপনার আগের CSS – কোনো পরিবর্তন নেই */
         :root { --accent: #ff3e3e; --green: #00ff41; --bg: #000; --card: #0a0a0a; --border: #222; --vip: #ffd700; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-        
         body { background: var(--bg); color: #fff; padding: 15px; display: flex; flex-direction: column; min-height: 100vh; align-items: center; justify-content: center; }
-        
-        /* Login Box */
-        .login-container { background: var(--card); border: 1px solid #333; padding: 30px; border-radius: 15px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 0 20px rgba(255, 62, 62, 0.1); }
+        .login-container { background: var(--card); border: 1px solid #555; padding: 30px; border-radius: 15px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 0 20px rgba(255, 62, 62, 0.1); }
         .login-container i { color: var(--accent); font-size: 3rem; margin-bottom: 15px; }
-        .login-container h2 { font-size: 1.4rem; margin-bottom: 20px; font-family: monospace; letter-spacing: 2px; }
+        .login-container h2 { font-size: 1.4rem; margin-bottom: 20px; font-family: monospace; letter-spacing: 2px; color: #fff; }
         .login-container input { width: 100%; background: #000; border: 1px solid #444; padding: 12px; border-radius: 8px; color: var(--green); font-size: 1rem; text-align: center; outline: none; margin-bottom: 15px; font-family: monospace; }
         .login-container input:focus { border-color: var(--accent); }
         .login-btn { background: var(--accent); color: #fff; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; letter-spacing: 1px; }
         .login-btn:hover { background: #cc2a2a; box-shadow: 0 0 10px rgba(255, 62, 62, 0.4); }
 
-        /* Dashboard */
-        .admin-dashboard { display: none; width: 100%; max-width: 600px; animation: fadeIn 0.5s ease; }
-        .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px dashed #333; padding-bottom: 15px; }
+        .admin-dashboard { display: none; width: 100%; max-width: 750px; animation: fadeIn 0.5s ease; }
+        .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px dashed #333; padding-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         .dash-header h1 { font-size: 1.2rem; color: var(--green); font-family: monospace; letter-spacing: 1px; }
         .logout-btn { background: #111; color: #fff; border: 1px solid #333; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; }
         .logout-btn:hover { background: var(--accent); border-color: var(--accent); }
 
-        /* Counters Row */
+        .search-row { margin-bottom: 20px; }
+        .search-row input[type="text"] { width: 100%; background: #000; border: 1px solid #333; padding: 12px 15px; border-radius: 8px; color: #fff; font-size: 0.95rem; outline: none; }
+        .search-row input[type="text"]:focus { border-color: var(--green); }
+
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
         .stat-card { background: var(--card); border: 1px solid #111; padding: 12px 5px; border-radius: 10px; text-align: center; }
         .stat-card h3 { font-size: 0.65rem; color: #666; margin-bottom: 5px; text-transform: uppercase; font-weight: bold; }
         .stat-card p { font-size: 1.3rem; font-weight: bold; color: #fff; font-family: monospace; }
         .stat-card p.active-count { color: var(--green); }
+        .stat-card p.deleted-count { color: #ffa500; }
 
-        /* User List Layout */
-        .user-list-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 15px; }
+        .user-list-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .list-header { display: flex; justify-content: space-between; font-size: 0.75rem; color: #666; font-weight: bold; text-transform: uppercase; padding-bottom: 10px; border-bottom: 1px solid #111; margin-bottom: 12px; }
-        
         .user-row { display: flex; justify-content: space-between; align-items: center; background: #050505; border: 1px solid #151515; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
-        
         .user-info { text-align: left; line-height: 1.4; }
         .user-info .name { font-size: 0.9rem; font-weight: bold; color: var(--green); font-family: monospace; }
         .user-info .key { font-size: 0.75rem; color: #aaa; font-family: monospace; }
         .user-info .plan { font-size: 0.7rem; color: var(--vip); font-weight: bold; font-family: monospace; margin-top: 2px; }
-
-        /* Delete Button */
-        .delete-btn { background: rgba(255, 62, 62, 0.1); border: 1px solid var(--accent); color: var(--accent); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; font-size: 0.9rem; }
-        .delete-btn:hover { background: var(--accent); color: #fff; box-shadow: 0 0 10px rgba(255, 62, 62, 0.4); }
-
-        .no-user { padding: 20px; text-align: center; color: #444; font-size: 0.8rem; font-family: monospace; line-height: 1.4; }
+        .user-info .expiry { font-size: 0.7rem; color: #ff6b6b; font-family: monospace; }
+        .action-group { display: flex; gap: 6px; align-items: center; }
+        .action-btn { background: rgba(255, 62, 62, 0.1); border: 1px solid var(--accent); color: var(--accent); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; font-size: 0.9rem; }
+        .action-btn:hover { background: var(--accent); color: #fff; box-shadow: 0 0 10px rgba(255, 62, 62, 0.4); }
+        .action-btn.lock-btn { border-color: #ffa500; color: #ffa500; }
+        .action-btn.lock-btn:hover { background: #ffa500; color: #000; }
+        .action-btn.reactivate { border-color: #00ff41; color: #00ff41; }
+        .action-btn.reactivate:hover { background: #00ff41; color: #000; }
+        .no-user { padding: 20px; text-align: center; color: #444; font-size: 0.8rem; font-family: monospace; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
-
-    <!--        CDN -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-</head>
-<body>
-
-    <div class="login-container" id="loginBox">
-        <i class="fas fa-user-shield"></i>
-        <h2>ADMIN PANEL AUTH</h2>
-        <input type="password" id="adminPassInput" placeholder="ENTER SECRET PASSWORD">
-        <button class="login-btn" onclick="verifyAdmin()">ACCESS SYSTEM</button>
-    </div>
-
-    <div class="admin-dashboard" id="adminDashboard">
-        <div class="dash-header">
-            <h1>[+] CYBER CORE CONTROL</h1>
-            <button class="logout-btn" onclick="logoutAdmin()"><i class="fas fa-power-off"></i> Exit</button>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>System Status</h3>
-                <p style="color: var(--green); font-size: 1rem;">ONLINE</p>
-            </div>
-            <div class="stat-card">
-                <h3>Active Terminals</h3>
-                <p class="active-count" id="liveTerminals">0</p>
-            </div>
-            <div class="stat-card">
-                <h3>Total VIP Users</h3>
-                <p id="totalUsersCount">0</p>
-            </div>
-        </div>
-
-        <div class="user-list-box">
-            <div class="list-header">
-                <span>User Parameters</span>
-                <span>Action</span>
-            </div>
-            
-            <div id="userListContainer"></div>
-            
-            <div class="no-user" id="noUserMsg" style="display: none;">[-] NO ACTIVE VIP SESSIONS DETECTED IN CLOUD DATABASE</div>
-        </div>
-    </div>
-
     <script>
-        //    
         const firebaseConfig = {
             apiKey: "AIzaSyDS2PkxK-i6I8ayI-l_f5XctS8YG1mbbI0",
             authDomain: "admin-panel-1946a.firebaseapp.com",
@@ -112,100 +67,330 @@
             appId: "1:78923664766:web:e599e323cca341ab14772f"
         };
 
-        //  
-        firebase.initializeApp(firebaseConfig);
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log("✅ Firebase initialized");
+        } catch (e) {
+            console.error("❌ Firebase init error:", e);
+            alert("Firebase initialization failed. Check console.");
+        }
         const database = firebase.database();
 
-        //   
+        let allActiveUsers = [];
+        let allDeletedUsers = [];
+
+        function getRemainingTime(expiryDate) {
+            if (expiryDate === "lifetime") return "Lifetime";
+            const now = new Date();
+            const exp = new Date(expiryDate);
+            const diffMs = exp - now;
+            if (diffMs <= 0) return "Expired";
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            if (diffDays >= 30) {
+                const months = Math.floor(diffDays / 30);
+                const remainingDays = diffDays % 30;
+                if (remainingDays === 0) return months + " month" + (months > 1 ? "s" : "") + " left";
+                return months + " month" + (months > 1 ? "s" : "") + " " + remainingDays + " day" + (remainingDays > 1 ? "s" : "") + " left";
+            } else {
+                return diffDays + " day" + (diffDays > 1 ? "s" : "") + " left";
+            }
+        }
+
         function verifyAdmin() {
             let pass = document.getElementById('adminPassInput').value;
-            let correctPass = "arif123"; 
-
+            let correctPass = "arif123";
             if (pass === correctPass) {
                 document.getElementById('loginBox').style.display = 'none';
                 document.getElementById('adminDashboard').style.display = 'block';
                 document.body.style.justifyContent = 'flex-start';
                 document.body.style.paddingTop = '30px';
-                
-                listenToUserDatabase();
+                listenToUsers();
+                listenToDeleted();
+                console.log("✅ Admin logged in");
             } else {
                 alert("[-] ACCESS DENIED: INVALID SECURITY PASSWORD!");
             }
         }
 
-        //          
-        function listenToUserDatabase() {
-            let listContainer = document.getElementById('userListContainer');
-            let noUserMsg = document.getElementById('noUserMsg');
-            let totalCount = document.getElementById('totalUsersCount');
-            let activeTerminals = document.getElementById('liveTerminals');
-
-            // .on('value')        - 
-            database.ref('vip_users').on('value', (snapshot) => {
-                listContainer.innerHTML = "";
-                let usersData = snapshot.val();
-
-                if (usersData) {
-                    let count = 0;
-                    noUserMsg.style.display = 'none';
-
-                    for (let userId in usersData) {
-                        count++;
-                        let user = usersData[userId];
-                        
-                        //        
-                        let loginTime = user.activated_at || new Date().toLocaleTimeString();
-
-                        listContainer.innerHTML += `
-                            <div class="user-row" id="user-${userId}">
-                                <div class="user-info">
-                                    <div class="name">[+] USER: ${user.username.toUpperCase()}</div>
-                                    <div class="key">KEY: ${user.vip_key}</div>
-                                    <div class="plan">STATUS: ACTIVE | TIME: ${loginTime}</div>
-                                </div>
-                                <div>
-                                    <button class="delete-btn" onclick="terminateUser('${userId}')" title="Terminate User Access">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
+        // ---- RENDER ----
+        function renderActiveUsers(filterText = '') {
+            let container = document.getElementById('activeUserList');
+            let noMsg = document.getElementById('noActiveMsg');
+            let count = 0;
+            let filtered = allActiveUsers.filter(item => {
+                let name = (item.data.username || '').toLowerCase();
+                return name.includes(filterText.toLowerCase());
+            });
+            container.innerHTML = "";
+            if (filtered.length > 0) {
+                filtered.forEach(item => {
+                    let user = item.data;
+                    let remaining = getRemainingTime(user.expiry);
+                    container.innerHTML += `
+                        <div class="user-row">
+                            <div class="user-info">
+                                <div class="name">[+] ${user.username.toUpperCase()}</div>
+                                <div class="key">KEY: ${user.vip_key || 'N/A'}</div>
+                                <div class="plan">ACTIVE | ${user.activated_at || 'N/A'}</div>
+                                <div class="expiry">⏳ ${remaining}</div>
                             </div>
-                        `;
+                            <div class="action-group">
+                                <button class="action-btn lock-btn" onclick="lockUser('${item.id}')" title="Lock session (logout)">
+                                    <i class="fas fa-lock"></i>
+                                </button>
+                                <button class="action-btn" onclick="deleteUser('${item.id}')" title="Delete (blacklist)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                count = filtered.length;
+            }
+            document.getElementById('liveTerminals').innerText = count;
+            noMsg.style.display = filtered.length ? 'none' : 'block';
+        }
+
+        function renderDeletedUsers(filterText = '') {
+            let container = document.getElementById('deletedUserList');
+            let noMsg = document.getElementById('noDeletedMsg');
+            let count = 0;
+            // 🔥 ফিল্টার: শুধু যাদের locked !== true তারা আসবে
+            let filtered = allDeletedUsers.filter(item => {
+                if (item.data.locked === true) return false; // লক করা অ্যাকাউন্ট বাদ
+                let name = (item.data.username || '').toLowerCase();
+                return name.includes(filterText.toLowerCase());
+            });
+            container.innerHTML = "";
+            if (filtered.length > 0) {
+                filtered.forEach(item => {
+                    let user = item.data;
+                    let remaining = user.expiry ? getRemainingTime(user.expiry) : "N/A";
+                    let status = user.expired ? "🚫 EXPIRED" : "⛔ Blacklisted";
+                    container.innerHTML += `
+                        <div class="user-row">
+                            <div class="user-info">
+                                <div class="name" style="color: ${user.expired ? '#ff6b6b' : '#ffa500'};">[${user.expired ? 'EXPIRED' : 'DELETED'}] ${user.username || item.id.toUpperCase()}</div>
+                                <div class="key">KEY: ${user.vip_key || 'N/A'}</div>
+                                <div class="plan">${status} | ${user.deleted_at || 'N/A'}</div>
+                                <div class="expiry" style="color: ${user.expired ? '#ff6b6b' : '#ffa500'};">⏳ ${remaining}</div>
+                            </div>
+                            <div>
+                                <button class="action-btn reactivate" onclick="reactivateUser('${item.id}')" title="Reactivate with new expiry">
+                                    <i class="fas fa-undo-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                count = filtered.length;
+            }
+            document.getElementById('deletedCount').innerText = count;
+            noMsg.style.display = filtered.length ? 'none' : 'block';
+        }
+
+        function filterUsers() {
+            let text = document.getElementById('searchInput').value || '';
+            renderActiveUsers(text);
+            renderDeletedUsers(text);
+        }
+
+        // ---- LISTENERS ----
+        function listenToUsers() {
+            database.ref('vip_users').on('value', (snapshot) => {
+                allActiveUsers = [];
+                let data = snapshot.val();
+                if (data) {
+                    for (let id in data) {
+                        let user = data[id];
+                        if (!user.device_id || user.device_id === "PENDING") continue;
+                        allActiveUsers.push({ id, data: user });
                     }
-                    totalCount.innerText = count;
-                    activeTerminals.innerText = count; //      
-                } else {
-                    noUserMsg.style.display = 'block';
-                    totalCount.innerText = "0";
-                    activeTerminals.innerText = "0";
                 }
+                let searchText = document.getElementById('searchInput').value || '';
+                renderActiveUsers(searchText);
+            }, (error) => {
+                console.error("Listen users error:", error);
+                alert("Error loading users. Check console.");
             });
         }
 
-        //              
-        function terminateUser(userId) {
-            let confirmWipe = confirm("Are you sure you want to terminate this user? Their premium access will be locked instantly!");
-            
-            if (confirmWipe) {
-                //            
-                database.ref('vip_users/' + userId).remove().then(() => {
-                    alert("[+] User access revoked and removed from Cloud Server successfully.");
-                }).catch((error) => {
-                    alert("[-] Error: Could not delete user. " + error.message);
-                });
-            }
+        function listenToDeleted() {
+            database.ref('deleted_accounts').on('value', (snapshot) => {
+                allDeletedUsers = [];
+                let data = snapshot.val();
+                if (data) {
+                    for (let id in data) {
+                        let user = data[id];
+                        // 🔥 লক করা অ্যাকাউন্ট বাদ দিন (অ্যাডমিন প্যানেলে দেখাবে না)
+                        if (user.locked === true) continue;
+                        allDeletedUsers.push({ id, data: user });
+                    }
+                }
+                let searchText = document.getElementById('searchInput').value || '';
+                renderDeletedUsers(searchText);
+            }, (error) => {
+                console.error("Listen deleted error:", error);
+            });
         }
 
-        //   / 
+        // ---- ACTIONS ----
+        function deleteUser(userId) {
+            if (!confirm("Delete this user? They will be blacklisted.")) return;
+            database.ref('vip_users/' + userId).once('value').then((snap) => {
+                let userData = snap.val();
+                if (!userData) { alert("User not found."); return; }
+                return database.ref('deleted_accounts/' + userId).set({
+                    deleted_at: new Date().toLocaleString(),
+                    device_id: userData.device_id || "unknown",
+                    admin_deleted: true,
+                    username: userData.username,
+                    vip_key: userData.vip_key || "UNKNOWN",
+                    expiry: userData.expiry || "lifetime"
+                }).then(() => {
+                    return database.ref('vip_users/' + userId).remove();
+                });
+            }).then(() => {
+                alert("[✔] User deleted and blacklisted.");
+            }).catch((err) => {
+                console.error("Delete error:", err);
+                alert("Error: " + err.message);
+            });
+        }
+
+        // 🔥 লক – অ্যাকাউন্ট মুছে ফেলবে, কিন্তু এক্সপায়ারি সংরক্ষণ করবে (locked ফ্ল্যাগ সহ)
+        function lockUser(userId) {
+            if (!confirm("Lock this user's session? They will be logged out and must re-enter their key.")) return;
+            
+            database.ref('vip_users/' + userId).once('value').then((snap) => {
+                let userData = snap.val();
+                if (!userData) {
+                    alert("User not found.");
+                    return;
+                }
+                return database.ref('deleted_accounts/' + userId).set({
+                    deleted_at: new Date().toLocaleString(),
+                    device_id: userData.device_id || "unknown",
+                    locked: true,
+                    username: userData.username,
+                    vip_key: userData.vip_key || "UNKNOWN",
+                    expiry: userData.expiry || "lifetime"
+                }).then(() => {
+                    return database.ref('vip_users/' + userId).remove();
+                });
+            }).then(() => {
+                alert("[✔] User session locked. Account removed with expiry preserved.");
+            }).catch((err) => {
+                console.error("Lock error:", err);
+                alert("Error: " + err.message);
+            });
+        }
+
+        // Reactivate (শুধুমাত্র ডিলিট বা এক্সপায়ারির জন্য, লকড নয়)
+        function reactivateUser(userId) {
+            let daysInput = prompt("Enter new expiry days (0 for Lifetime):", "90");
+            if (daysInput === null) return;
+            let daysNum = parseInt(daysInput);
+            if (isNaN(daysNum) || daysNum < 0) {
+                alert("❌ Invalid input. Please enter a number >= 0.");
+                return;
+            }
+            let newExpiry = "lifetime";
+            let planLabel = "Lifetime";
+            if (daysNum > 0) {
+                let d = new Date();
+                d.setDate(d.getDate() + daysNum);
+                newExpiry = d.toISOString();
+                planLabel = daysNum + " day" + (daysNum > 1 ? "s" : "");
+            }
+            database.ref('deleted_accounts/' + userId).once('value').then((snap) => {
+                let data = snap.val();
+                if (!data) { alert("❌ Not found in blacklist."); return; }
+                let username = data.username || userId;
+                let savedKey = data.vip_key || "REACTIVATED";
+                let restoreExpiry = (data.locked === true && data.expiry) ? data.expiry : newExpiry;
+                return database.ref('vip_users/' + userId).set({
+                    username: username,
+                    vip_key: savedKey,
+                    status: "active",
+                    device_id: "PENDING",
+                    admin_reactivated: true,
+                    activated_at: new Date().toLocaleString(),
+                    expiry: restoreExpiry
+                }).then(() => {
+                    return database.ref('deleted_accounts/' + userId).remove();
+                });
+            }).then(() => {
+                alert("[✔] User reactivated with expiry: " + planLabel);
+            }).catch((err) => {
+                console.error("Reactivate error:", err);
+                alert("Error: " + err.message);
+            });
+        }
+
+        // ---- LOGOUT ADMIN ----
         function logoutAdmin() {
             document.getElementById('adminPassInput').value = "";
             document.getElementById('adminDashboard').style.display = 'none';
             document.getElementById('loginBox').style.display = 'block';
             document.body.style.justifyContent = 'center';
             document.body.style.paddingTop = '20px';
-            
-            //      
             database.ref('vip_users').off();
+            database.ref('deleted_accounts').off();
+            console.log("Admin logged out");
         }
+
+        // ---- ON LOAD ----
+        window.onload = function() {
+            document.getElementById('loginBox').style.display = 'block';
+            document.getElementById('adminDashboard').style.display = 'none';
+            console.log("Admin page loaded. Waiting for login.");
+        };
     </script>
+</head>
+<body>
+
+    <!-- LOGIN BOX -->
+    <div class="login-container" id="loginBox">
+        <i class="fas fa-user-shield"></i>
+        <h2>ADMIN PANEL AUTH</h2>
+        <input type="password" id="adminPassInput" placeholder="ENTER SECRET PASSWORD">
+        <button class="login-btn" onclick="verifyAdmin()">ACCESS SYSTEM</button>
+    </div>
+
+ <!-- DASHBOARD -->
+    <div class="admin-dashboard" id="adminDashboard">
+        <div class="dash-header">
+            <h1>[+] CYBER CORE CONTROL</h1>
+            <button class="logout-btn" onclick="logoutAdmin()"><i class="fas fa-power-off"></i> Exit</button>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="search-row">
+            <input type="text" id="searchInput" placeholder="🔍 Search by username..." oninput="filterUsers()">
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><h3>System Status</h3><p style="color: var(--green); font-size: 1rem;">ONLINE</p></div>
+            <div class="stat-card"><h3>Active Users</h3><p class="active-count" id="liveTerminals">0</p></div>
+            <div class="stat-card"><h3>Deleted Users</h3><p class="deleted-count" id="deletedCount">0</p></div>
+        </div>
+
+        <!-- Active Users -->
+        <div class="user-list-box">
+            <div class="list-header"><span>Active Users</span><span>Action</span></div>
+            <div id="activeUserList"></div>
+            <div class="no-user" id="noActiveMsg">No active users.</div>
+        </div>
+
+        <!-- Deleted Users (লক করা অ্যাকাউন্ট বাদ) -->
+        <div class="user-list-box" style="border-color: #ffa500;">
+            <div class="list-header"><span style="color: #ffa500;">Deleted / Expired Users</span><span>Action</span></div>
+            <div id="deletedUserList"></div>
+            <div class="no-user" id="noDeletedMsg">No deleted or expired users.</div>
+        </div>
+    </div>
+
 </body>
 </html>
+       

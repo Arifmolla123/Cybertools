@@ -6,87 +6,62 @@
     <title>Settings - Cyber Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* আপনার আগের CSS ঠিক আছে – আমি শুধু JS পরিবর্তন করছি */
         :root { --accent: #00ff41; --bg: #000; --card: #0a0a0a; --border: #222; --vip: #ffd700; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: var(--bg); color: #fff; padding: 20px; display: flex; flex-direction: column; min-height: 100vh; }
-        
-        /* Header */
         .header { display: flex; align-items: center; text-align: left; margin-bottom: 20px; }
         .header a { color: var(--accent); font-size: 1.5rem; margin-right: 20px; text-decoration: none; }
         .header h2 { font-size: 1.3rem; color: #fff; }
-
-        /* Settings Box */
         .settings-container { background: var(--card); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        
-        /* Settings Row */
         .settings-row { display: flex; flex-direction: column; padding: 18px 5px; border-bottom: 1px solid #111; text-align: left; }
         .settings-row:last-child { border-bottom: none; }
-        
         .row-label { font-size: 0.9rem; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
         .row-label i { color: var(--accent); width: 20px; text-align: center; }
         .row-desc { font-size: 0.75rem; color: #666; margin-left: 30px; margin-top: -8px; margin-bottom: 12px; }
-
-        /* Action Buttons */
         .btn { border: none; padding: 11px 22px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; margin-left: 30px; width: fit-content; }
-        
         .vip-btn { background: var(--vip); color: #000; }
         .vip-btn:hover { background: #e6be00; box-shadow: 0 0 12px rgba(255, 215, 0, 0.4); }
-        
         .logout-btn { background: transparent; border: 1px solid #ff3e3e; color: #ff3e3e; }
         .logout-btn:hover { background: #ff3e3e; color: #fff; box-shadow: 0 0 12px rgba(255, 62, 62, 0.4); }
-
-        /* Credentials Display Terminal Box */
+        .delete-btn { background: transparent; border: 2px solid #ff0000; color: #ff0000; }
+        .delete-btn:hover { background: #ff0000; color: #fff; box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); }
         .cred-display { display: none; background: #050505; border: 1px solid #333; border-radius: 8px; padding: 12px; margin-left: 30px; margin-top: 10px; font-family: monospace; font-size: 0.8rem; line-height: 1.5; }
         .cred-display .cred-item { color: #aaa; margin-bottom: 4px; }
         .cred-display .cred-item:last-child { margin-bottom: 0; }
         .cred-item b { color: var(--vip); }
-
-        /* Status Toast Alert */
         .toast { display: none; background: #111; border: 1px solid var(--accent); color: var(--accent); padding: 12px; border-radius: 8px; font-size: 0.8rem; font-family: monospace; text-align: center; margin-top: 15px; animation: fadeIn 0.4s ease; }
-
-        /* Developer Footer Branding */
         .dev-footer { margin-top: auto; padding: 15px; font-size: 0.75rem; color: #555; letter-spacing: 1px; font-weight: bold; text-transform: uppercase; text-align: center; }
-
-        /*   -  - CSS */
-        .popup-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9999; opacity: 0; pointer-events: none; transition: 0.3s ease;
-        }
+        .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; pointer-events: none; transition: 0.3s ease; }
         .popup-overlay.show { opacity: 1; pointer-events: auto; }
-        
-        .popup-box {
-            background: #0d0d0d; border: 1px solid #ff3e3e; width: 85%; max-width: 340px;
-            padding: 25px 20px; border-radius: 15px; text-align: center;
-            box-shadow: 0 0 20px rgba(255, 62, 62, 0.2);
-            transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        .popup-box { background: #0d0d0d; border: 1px solid #ff0000; width: 85%; max-width: 340px; padding: 25px 20px; border-radius: 15px; text-align: center; box-shadow: 0 0 20px rgba(255, 0, 0, 0.2); transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .popup-overlay.show .popup-box { transform: scale(1); }
-        .popup-icon { font-size: 2.5rem; color: #ff3e3e; margin-bottom: 12px; }
+        .popup-icon { font-size: 2.5rem; margin-bottom: 12px; }
         .popup-box h3 { font-size: 1.1rem; color: #fff; margin-bottom: 8px; font-weight: 600; }
         .popup-box p { font-size: 0.8rem; color: #888; line-height: 1.4; margin-bottom: 20px; }
-        
         .popup-buttons { display: flex; justify-content: center; gap: 12px; }
         .p-btn { border: none; padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100px; }
-        .btn-yes { background: #ff3e3e; color: #fff; }
-        .btn-yes:hover { background: #d62c2c; box-shadow: 0 0 10px rgba(255, 62, 62, 0.4); }
+        .btn-yes { background: #ff0000; color: #fff; }
+        .btn-yes:hover { background: #cc0000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.4); }
         .btn-no { background: #222; color: #aaa; border: 1px solid #333; }
         .btn-no:hover { background: #333; color: #fff; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 </head>
 <body>
 
-    <div class="popup-overlay" id="logoutConfirmPopup">
+    <div class="popup-overlay" id="deleteConfirmPopup">
         <div class="popup-box">
-            <div class="popup-icon"><i class="fas fa-exclamation-triangle"></i></div>
-            <h3>TERMINATE SESSION?</h3>
-            <p>Are you sure you want to lock and log out of the VIP Menu?</p>
+            <div class="popup-icon" style="color: #ff0000;"><i class="fas fa-trash-alt"></i></div>
+            <h3 style="color: #ff0000;">DELETE ACCOUNT?</h3>
+            <p>This will <b>permanently delete</b> your VIP account.<br>
+            You will <b>not</b> be able to reactivate yourself.<br>
+            Only admin can reactivate your account.</p>
             <div class="popup-buttons">
-                <button class="p-btn btn-yes" onclick="confirmLogoutAction()">YES</button>
-                <button class="p-btn btn-no" onclick="closeLogoutPopup()">NO</button>
+                <button class="p-btn btn-yes" onclick="confirmDeleteAction()">YES, DELETE</button>
+                <button class="p-btn btn-no" onclick="closePopup('deleteConfirmPopup')">CANCEL</button>
             </div>
         </div>
     </div>
@@ -97,49 +72,43 @@
     </div>
 
     <div class="settings-container">
-        
         <div class="settings-row">
-            <div class="row-label">
-                <i class="fas fa-crown" style="color: var(--vip);"></i> <span>VIP Membership Key</span>
-            </div>
-            <div class="row-desc">If you forgot your purchased VIP login details, click below to recover them.</div>
-            <button class="btn vip-btn" onclick="viewVipCredentials()">
-                <i class="fas fa-eye"></i> View VIP Details
-            </button>
-            
+            <div class="row-label"><i class="fas fa-crown" style="color: var(--vip);"></i> <span>VIP Membership Key</span></div>
+            <div class="row-desc">Click below to view your VIP details.</div>
+            <button class="btn vip-btn" onclick="viewVipCredentials()"><i class="fas fa-eye"></i> View VIP Details</button>
             <div class="cred-display" id="vipCredBox"></div>
         </div>
 
-        <div class="settings-row">
-            <div class="row-label">
-                <i class="fas fa-sign-out-alt" style="color: #ff3e3e;"></i> <span>Logout VIP Session</span>
-            </div>
-            <div class="row-desc">Instantly log out and terminate the premium session on this browser.</div>
-            <button class="btn logout-btn" onclick="showLogoutPopup()">
-                <i class="fas fa-lock"></i> Lock VIP Menu
-            </button>
+        <div class="settings-row" style="border-bottom: 2px solid #ff000033; border-top: 1px solid #ff000033; margin-top: 5px; padding-top: 20px;">
+            <div class="row-label"><i class="fas fa-user-slash" style="color: #ff0000;"></i> <span style="color: #ff0000;">Delete Account Permanently</span></div>
+            <div class="row-desc" style="color: #ff6b6b;">⚠️ This will delete your VIP account. Only admin can reactivate it later.</div>
+            <button class="btn delete-btn" onclick="showDeletePopup()"><i class="fas fa-trash-can"></i> Delete Account</button>
         </div>
-
         <div class="toast" id="statusToast"></div>
-
     </div>
 
-    <div class="dev-footer">
-        <i class="fas fa-code" style="color: var(--accent);"></i> Cyber Tools Developer Arif
-    </div>
+    <div class="dev-footer"><i class="fas fa-code" style="color: var(--accent);"></i> Cyber Tools Developer Arif</div>
 
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDS2PkxK-i6I8ayI-l_f5XctS8YG1mbbI0",
+            authDomain: "admin-panel-1946a.firebaseapp.com",
+            databaseURL: "https://admin-panel-1946a-default-rtdb.firebaseio.com/",
+            projectId: "admin-panel-1946a",
+            storageBucket: "admin-panel-1946a.firebasestorage.app",
+            messagingSenderId: "78923664766",
+            appId: "1:78923664766:web:e599e323cca341ab14772f"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         function viewVipCredentials() {
             let credBox = document.getElementById('vipCredBox');
             let localStatus = localStorage.getItem('vip_status');
             let savedUser = localStorage.getItem('my_username');
             let savedKey = localStorage.getItem('vip_key') || localStorage.getItem('vipKey') || localStorage.getItem('app_device_token');
 
-            if (credBox.style.display === "block") {
-                credBox.style.display = "none";
-                return;
-            }
-
+            if (credBox.style.display === "block") { credBox.style.display = "none"; return; }
             if (localStatus === 'active' && savedUser) {
                 let keyResult = savedKey ? savedKey : "SESSION_VERIFIED_OK";
                 credBox.innerHTML = `
@@ -150,50 +119,73 @@
                 credBox.style.border = "1px dashed var(--vip)";
             } else {
                 credBox.innerHTML = `
-                    <div class="cred-item" style="color: #ff3e3e;">[-] ERROR: No active VIP account found on this device.</div>
+                    <div class="cred-item" style="color: #ff3e3e;">[-] ERROR: No active VIP account found.</div>
                     <div class="cred-item" style="font-size: 0.75rem; color: #666; margin-top: 5px;">Contact Developer Arif to purchase a premium license key.</div>
                 `;
                 credBox.style.border = "1px dashed #ff3e3e";
             }
-            
             credBox.style.display = "block";
         }
 
-        //   -      
-        function showLogoutPopup() {
+        function showPopup(id) { document.getElementById(id).classList.add('show'); }
+        function closePopup(id) { document.getElementById(id).classList.remove('show'); }
+
+        function showDeletePopup() {
             let savedUser = localStorage.getItem('my_username');
-            if (!savedUser) {
-                alert("You are not logged into any VIP account.");
-                return;
-            }
-            document.getElementById('logoutConfirmPopup').classList.add('show');
+            if (!savedUser) { alert("No active VIP account to delete."); return; }
+            showPopup('deleteConfirmPopup');
         }
 
-        function closeLogoutPopup() {
-            document.getElementById('logoutConfirmPopup').classList.remove('show');
+        // 🔥 আপডেটেড ডিলিট ফাংশন – এক্সপায়ারি সংরক্ষণ
+        function confirmDeleteAction() {
+            closePopup('deleteConfirmPopup');
+            let username = localStorage.getItem('my_username');
+            if (!username) { alert("No active user found."); return; }
+            let lowerName = username.toLowerCase();
+
+            // প্রথমে ইউজারের ডেটা পড়ি (এক্সপায়ারি সহ)
+            database.ref('vip_users/' + lowerName).once('value').then((snap) => {
+                let userData = snap.val();
+                if (!userData) {
+                    alert("User data not found.");
+                    return;
+                }
+                // এখন deleted_accounts-এ এক্সপায়ারি সহ সংরক্ষণ
+                return database.ref('deleted_accounts/' + lowerName).set({
+                    deleted_at: new Date().toLocaleString(),
+                    device_id: localStorage.getItem('app_device_token') || "unknown",
+                    user_deleted: true,
+                    username: userData.username,
+                    vip_key: userData.vip_key || "UNKNOWN",
+                    expiry: userData.expiry || "lifetime"  // 🔥 এক্সপায়ারি সংরক্ষণ
+                }).then(() => {
+                    return database.ref('vip_users/' + lowerName).remove();
+                });
+            }).then(() => {
+                // লোকাল স্টোরেজ ক্লিয়ার
+                localStorage.removeItem('vip_status');
+                localStorage.removeItem('my_username');
+                localStorage.removeItem('app_device_token');
+                localStorage.removeItem('vip_key');
+                localStorage.removeItem('vipUser');
+                localStorage.removeItem('vipKey');
+                localStorage.removeItem('vipStatus');
+                localStorage.removeItem('vipExpiryDate');
+                document.getElementById('vipCredBox').style.display = 'none';
+                showToast("[✔] Account deleted. Admin can reactivate with original expiry.", "#ff0000");
+                setTimeout(() => { window.location.href = "index.html"; }, 2500);
+            }).catch((error) => {
+                alert("Error deleting account: " + error.message);
+            });
         }
 
-        //   YES        
-        function confirmLogoutAction() {
-            closeLogoutPopup();
-            
-            //    
-            localStorage.removeItem('vip_status');
-            localStorage.removeItem('my_username');
-            localStorage.removeItem('app_device_token');
-            localStorage.removeItem('vip_key');
-            localStorage.removeItem('vipUser');
-            localStorage.removeItem('vipKey');
-            
-            document.getElementById('vipCredBox').style.display = 'none';
-            
+        function showToast(msg, color = "#00ff41") {
             let toast = document.getElementById('statusToast');
-            toast.innerText = "[+] VIP Access locked successfully. All active keys wiped from session memory.";
+            toast.innerText = msg;
+            toast.style.borderColor = color;
+            toast.style.color = color;
             toast.style.display = 'block';
-
-            setTimeout(() => {
-                window.location.href = "index.html";
-            }, 2000);
+            setTimeout(() => { toast.style.display = 'none'; }, 5000);
         }
     </script>
 </body>

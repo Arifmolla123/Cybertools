@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Key Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --accent: #00ff41; --bg: #0d0d0d; --card: #1a1a1a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #000; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .panel { background: var(--card); border: 1px solid #222; border-radius: 20px; width: 100%; max-width: 440px; padding: 30px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+        .icon-box { width: 70px; height: 70px; background: #000; border: 1px solid gold; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: gold; font-size: 2rem; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
+        h2 { color: #fff; font-size: 1.4rem; margin-bottom: 5px; letter-spacing: 1px; }
+        p { color: #666; font-size: 0.8rem; margin-bottom: 25px; }
+        .input-group { position: relative; margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; font-size: 0.75rem; color: var(--accent); font-weight: bold; margin-bottom: 8px; margin-left: 5px; }
+        .input-group input, .input-group select { width: 100%; background: #000; border: 1px solid #333; padding: 12px 15px; border-radius: 10px; color: #fff; font-size: 1rem; outline: none; transition: 0.3s; }
+        .input-group select option { background: #1a1a1a; color: #fff; }
+        .input-group input:focus, .input-group select:focus { border-color: var(--accent); }
+        .input-group .flex-row { display: flex; gap: 10px; align-items: center; }
+        .input-group .flex-row input { flex: 1; }
+        .input-group .flex-row select { flex: 1; }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+        .checkbox-group label { font-size: 0.8rem; color: #aaa; cursor: pointer; }
+        .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; accent-color: gold; cursor: pointer; }
+        .gen-btn { width: 100%; background: gold; color: #000; border: none; padding: 14px; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2); }
+        .gen-btn:hover { background: #e6c200; transform: translateY(-1px); }
+        .result-box { display: none; margin-top: 25px; padding: 15px; background: #000; border: 1px dashed gold; border-radius: 10px; text-align: left; position: relative; }
+        .result-box label { font-size: 0.7rem; color: gold; font-weight: bold; display: block; margin-bottom: 5px; }
+        .key-text { color: var(--accent); font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; font-weight: bold; word-break: break-all; padding-right: 40px; display: block; }
+        .copy-btn { position: absolute; right: 15px; top: 25px; color: #888; cursor: pointer; font-size: 1.2rem; transition: 0.3s; }
+        .copy-btn:hover { color: #fff; }
+        .name-used { font-size: 0.75rem; color: #00ff41; margin-top: 8px; background: #0a0a0a; padding: 5px; border-radius: 4px; border: 1px solid #222; }
+        .expiry-info { font-size: 0.75rem; color: #ffd700; margin-top: 5px; }
+        .status-msg { margin-top: 10px; font-size: 0.75rem; color: #888; }
+        .quick-select-hint { font-size: 0.65rem; color: #555; margin-top: 2px; text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <div class="icon-box"><i class="fas fa-key"></i></div>
+        <h2>VIP KEY MAKER</h2>
+        <p>Generate keys with custom expiry</p>
+        
+        <div class="input-group">
+            <label>USER REGISTERED NAME</label>
+            <input type="text" id="usernameInput" placeholder="Enter name (e.g., arif)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </div>
+
+        <!--    +   -->
+        <div class="input-group">
+            <label>EXPIRY DURATION</label>
+            <div class="flex-row">
+                <input type="number" id="daysInput" placeholder="Days (e.g. 30)" min="0" value="0">
+                <select id="quickSelect">
+                    <option value="1">1 Day</option>
+                    <option value="7">7 Days</option>
+                    <option value="30">30 Days</option>
+                    <option value="90">3 Months (90)</option>
+                    <option value="180">6 Months (180)</option>
+                    <option value="365">1 Year (365)</option>
+                    <option value="0" selected>Lifetime</option>
+                </select>
+            </div>
+            <div class="quick-select-hint">Select a preset or type any number of days. 0 = Lifetime</div>
+        </div>
+
+        <button class="gen-btn" onclick="generateVipKey()">Generate VIP Key</button>
+        
+        <div class="result-box" id="resultContainer">
+            <label>GENERATED VIP KEY (10 CHARS)</label>
+            <span class="key-text" id="keyDisplay"></span>
+            <i class="far fa-copy copy-btn" id="copyIcon" onclick="copyToClipboard()" title="Copy Key"></i>
+            <div class="name-used" id="nameUsed"></div>
+            <div class="expiry-info" id="expiryInfo"></div>
+            <div class="status-msg" id="statusMsg"></div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDS2PkxK-i6I8ayI-l_f5XctS8YG1mbbI0",
+            authDomain: "admin-panel-1946a.firebaseapp.com",
+            databaseURL: "https://admin-panel-1946a-default-rtdb.firebaseio.com/",
+            projectId: "admin-panel-1946a",
+            storageBucket: "admin-panel-1946a.firebasestorage.app",
+            messagingSenderId: "78923664766",
+            appId: "1:78923664766:web:e599e323cca341ab14772f"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        const USER_SECRET = "ARIF_KING_786";
+
+        // Quick select: when dropdown changes, update days input
+        document.getElementById('quickSelect').addEventListener('change', function() {
+            let val = parseInt(this.value);
+            document.getElementById('daysInput').value = val;
+        });
+
+        // Also update dropdown when user types in days input (optional)
+        document.getElementById('daysInput').addEventListener('input', function() {
+            let val = parseInt(this.value);
+            if (isNaN(val)) val = 0;
+            // find matching option in quickSelect
+            let options = document.getElementById('quickSelect').options;
+            for (let i = 0; i < options.length; i++) {
+                if (parseInt(options[i].value) === val) {
+                    document.getElementById('quickSelect').selectedIndex = i;
+                    return;
+                }
+            }
+            // if no match, select "Custom" or leave as is
+            // we don't have custom option, so just leave
+        });
+
+        function generateVipKey() {
+            let rawName = document.getElementById('usernameInput').value;
+            let days = parseInt(document.getElementById('daysInput').value);
+            if (isNaN(days) || days < 0) days = 0;
+            let container = document.getElementById('resultContainer');
+            let keyDisplay = document.getElementById('keyDisplay');
+            let copyIcon = document.getElementById('copyIcon');
+            let nameUsed = document.getElementById('nameUsed');
+            let expiryInfo = document.getElementById('expiryInfo');
+            let statusMsg = document.getElementById('statusMsg');
+
+            let name = rawName.trim().toLowerCase();
+            if (!name) { alert("Please enter a name!"); return; }
+
+            const generatedKey = btoa(name + USER_SECRET).substring(0, 10).toUpperCase();
+
+            // Calculate expiry
+            let expiryDate = null;
+            let planLabel = "";
+            if (days === 0) {
+                expiryDate = "lifetime";
+                planLabel = "Lifetime";
+            } else {
+                let d = new Date();
+                d.setDate(d.getDate() + days);
+                expiryDate = d.toISOString();
+                planLabel = days + " day" + (days > 1 ? "s" : "");
+            }
+
+            // Save plan to Firebase
+            let planData = {
+                key: generatedKey,
+                plan: planLabel,
+                expiry: expiryDate,
+                created_at: new Date().toISOString(),
+                username: rawName.trim(),
+                days: days
+            };
+
+            database.ref('vip_plans/' + name).set(planData)
+                .then(() => {
+                    keyDisplay.innerText = generatedKey;
+                    container.style.display = "block";
+                    nameUsed.innerHTML = ' Name: <b style="color: #ffd700;">' + name + '</b>';
+                    let displayExpiry = expiryDate === "lifetime" ? "Never" : new Date(expiryDate).toLocaleDateString();
+                    expiryInfo.innerHTML = ' Plan: <b>' + planLabel + '</b> | Expires on: ' + displayExpiry;
+                    statusMsg.innerHTML = ' Key stored with expiry.';
+                    copyIcon.className = "far fa-copy";
+                    copyIcon.style.color = "#888";
+                })
+                .catch(err => {
+                    alert("Error saving plan: " + err.message);
+                });
+        }
+
+        function copyToClipboard() {
+            let keyText = document.getElementById('keyDisplay').innerText;
+            let copyIcon = document.getElementById('copyIcon');
+            if (!keyText) return;
+            navigator.clipboard.writeText(keyText).then(() => {
+                copyIcon.className = "fas fa-check";
+                copyIcon.style.color = "#00ff41";
+                alert("VIP Key copied!");
+            }).catch(() => { alert("Copy manually."); });
+        }
+    </script>
+</body>
+</html>

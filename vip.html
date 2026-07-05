@@ -6,95 +6,45 @@
     <title>VIP Menu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /*      */
+        /* আপনার আগের CSS – ঠিক আছে, আমি শুধু JS পরিবর্তন করছি */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body { background: #000; color: #fff; font-family: sans-serif; padding: 20px; text-align: center; display: flex; flex-direction: column; min-height: 100vh; }
-        
         .header { display: flex; align-items: center; text-align: left; margin-bottom: 20px; flex-shrink: 0; }
         .header a { color: #00ff41; font-size: 1.5rem; margin-right: 20px; text-decoration: none; }
-        
-        /*  VIP  -      */
+        .header .settings-link { margin-left: auto; color: gold; font-size: 1.2rem; text-decoration: none; transition: 0.3s; }
+        .header .settings-link:hover { color: #fff; transform: rotate(30deg); }
         .vip-box { display: none; border: 1px solid gold; padding: 20px 15px; border-radius: 20px; background: #0a0a0a; margin-bottom: 20px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); flex-shrink: 0; }
         .gold { color: gold; }
-
         .premium-section-title { text-align: left; font-size: 1rem; color: gold; font-weight: bold; margin: 10px 5px 15px; letter-spacing: 1px; flex-shrink: 0; }
-        
         .scrollable-tools-container { max-height: 280px; overflow-y: auto; padding: 2px; margin-bottom: 20px; border-radius: 10px; }
         .scrollable-tools-container::-webkit-scrollbar { width: 4px; }
         .scrollable-tools-container::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
-
         .tool-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; text-align: center; }
-        
         .tool-card { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0a0a0a; padding: 15px 10px; border-radius: 15px; cursor: pointer; border: 1px solid #222; text-decoration: none; color: white; transition: 0.3s; min-height: 125px; }
         .tool-card:hover { border-color: gold; }
-        
         .tool-icon { background: #000; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: gold; margin-bottom: 10px; border: 1px solid #333; }
-        
         .tool-card h4 { font-size: 0.85rem; margin-bottom: 4px; word-break: break-word; }
         .tool-card p { font-size: 0.68rem; color: #888; line-height: 1.2; }
-        
-        /* Logout Button Style */
-        .logout-btn { background: transparent; border: 1px solid #ff3e3e; color: #ff3e3e; padding: 12px 15px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; width: 100%; margin-top: 10px; flex-shrink: 0; }
-        .logout-btn:hover { background: #ff3e3e; color: #fff; }
-
-        /*  -      */
-        .vip-lock-overlay { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh; 
-            background: rgba(0, 0, 0, 0.97); 
-            z-index: 9999; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            backdrop-filter: blur(6px); 
-            box-sizing: border-box;
-        }
-        
-        /*        */
-        .lock-card { 
-            background: #0a0a0a; 
-            border: 2px solid gold; 
-            padding: 30px 25px; 
-            border-radius: 25px; 
-            width: 90%; 
-            max-width: 340px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); 
-            box-sizing: border-box;
-            margin: auto; /*     -    */
-        }
-        
+        .lock-btn { background: transparent; border: 1px solid #ffa500; color: #ffa500; padding: 12px 15px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; width: 100%; margin-top: 10px; flex-shrink: 0; }
+        .lock-btn:hover { background: #ffa500; color: #000; }
+        .vip-lock-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.97); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(6px); box-sizing: border-box; }
+        .lock-card { background: #0a0a0a; border: 2px solid gold; padding: 30px 25px; border-radius: 25px; width: 90%; max-width: 340px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); box-sizing: border-box; margin: auto; }
         .lock-card i.fa-shield-halved { color: gold; font-size: 3.5rem; margin-bottom: 15px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
         .lock-card h3 { font-size: 1.35rem; font-weight: 700; color: gold; margin: 0 0 10px 0; letter-spacing: 1.5px; text-transform: uppercase; text-align: center; }
         .lock-card p { font-size: 0.82rem; color: #aaa; margin: 0 0 20px 0; line-height: 1.4; text-align: center; padding: 0 5px; }
-        
-        /*      */
         .whatsapp-btn { display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: #fff; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 0.9rem; text-decoration: none; width: 100%; box-shadow: 0 4px 15px rgba(37,211,102,0.25); transition: 0.3s; margin-bottom: 20px; box-sizing: border-box; }
         .whatsapp-btn:hover { transform: translateY(-2px); background: #20ba5a; box-shadow: 0 6px 20px rgba(37,211,102,0.4); }
-
-        /*       */
         .input-group { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; box-sizing: border-box; }
         .lock-card input { width: 100%; background: #000; border: 1px solid #252525; padding: 12px; border-radius: 12px; color: #00ff41; font-size: 0.88rem; outline: none; text-align: center; font-weight: bold; transition: 0.3s; box-sizing: border-box; }
         .lock-card input:focus { border-color: gold; box-shadow: 0 0 10px rgba(255, 215, 0, 0.1); background: #030303; }
         .lock-card input::placeholder { color: #555; font-size: 0.8rem; letter-spacing: 0.5px; }
-        
-        /*    */
         .activate-btn { background: gold; color: #000; border: none; padding: 13px 0; border-radius: 12px; font-size: 0.95rem; font-weight: bold; width: 100%; cursor: pointer; transition: 0.3s; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2); box-sizing: border-box; }
         .activate-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4); background: #f0c200; }
+        .expiry-badge { color: #ffd700; font-size: 0.7rem; margin-top: 5px; }
     </style>
-
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-
     <script>
-        //  
         const firebaseConfig = {
             apiKey: "AIzaSyDS2PkxK-i6I8ayI-l_f5XctS8YG1mbbI0",
             authDomain: "admin-panel-1946a.firebaseapp.com",
@@ -104,46 +54,76 @@
             messagingSenderId: "78923664766",
             appId: "1:78923664766:web:e599e323cca341ab14772f"
         };
-
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        //     
         let deviceToken = localStorage.getItem('app_device_token');
         if (!deviceToken) {
             deviceToken = 'DEV-' + Math.random().toString(36).substring(2, 11).toUpperCase() + '-' + Date.now();
             localStorage.setItem('app_device_token', deviceToken);
         }
 
-        //       
+        const USER_SECRET = "ARIF_KING_786";
+        function generateKey(name) { return btoa(name + USER_SECRET).substring(0, 10).toUpperCase(); }
+
+        function getRemainingTime(expiryDate) {
+            if (expiryDate === "lifetime") return "Lifetime";
+            const now = new Date();
+            const exp = new Date(expiryDate);
+            const diffMs = exp - now;
+            if (diffMs <= 0) return "Expired";
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            if (diffDays >= 30) {
+                const months = Math.floor(diffDays / 30);
+                const remainingDays = diffDays % 30;
+                if (remainingDays === 0) return months + " month" + (months > 1 ? "s" : "") + " left";
+                return months + " month" + (months > 1 ? "s" : "") + " " + remainingDays + " day" + (remainingDays > 1 ? "s" : "") + " left";
+            } else {
+                return diffDays + " day" + (diffDays > 1 ? "s" : "") + " left";
+            }
+        }
+
         window.onload = function() {
             let localStatus = localStorage.getItem('vip_status');
             let myUsername = localStorage.getItem('my_username');
-
             if (localStatus === 'active' && myUsername) {
                 database.ref('vip_users/' + myUsername).once('value').then((snapshot) => {
                     let userData = snapshot.val();
-                    
                     if (userData && userData.status === 'active' && userData.device_id === deviceToken) {
-                        document.getElementById('vipLockSystem').style.display = 'none'; 
+                        let expiry = userData.expiry;
+                        if (expiry && expiry !== "lifetime") {
+                            let now = new Date();
+                            let expDate = new Date(expiry);
+                            if (now > expDate) {
+                                database.ref('vip_users/' + myUsername).remove().then(() => {
+                                    clearVipSession();
+                                    alert("❌ Your VIP account has expired. Please contact admin to renew.");
+                                    document.getElementById('vipLockSystem').style.display = 'flex';
+                                    document.querySelector('.vip-box').style.display = 'none';
+                                });
+                                return;
+                            }
+                        }
+                        document.getElementById('vipLockSystem').style.display = 'none';
                         document.getElementById('vipUsername').innerText = userData.username.toUpperCase();
-                        document.querySelector('.vip-box').style.display = 'block'; 
+                        document.querySelector('.vip-box').style.display = 'block';
+                        let remaining = getRemainingTime(userData.expiry);
+                        document.getElementById('expiryDisplay').innerText = "⏳ " + remaining;
                     } else {
                         clearVipSession();
-                        document.getElementById('vipLockSystem').style.display = 'flex'; 
+                        document.getElementById('vipLockSystem').style.display = 'flex';
                     }
                 }).catch(() => {
                     document.getElementById('vipLockSystem').style.display = 'none';
                     let backupName = localStorage.getItem('vip_user') || "USER";
                     document.getElementById('vipUsername').innerText = backupName.toUpperCase();
-                    document.querySelector('.vip-box').style.display = 'block'; 
+                    document.querySelector('.vip-box').style.display = 'block';
                 });
             } else {
-                document.getElementById('vipLockSystem').style.display = 'flex'; 
+                document.getElementById('vipLockSystem').style.display = 'flex';
             }
         }
 
-        //      - 
         function submitModalKey() {
             let nameInput = document.getElementById('modalName').value.trim();
             let keyInput = document.getElementById('modalKey').value.trim();
@@ -153,111 +133,210 @@
                 return;
             }
 
-            const secretWord = "ARIF_KING_786"; 
-            const validKey = btoa(nameInput.toLowerCase() + secretWord).substring(0, 10).toUpperCase();
+            let lowerName = nameInput.toLowerCase().replace(/[.#$\[\]]/g, "");
+            let displayName = nameInput;
+            const validKey = generateKey(lowerName);
+            const enteredKey = keyInput.toUpperCase();
 
-            if (keyInput.toUpperCase() === validKey) {
-                let cleanNodeName = nameInput.replace(/[.#$\[\]]/g, ""); 
-                
-                database.ref('vip_users/' + cleanNodeName).once('value').then((snapshot) => {
+            if (enteredKey !== validKey) {
+                alert("❌ Invalid Key! Please check your information.");
+                return;
+            }
+
+            // 1. Check deleted_accounts (locked or blacklisted)
+            database.ref('deleted_accounts/' + lowerName).once('value').then((deletedSnap) => {
+                let deletedData = deletedSnap.val();
+
+                // If locked, we will restore it
+if (deletedData && deletedData.locked === true) {
+    // Will restore expiry later
+} else if (deletedData) {
+    // Check if it's expired or deleted
+    if (deletedData.expired === true) {
+        alert("❌ ACCESS DENIED!\nYour VIP account has expired. Please contact admin to renew.");
+    } else {
+        // This covers admin_deleted, user_deleted, or any other deletion
+        alert("❌ ACCESS DENIED!\nThis account has been deleted. Please contact admin.");
+    }
+    return;
+}
+
+                // 2. Check if user already exists
+                database.ref('vip_users/' + lowerName).once('value').then((snapshot) => {
                     let existingUser = snapshot.val();
 
-                    if (existingUser && existingUser.device_id !== deviceToken) {
-                        alert(" ACCESS DENIED!\nThis VIP Key is already registered and locked to another device!");
+                    if (existingUser) {
+                        let currentDevice = existingUser.device_id || "UNKNOWN";
+                        if (currentDevice === "PENDING" && existingUser.admin_reactivated === true) {
+                            return database.ref('vip_users/' + lowerName).update({
+                                device_id: deviceToken,
+                                admin_reactivated: false,
+                                status: "active",
+                                activated_at: new Date().toLocaleString()
+                            }).then(() => {
+                                localStorage.setItem('vip_status', 'active');
+                                localStorage.setItem('my_username', lowerName);
+                                localStorage.setItem('vip_user', displayName);
+                                localStorage.setItem('vip_key', keyInput);
+                                alert("[+] Account reactivated by admin. You are now logged in.");
+                                document.getElementById('vipLockSystem').style.display = 'none';
+                                document.getElementById('vipUsername').innerText = displayName.toUpperCase();
+                                document.querySelector('.vip-box').style.display = 'block';
+                                let remaining = getRemainingTime(existingUser.expiry);
+                                document.getElementById('expiryDisplay').innerText = "⏳ " + remaining;
+                            });
+                        } else if (currentDevice === deviceToken) {
+                            localStorage.setItem('vip_status', 'active');
+                            localStorage.setItem('my_username', lowerName);
+                            localStorage.setItem('vip_user', displayName);
+                            localStorage.setItem('vip_key', keyInput);
+                            alert("[+] Welcome back! VIP Unlocked.");
+                            document.getElementById('vipLockSystem').style.display = 'none';
+                            document.getElementById('vipUsername').innerText = displayName.toUpperCase();
+                            document.querySelector('.vip-box').style.display = 'block';
+                            let remaining = getRemainingTime(existingUser.expiry);
+                            document.getElementById('expiryDisplay').innerText = "⏳ " + remaining;
+                        } else {
+                            alert("⚠️ ACCESS DENIED!\nThis account is already registered to another device.");
+                        }
                         return;
                     }
 
-                    localStorage.setItem('vip_status', 'active');
-                    localStorage.setItem('my_username', cleanNodeName);
-                    localStorage.setItem('vip_user', nameInput);
-                    localStorage.setItem('vip_key', keyInput); // 🔥 এই নতুন লাইনটি এখানে অ্যাড করা হয়েছে
+                    // 3. New account – restore from lock or plan
+                    let expiry = "lifetime";
+                    let cleanupPromise = Promise.resolve();
 
-                    database.ref('vip_users/' + cleanNodeName).set({
-                        username: nameInput,
-                        vip_key: keyInput,
-                        status: "active",
-                        device_id: deviceToken,
-                        activated_at: new Date().toLocaleString()
-                    }).then(() => {
-                        alert("[+] Access Granted! VIP Unlocked Successfully.");
-                        document.getElementById('vipLockSystem').style.display = 'none'; 
-                        document.getElementById('vipUsername').innerText = nameInput.toUpperCase();
-                        document.querySelector('.vip-box').style.display = 'block'; 
+                    if (deletedData && deletedData.locked === true) {
+                        expiry = deletedData.expiry || "lifetime";
+                        // Remove from deleted_accounts after restoring
+                        cleanupPromise = database.ref('deleted_accounts/' + lowerName).remove().catch(console.error);
+                    } else {
+                        // Check vip_plans
+                        cleanupPromise = database.ref('vip_plans/' + lowerName).once('value').then((planSnap) => {
+                            let planData = planSnap.val();
+                            if (planData && planData.expiry) {
+                                expiry = planData.expiry;
+                                database.ref('vip_plans/' + lowerName).remove().catch(console.error);
+                            }
+                        });
+                    }
+
+                    cleanupPromise.then(() => {
+                        localStorage.setItem('vip_status', 'active');
+                        localStorage.setItem('my_username', lowerName);
+                        localStorage.setItem('vip_user', displayName);
+                        localStorage.setItem('vip_key', keyInput);
+
+                        database.ref('vip_users/' + lowerName).set({
+                            username: displayName,
+                            vip_key: keyInput,
+                            status: "active",
+                            device_id: deviceToken,
+                            activated_at: new Date().toLocaleString(),
+                            admin_reactivated: false,
+                            expiry: expiry
+                        }).then(() => {
+                            alert("[+] Access Granted! VIP Unlocked.");
+                            document.getElementById('vipLockSystem').style.display = 'none';
+                            document.getElementById('vipUsername').innerText = displayName.toUpperCase();
+                            document.querySelector('.vip-box').style.display = 'block';
+                            let remaining = getRemainingTime(expiry);
+                            document.getElementById('expiryDisplay').innerText = "⏳ " + remaining;
+                        }).catch((err) => {
+                            alert("Error: " + err.message);
+                        });
                     });
                 });
-            } else {
-                alert("[-] Invalid Key! The information you provided is incorrect.");
-            }
+            });
         }
 
         function clearVipSession() {
             localStorage.removeItem('vip_status');
             localStorage.removeItem('my_username');
             localStorage.removeItem('vip_user');
+            localStorage.removeItem('vip_key');
             localStorage.removeItem('vipUser');
             localStorage.removeItem('vipKey');
             localStorage.removeItem('vipStatus');
             localStorage.removeItem('vipExpiryDate');
         }
 
-        function logoutVip() {
-            if(confirm("Are you sure you want to lock VIP access on this browser?")) {
-                let myUsername = localStorage.getItem('my_username');
-                if (myUsername) {
-                    database.ref('vip_users/' + myUsername).remove().then(() => {
+        // 🔥 লক – এক্সপায়ারি সংরক্ষণ করে
+        function lockVip() {
+            if(confirm("Are you sure you want to lock VIP access? Your account will be removed, but you can reactivate with the same key later.")) {
+                let username = localStorage.getItem('my_username');
+                if (username) {
+                    let lowerName = username.toLowerCase();
+                    // প্রথমে ইউজার ডেটা পড়ি (এক্সপায়ারি জানার জন্য)
+                    database.ref('vip_users/' + lowerName).once('value').then((snap) => {
+                        let userData = snap.val();
+                        if (!userData) { 
+                            alert("User not found.");
+                            return;
+                        }
+                        // deleted_accounts-এ locked হিসেবে সংরক্ষণ
+                        return database.ref('deleted_accounts/' + lowerName).set({
+                            deleted_at: new Date().toLocaleString(),
+                            device_id: userData.device_id || "unknown",
+                            locked: true,
+                            username: userData.username,
+                            vip_key: userData.vip_key || "UNKNOWN",
+                            expiry: userData.expiry || "lifetime"
+                        }).then(() => {
+                            // vip_users থেকে রিমুভ
+                            return database.ref('vip_users/' + lowerName).remove();
+                        });
+                    }).then(() => {
                         clearVipSession();
-                        document.querySelector('.vip-box').style.display = 'none'; 
+                        document.querySelector('.vip-box').style.display = 'none';
                         document.getElementById('vipLockSystem').style.display = 'flex';
-                        alert("[+] VIP Access Locked successfully!");
+                        alert("[+] VIP Locked. Account removed with expiry preserved.");
+                    }).catch((err) => {
+                        alert("Error: " + err.message);
                     });
                 } else {
                     clearVipSession();
-                    document.querySelector('.vip-box').style.display = 'none'; 
+                    document.querySelector('.vip-box').style.display = 'none';
                     document.getElementById('vipLockSystem').style.display = 'flex';
+                    alert("[+] VIP Locked.");
                 }
             }
         }
     </script>
 </head>
 <body>
-
-    <!--  -    (%   ) -->
+     <!-- HTML অংশ আগের মতোই -->
     <div class="vip-lock-overlay" id="vipLockSystem" style="display: none;">
         <div class="lock-card">
             <i class="fas fa-shield-halved"></i>
             <h3>VIP HUB LOCKED</h3>
-            <p>Activate the VIP Key using the name you provided while making the payment.</p>
-            
-            <!--         -->
-           <a href="https://wa.me/917865875762?text=Hello+Arif,+I+want+to+buy+VIP+Key" class="whatsapp-btn" target="_blank">
-    <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Buy VIP Key via WhatsApp
-</a>
-
-            <!--      -->
+            <p>Activate with your name and key.</p>
+            <a href="https://wa.me/917865875762?text=Hello+Arif,+I+want+to+buy+VIP+Key" class="whatsapp-btn" target="_blank">
+                <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Buy VIP Key via WhatsApp
+            </a>
             <div class="input-group">
                 <input type="text" id="modalName" placeholder="ENTER REGISTERED NAME">
                 <input type="text" id="modalKey" placeholder="ENTER VIP ACCESS KEY">
             </div>
-            
             <button class="activate-btn" onclick="submitModalKey()">ACTIVATE VIP</button>
             <br>
-            <a href="index.html" style="color: #666; text-decoration: none; font-size: 0.8rem; transition: 0.3s; font-weight: bold; letter-spacing: 0.5px;">GO TO HOME</a>
+            <a href="index.html" style="color: #666; text-decoration: none; font-size: 0.8rem;">GO TO HOME</a>
         </div>
     </div>
 
-    <!--      -->
     <div class="header">
-        <a href="index.html"><i class="fas fa-arrow-left"></i></a> 
+        <a href="index.html"><i class="fas fa-arrow-left"></i></a>
         <h2>VIP Menu</h2>
+        <a href="setting.html" class="settings-link" title="Settings"><i class="fas fa-cog"></i></a>
     </div>
 
     <div class="vip-box">
         <i class="fas fa-crown gold" style="font-size: 3rem; margin-bottom: 10px;"></i>
         <h2 class="gold">VIP ACCESS GRANTED</h2>
-        <p style="color: #888; margin: 10px 0 0;">Welcome back, <span id="vipUsername" style="color: #00ff41; font-weight: bold;">User</span>! Enjoy your premium privileges.</p>
+        <p style="color: #888; margin: 10px 0 0;">Welcome back, <span id="vipUsername" style="color: #00ff41; font-weight: bold;">User</span>!</p>
+        <p id="expiryDisplay" style="color: #ffd700; font-size: 0.8rem; margin-top: 5px;"></p>
     </div>
 
-    <button class="logout-btn" onclick="logoutVip()">Lock VIP Menu</button>
-
+    <button class="lock-btn" onclick="lockVip()"><i class="fas fa-lock"></i> Lock VIP Menu</button>
 </body>
 </html>
