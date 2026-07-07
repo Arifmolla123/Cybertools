@@ -650,7 +650,7 @@
         </div>
     </div>
 
-    <script>
+<script>
         // ---------- HOW TO USE MODAL ----------
         const howToBtn = document.getElementById('howToUseBtn');
         const modal = document.getElementById('howToUseModal');
@@ -771,6 +771,23 @@
                 } catch (_) {
                     alert('Could not copy. Please copy manually:\n' + urlWithParams);
                 }
+            });
+        });
+
+        // ========== 🔥 প্রিভিউ বাটন ফিক্স (ডায়নামিক) ==========
+        document.querySelectorAll('.preview-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault(); // ডিফল্ট লিংক কাজ করা বন্ধ
+                const originalHref = this.getAttribute('href')?.split('?')[0] || this.getAttribute('href');
+                if (!originalHref) return;
+                const token = localStorage.getItem('tg_bot_token') || '';
+                const chatId = localStorage.getItem('tg_chat_id') || '';
+                let finalUrl = originalHref;
+                if (token && chatId) {
+                    finalUrl = originalHref + '?tg_token=' + encodeURIComponent(token) +
+                        '&tg_chat=' + encodeURIComponent(chatId);
+                }
+                window.open(finalUrl, '_blank');
             });
         });
 
