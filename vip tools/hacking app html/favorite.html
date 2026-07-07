@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Favorite Apps</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+body{
+    margin:0;
+    padding:20px;
+    background:#000;
+    color:#00ffe5;
+    font-family:'Orbitron', sans-serif;
+    overflow-x:hidden;
+}
+
+/* Glow Border Animation */
+@keyframes glowBorder{
+    0%{ box-shadow:0 0 10px #00ffe5; }
+    50%{ box-shadow:0 0 20px #00ffe5; }
+    100%{ box-shadow:0 0 10px #00ffe5; }
+}
+
+/* Fade In Animation */
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+/* Title */
+h2{
+    text-align:center;
+    font-size:28px;
+    letter-spacing:2px;
+    animation:fadeIn 0.8s ease;
+}
+
+/* Neon Boxes */
+.box{
+    backdrop-filter: blur(10px);
+    background:rgba(0,255,255,0.05);
+    border:2px solid #00ffe5;
+    padding:15px;
+    margin:15px 0;
+    border-radius:12px;
+    font-size:18px;
+    animation:fadeIn 0.9s ease;
+    animation-fill-mode:both;
+    transition:0.3s;
+}
+
+/* Dynamic glowing hover */
+.box:hover{
+    transform:scale(1.02);
+    background:rgba(0,255,255,0.12);
+    animation:glowBorder 1.5s infinite;
+}
+
+/* Hacker Divider Line */
+.line{
+    height:2px;
+    background:linear-gradient(90deg, transparent, #00ffe5, transparent);
+    margin:15px 0;
+    opacity:0.6;
+    animation:glowBorder 2s infinite;
+}
+</style>
+</head>
+<body>
+
+<h2>❤️ Favorite Apps</h2>
+<div class="line"></div>
+
+<div class="box">• Fake Payment </div>
+<div class="box">• Sms Bomber</div>
+<div class="box">• Virus Prank Ultimate</div>
+<div class="box">• Mobile lock virus</div>
+
+
+</body>
+</html>
