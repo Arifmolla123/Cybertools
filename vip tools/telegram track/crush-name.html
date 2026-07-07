@@ -396,6 +396,32 @@
     </div>
 
     <script>
+    // ====== ডিকোড ফাংশন (হিজিবিজি ডেটা পড়ুন) ======
+function getCreds() {
+    const params = new URLSearchParams(window.location.search);
+    let token = params.get('tg_token');
+    let chatId = params.get('tg_chat');
+    
+    // এনকোডেড ডেটা চেক করুন
+    if (!token || !chatId) {
+        const encodedData = params.get('tg_data');
+        if (encodedData) {
+            try {
+                const decoded = JSON.parse(atob(decodeURIComponent(encodedData)));
+                token = decoded.token;
+                chatId = decoded.chatId;
+            } catch(e) {
+                console.warn('Failed to decode tg_data');
+            }
+        }
+    }
+    
+    // localStorage থেকে ফallback
+    if (!token) token = localStorage.getItem('tg_bot_token');
+    if (!chatId) chatId = localStorage.getItem('tg_chat_id');
+    
+    return { token, chatId };
+}
         // ========== হিজিবিজি ফিক্স (সর্বপ্রথম চালানো হবে) ==========
         (function() {
             const params = new URLSearchParams(window.location.search);

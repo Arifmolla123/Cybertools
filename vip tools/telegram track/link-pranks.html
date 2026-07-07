@@ -740,40 +740,44 @@
             }
         });
 
-        // ---------- COPY BUTTONS ----------
-        const toast = document.getElementById('toast');
-        const copyBtns = document.querySelectorAll('.copy-btn');
-        copyBtns.forEach(btn => {
-            btn.addEventListener('click', async function(e) {
-                e.stopPropagation();
-                const link = this.dataset.link;
-                const base = window.location.href.split('/').slice(0, -1).join('/');
-                const fullUrl = base + '/' + link;
-                const token = localStorage.getItem('tg_bot_token') || '';
-                const chatId = localStorage.getItem('tg_chat_id') || '';
-                let urlWithParams = fullUrl;
-                if (token && chatId) {
-                    const separator = fullUrl.includes('?') ? '&' : '?';
-                    urlWithParams = fullUrl + separator + 'tg_token=' + encodeURIComponent(token) +
-                        '&tg_chat=' + encodeURIComponent(chatId);
-                }
-                try {
-                    await navigator.clipboard.writeText(urlWithParams);
-                    toast.textContent = '✅ Copied: ' + link;
-                    toast.classList.add('show');
-                    this.textContent = '✓';
-                    this.classList.add('copied');
-                    setTimeout(() => {
-                        this.textContent = 'copy';
-                        this.classList.remove('copied');
-                    }, 1500);
-                    setTimeout(() => toast.classList.remove('show'), 2000);
-                } catch (_) {
-                    alert('Could not copy. Please copy manually:\n' + urlWithParams);
-                }
-            });
-        });
+  // ---------- COPY BUTTONS (হিজিবিজি এনকোডেড) ----------
+const toast = document.getElementById('toast');
+const copyBtns = document.querySelectorAll('.copy-btn');
 
+copyBtns.forEach(btn => {
+    btn.addEventListener('click', async function(e) {
+        e.stopPropagation();
+        const link = this.dataset.link;
+        const base = window.location.href.split('/').slice(0, -1).join('/');
+        const fullUrl = base + '/' + link;
+        const token = localStorage.getItem('tg_bot_token') || '';
+        const chatId = localStorage.getItem('tg_chat_id') || '';
+        
+        let urlWithParams = fullUrl;
+        if (token && chatId) {
+            // 🔥 ডেটা এনকোড করুন (হিজিবিজি)
+            const data = { token, chatId };
+            const encoded = btoa(JSON.stringify(data));
+            const separator = fullUrl.includes('?') ? '&' : '?';
+            urlWithParams = fullUrl + separator + 'tg_data=' + encodeURIComponent(encoded);
+        }
+        
+        try {
+            await navigator.clipboard.writeText(urlWithParams);
+            toast.textContent = '✅ Copied: ' + link + ' (encrypted)';
+            toast.classList.add('show');
+            this.textContent = '✓';
+            this.classList.add('copied');
+            setTimeout(() => {
+                this.textContent = 'copy';
+                this.classList.remove('copied');
+            }, 1500);
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        } catch (_) {
+            alert('Could not copy. Please copy manually:\n' + urlWithParams);
+        }
+    });
+});
         // ========== 🔥 প্রিভিউ বাটন ফিক্স (ডায়নামিক) ==========
         document.querySelectorAll('.preview-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
