@@ -1,292 +1,852 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>🎯 Arif Age Calculator</title>
+    <meta charset="UTF-8" />
+    <title> Age Calculator</title>
 
-<!-- Confetti -->
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js">
+    </script>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-<style>
-/* ====== Base ====== */
-body {
-    margin: 0;
-    padding: 20px;
-    font-family: 'Orbitron', sans-serif, 'Segoe UI Emoji','Noto Color Emoji','Arial',sans-serif;
-    background: #0a0a0a;
-    color: #0ff;
-    transition: 0.4s;
-}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-#clock {
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 15px;
-}
+    <style>
+        /* ====== Day-Finder Inspired Theme ====== */
+        :root {
+            --accent: #00ff41;
+            --bg: #000;
+            --card: #0a0a0a;
+            --border: #222;
+            --text: #fff;
+            --dim: #aaa;
+            --muted: #555;
+        }
 
-/* ====== Container ====== */
-.container {
-    width: 95%;
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid currentColor;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(6px);
-    box-sizing: border-box;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-/* ====== Titles ====== */
-h1 {
-    font-size: 26px;
-    text-align: center;
-    margin-bottom: 15px;
-}
+        body {
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            text-align: center;
+        }
 
-/* ====== Inputs / Buttons ====== */
-input, select, button {
-    width: 100%;
-    max-width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    border-radius: 8px;
-    border: 2px solid currentColor;
-    background: transparent;
-    color: inherit;
-    font-size: 16px;
-    box-sizing: border-box;
-    transition: 0.3s;
-}
+        /* ====== Header ====== */
+        .header {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .header a {
+            color: var(--accent);
+            font-size: 1.5rem;
+            margin-right: 20px;
+            text-decoration: none;
+        }
+        .header h2 {
+            font-size: 1.3rem;
+            color: var(--text);
+        }
 
-input:focus, select:focus, button:focus {
-    outline: none;
-    border-color: #0ff;
-}
+        /* ====== Description Box ====== */
+        .info-note {
+            background: #111;
+            border: 1px dashed var(--accent);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: left;
+            margin-bottom: 20px;
+            font-size: 0.8rem;
+            color: var(--dim);
+            line-height: 1.4;
+        }
 
-button {
-    cursor: pointer;
-    font-weight: bold;
-    background: #000;
-    transition: 0.3s;
-}
+        /* ====== Main Container ====== */
+        .container {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: left;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            width: 95%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-button:hover {
-    background: #0ff;
-    color: #000;
-}
+        .container h1 {
+            font-size: 1.5rem;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.15);
+        }
 
-/* ====== Result Boxes ====== */
-.result, .zodiac, .advice, .funFact {
-    margin-top: 10px;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid currentColor;
-    background: rgba(255,255,255,0.08);
-    transition: 0.3s;
-    word-break: break-word;
-}
+        /* ====== Form Groups ====== */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .form-group label i {
+            margin-right: 6px;
+        }
 
-/* ====== Blink animation ====== */
-.blink {
-    animation: blink 1s infinite;
-}
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            background: #000;
+            border: 1px solid #333;
+            padding: 12px;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+            color-scheme: dark;
+            appearance: auto;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 8px rgba(0, 255, 65, 0.2);
+        }
+        .form-group select option {
+            background: #000;
+            color: var(--text);
+        }
 
-@keyframes blink {
-    0%,50%,100% { opacity: 1; }
-    25%,75% { opacity: 0; }
-}
+        /* ====== Buttons ====== */
+        .search-btn {
+            width: 100%;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .search-btn:hover {
+            background: #00cc33;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+        }
 
-/* ====== Social share buttons ====== */
-#socialShare button {
-    margin: 5px 2px;
-    padding: 10px;
-    font-size: 14px;
-}
+        .btn-secondary {
+            width: 100%;
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .btn-secondary:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.25);
+        }
 
-/* ====== Responsive ====== */
-@media (max-width: 480px){
-    h1 { font-size: 22px; }
-    input, select, button { font-size: 14px; padding: 8px; }
-    .result, .zodiac, .advice, .funFact { font-size: 13px; }
-}
-</style>
+        /* ====== Result Section ====== */
+        .result-section {
+            display: none;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
+            width: 95%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .result-section .result-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .result-section .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item .label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .result-item .value {
+            font-size: 1.4rem;
+            color: var(--accent);
+            font-weight: bold;
+            margin-top: 4px;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.15);
+        }
+        .result-item .value.blink {
+            animation: blink 1s infinite;
+        }
+
+        .result-item .value-sm {
+            font-size: 1.1rem;
+        }
+
+        .result-item .value-gold {
+            color: gold;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
+        }
+
+        /* ====== Social Share Buttons ====== */
+        #socialShare {
+            display: none;
+            margin-top: 10px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        #socialShare button {
+            flex: 1;
+            min-width: 80px;
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        #socialShare button:hover {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+
+        /* ====== Clock ====== */
+        #clock {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+            font-weight: 300;
+        }
+        #clock i {
+            color: var(--accent);
+            margin-right: 6px;
+        }
+
+        /* ====== Developer Footer ====== */
+        .dev-footer {
+            margin-top: auto;
+            padding: 15px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            letter-spacing: 1px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        .dev-footer i {
+            color: var(--accent);
+        }
+
+        /* ====== Animations ====== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes blink {
+            0%,
+            50%,
+            100% {
+                opacity: 1;
+            }
+            25%,
+            75% {
+                opacity: 0;
+            }
+        }
+
+        /* ====== Responsive ====== */
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+            .container {
+                padding: 16px;
+            }
+            .container h1 {
+                font-size: 1.2rem;
+            }
+            .form-group input,
+            .form-group select {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+            .search-btn,
+            .btn-secondary {
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+            .result-item .value {
+                font-size: 1.2rem;
+            }
+            #socialShare button {
+                font-size: 0.75rem;
+                padding: 8px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div id="clock"></div>
-
-<div class="container">
-    <h1>🎯 Age Calculator</h1>
-
-    <label>Select your birthdate:</label>
-    <input type="date" id="dob">
-
-    <label>Select Language:</label>
-    <select id="language">
-        <option value="en">English</option>
-        <option value="bn">বাংলা</option>
-    </select>
-
-    <label>Background Music:</label>
-    <select onchange="toggleMusic(this.value)">
-        <option value="off">Off</option>
-        <option value="on">On</option>
-    </select>
-
-    <button onclick="calculateAge()">Calculate Age</button>
-    <button onclick="toggleShare()">Share Result</button>
-
-    <div id="socialShare" style="display:none;">
-        <button onclick="shareWhatsApp()">WhatsApp</button>
-        <button onclick="shareFacebook()">Facebook</button>
+    <!-- ====== HEADER ====== -->
+    <div class="header">
+        <a href="#" onclick="window.history.back(); return false;"><i class="fas fa-arrow-left"></i></a>
+        <h2 id="appTitle">Age Calculator</h2>
     </div>
 
-    <div class="result" id="result"></div>
-    <div class="zodiac" id="chineseZodiac"></div>
-    <div class="zodiac" id="luckyNumber"></div>
-    <div class="advice" id="lifeAdvice"></div>
-    <div class="funFact" id="funFact"></div>
-</div>
+    <!-- ====== INFO NOTE ====== -->
+    <div class="info-note" id="infoNote">
+        <i class="fas fa-cake-candles" style="color: var(--accent);"></i>
+        <strong id="infoNoteStrong"> :</strong>
+        <span id="infoNoteText">          , ,      !</span>
+    </div>
 
-<audio id="bgMusic" loop>
-  <source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mpeg">
-</audio>
+    <!-- ====== CLOCK ====== -->
+    <div id="clock"><i class="fas fa-clock"></i> <span id="clockText"></span></div>
 
-<script>
-/* ====== Clock ====== */
-function updateClock(){
-    let now = new Date();
-    let options = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
-    document.getElementById("clock").innerText = now.toLocaleDateString(undefined, options) + " " + now.toLocaleTimeString();
-}
-setInterval(updateClock,1000);
-updateClock();
+    <!-- ====== MAIN CONTAINER ====== -->
+    <div class="container">
+        <h1 id="mainTitle"><i class="fas fa-calculator" style="color: var(--accent);"></i> Age Calculator</h1>
 
-/* ====== Zodiac ====== */
-const zodiacSigns = ["Rat","Ox","Tiger","Rabbit","Dragon","Snake","Horse","Goat","Monkey","Rooster","Dog","Pig"];
-const zodiacEmojis = ["🐀","🐂","🐅","🐇","🐉","🐍","🐎","🐐","🐒","🐓","🐕","🐖"];
+        <div class="form-group">
+            <label id="birthdateLabel"><i class="fas fa-calendar-alt"></i>     </label>
+            <input type="date" id="dob" />
+        </div>
 
-/* ====== Music ====== */
-function toggleMusic(val){
-    let m = document.getElementById("bgMusic");
-    if(val==="on") m.play().catch(()=>alert("Tap somewhere to enable sound!"));
-    else { m.pause(); m.currentTime = 0; }
-}
+        <div class="form-group">
+            <label id="languageLabel"><i class="fas fa-language"></i>   </label>
+            <select id="language">
+                <option value="en">English</option>
+                <option value="bn"></option>
+                <option value="hi"></option>
+            </select>
+        </div>
 
-/* ====== Birthday Confetti ====== */
-function celebrateBirthday(){
-    confetti({ particleCount:150, spread:80, origin:{ y:0.6 } });
-    alert("🎉 Happy Birthday! 🎉");
-}
+        
+        <button class="search-btn" id="calculateBtn" onclick="calculateAge()">
+            <i class="fas fa-search"></i>   
+        </button>
 
-/* ====== Lucky Number ====== */
-function getLuckyNumber(d){
-    let str = d.getDate().toString().padStart(2,'0') +
-              (d.getMonth()+1).toString().padStart(2,'0') +
-              d.getFullYear().toString();
-    let s=0;
-    for(let c of str) s+=parseInt(c);
-    while(s>=10) s = s.toString().split("").reduce((a,b)=>a+parseInt(b),0);
-    return s;
-}
+        <button class="btn-secondary" id="shareBtn" onclick="toggleShare()">
+            <i class="fas fa-share-alt"></i>  
+        </button>
 
-/* ====== Life Advice ====== */
-function getLifeAdvice(age, lang){
-    if(lang==='bn'){
-        if(age<13) return "শিশুকাল উপভোগ করুন!";
-        if(age<20) return "লক্ষ্যে মনোনিবেশ করুন এবং বন্ধুদের সাথে সময় কাটান।";
-        if(age<30) return "নিজেকে গড়ে তুলুন এবং ক্যারিয়ারে মন দিন।";
-        if(age<50) return "কাজ, পরিবার ও স্বপ্নের মধ্যে ব্যালান্স রাখুন।";
-        return "জ্ঞান ভাগ করুন, সুস্থ থাকুন এবং জীবন উপভোগ করুন!";
-    }
-    if(age<13) return "Learn, play and enjoy childhood!";
-    if(age<20) return "Focus on goals, explore tech and friends.";
-    if(age<30) return "Grow yourself and your career.";
-    if(age<50) return "Balance work, family, and dreams.";
-    return "Share wisdom, stay healthy and enjoy life!";
-}
+        <div id="socialShare">
+            <button id="whatsappBtn" onclick="shareWhatsApp()"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+            <button id="facebookBtn" onclick="shareFacebook()"><i class="fab fa-facebook"></i> Facebook</button>
+        </div>
+    </div>
 
-/* ====== Fun Fact ====== */
-function getFunFact(d){
-    const facts = [
-        "On this day, some famous people were born!",
-        "Today is a great day to start something new!",
-        "The stars say it's a lucky day for you!",
-        "This date has some historical events!",
-        "Fun fact: Your zodiac can influence your mood today!"
-    ];
-    return facts[d.getDate() % facts.length];
-}
+    <!-- ====== RESULT SECTION ====== -->
+    <div class="result-section" id="resultSection">
+        <div class="result-item">
+            <div class="label" id="resultAgeLabel"><i class="fas fa-user"></i> </div>
+            <div class="value" id="resultAge"></div>
+        </div>
+        <div class="result-item">
+            <div class="label" id="resultZodiacLabel"><i class="fas fa-dragon"></i>  </div>
+            <div class="value value-sm" id="chineseZodiac"></div>
+        </div>
+        <div class="result-item">
+            <div class="label" id="resultLuckyLabel"><i class="fas fa-star"></i>  </div>
+            <div class="value blink" id="luckyNumber"></div>
+        </div>
+        <div class="result-item">
+            <div class="label" id="resultAdviceLabel"><i class="fas fa-lightbulb"></i>  </div>
+            <div class="value value-sm value-gold" id="lifeAdvice"></div>
+        </div>
+        <div class="result-item">
+            <div class="label" id="resultFunFactLabel"><i class="fas fa-smile"></i>  </div>
+            <div class="value value-sm" id="funFact" style="color: #ccc;"></div>
+        </div>
+    </div>
 
-/* ====== Calculate Age ====== */
-function calculateAge(){
-    let v = document.getElementById("dob").value;
-    let lang = document.getElementById("language").value;
-    if(!v) return alert(lang==='bn'? "জন্মতারিখ নির্বাচন করুন!" : "Select birthdate!");
+    <!-- ====== FOOTER ====== -->
+    <div class="dev-footer" id="footerText">
+        <i class="fas fa-code"></i> Age Calculator Developer Arif
+    </div>
 
-    let dob = new Date(v);
-    let t = new Date();
+    
 
-    let Y = t.getFullYear() - dob.getFullYear();
-    let M = t.getMonth() - dob.getMonth();
-    let D = t.getDate() - dob.getDate();
-    if(D<0){ M--; D += new Date(t.getFullYear(), t.getMonth(), 0).getDate(); }
-    if(M<0){ Y--; M += 12; }
+    <!-- ====== SCRIPTS ====== -->
+    <script>
+        // ============================================================
+        //  TRANSLATIONS
+        // ============================================================
+        const LANG = {
+            en: {
+                appTitle: 'Age Calculator',
+                infoNoteStrong: 'Age Calculator:',
+                infoNoteText: 'Select your birthdate and find out your age, zodiac, lucky number and more in one click!',
+                mainTitle: 'Age Calculator',
+                birthdateLabel: 'Select your birthdate',
+                languageLabel: 'Select Language',
+                musicLabel: 'Background Music',
+                musicOff: 'Off',
+                musicOn: 'On',
+                calculateBtn: 'Calculate Age',
+                shareBtn: 'Share Result',
+                whatsappBtn: 'WhatsApp',
+                facebookBtn: 'Facebook',
+                resultAgeLabel: 'Age',
+                resultZodiacLabel: 'Chinese Zodiac',
+                resultLuckyLabel: 'Lucky Number',
+                resultAdviceLabel: 'Life Advice',
+                resultFunFactLabel: 'Fun Fact',
+                footerText: 'Cyber Tools Developer Arif',
+                placeholderDash: '',
+                alertSelectDate: 'Please select a valid birthdate!',
+                alertHappyBirthday: ' Happy Birthday! ',
+                // Zodiac animal names
+                zodiac: ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog',
+                    'Pig'
+                ],
+                // Life advice by age group
+                advice: {
+                    child: 'Learn, play and enjoy childhood!',
+                    teen: 'Focus on goals, explore tech and friends.',
+                    young: 'Grow yourself and your career.',
+                    mid: 'Balance work, family, and dreams.',
+                    senior: 'Share wisdom, stay healthy and enjoy life!'
+                },
+                // Fun facts
+                facts: [
+                    'On this day, some famous people were born!',
+                    'Today is a great day to start something new!',
+                    'The stars say it\'s a lucky day for you!',
+                    'This date has some historical events!',
+                    'Fun fact: Your zodiac can influence your mood today!',
+                    'Did you know? This day has a special meaning in many cultures.',
+                    'The energy of this date is full of possibilities!'
+                ],
+                // Age text template
+                ageText: function(y, m, d) {
+                    return `${y} years, ${m} months and ${d} days`;
+                }
+            },
 
-    document.getElementById("result").innerHTML =
-        lang==='bn' ? `আপনি ${Y} বছর, ${M} মাস এবং ${D} দিন বয়সী` 
-                    : `You are ${Y} years, ${M} months and ${D} days old.`;
+            bn: {
+                appTitle: ' ',
+                infoNoteStrong: ' :',
+                infoNoteText: '          , ,      !',
+                mainTitle: ' ',
+                birthdateLabel: '    ',
+                languageLabel: '  ',
+                musicLabel: ' ',
+                musicOff: '',
+                musicOn: '',
+                calculateBtn: '  ',
+                shareBtn: ' ',
+                whatsappBtn: 'WhatsApp',
+                facebookBtn: 'Facebook',
+                resultAgeLabel: '',
+                resultZodiacLabel: ' ',
+                resultLuckyLabel: ' ',
+                resultAdviceLabel: ' ',
+                resultFunFactLabel: ' ',
+                footerText: '   ',
+                placeholderDash: '',
+                alertSelectDate: '      !',
+                alertHappyBirthday: '  ! ',
+                zodiac: ['', '', '', '', '', '', '', '', '', '', '', ''],
+                advice: {
+                    child: '  !    ',
+                    teen: '       ',
+                    young: '      ',
+                    mid: ',      ',
+                    senior: '  ,      !'
+                },
+                facts: [
+                    '      !',
+                    '        !',
+                    '       !',
+                    '     !',
+                    ' :        !',
+                    ' ?       ',
+                    '    !'
+                ],
+                ageText: function(y, m, d) {
+                    return `${y} , ${m}   ${d} `;
+                }
+            },
 
-    let sign = zodiacSigns[dob.getFullYear()%12];
-    let emoji = zodiacEmojis[dob.getFullYear()%12];
-    document.getElementById("chineseZodiac").innerHTML =
-        lang==='bn' ? `চীনা রাশি: <b>${sign} ${emoji}</b>` 
-                    : `Chinese Zodiac: <b>${sign} ${emoji}</b>`;
+            hi: {
+                appTitle: ' ',
+                infoNoteStrong: ' :',
+                infoNoteText: '        , ,      !',
+                mainTitle: ' ',
+                birthdateLabel: '  ',
+                languageLabel: ' ',
+                musicLabel: ' ',
+                musicOff: '',
+                musicOn: '',
+                calculateBtn: '  ',
+                shareBtn: ' ',
+                whatsappBtn: 'WhatsApp',
+                facebookBtn: 'Facebook',
+                resultAgeLabel: '',
+                resultZodiacLabel: ' ',
+                resultLuckyLabel: ' ',
+                resultAdviceLabel: ' ',
+                resultFunFactLabel: ' ',
+                footerText: '   ',
+                placeholderDash: '',
+                alertSelectDate: '    !',
+                alertHappyBirthday: '   ! ',
+                zodiac: ['', '', '', '', '', '', '', '', '', '', '', ''],
+                advice: {
+                    child: ',      !',
+                    teen: '   ,      ',
+                    young: '        ',
+                    mid: ',      ',
+                    senior: '  ,       !'
+                },
+                facts: [
+                    '        !',
+                    '          !',
+                    '          !',
+                    '      !',
+                    ' :          !',
+                    '   ?         ',
+                    '       !'
+                ],
+                ageText: function(y, m, d) {
+                    return `${y} , ${m}   ${d} `;
+                }
+            }
+        };
 
-    let lucky = getLuckyNumber(dob);
-    document.getElementById("luckyNumber").innerHTML =
-        lang==='bn' ? `লাকি নাম্বার: <b class="blink">${lucky}</b>` 
-                    : `Lucky Number: <b class="blink">${lucky}</b>`;
+        // ============================================================
+        //  STATE
+        // ============================================================
+        let currentLang = 'en'; // default
+        let lastCalculated = null; // store last result data
 
-    document.getElementById("lifeAdvice").innerHTML =
-        `<b>${lang==='bn'? "জীবনের পরামর্শ" : "Life Advice"}:</b> ${getLifeAdvice(Y, lang)}`;
+        // ============================================================
+        //  DOM REFS
+        // ============================================================
+        const $ = (id) => document.getElementById(id);
+        const elements = {
+            appTitle: $('appTitle'),
+            infoNoteStrong: $('infoNoteStrong'),
+            infoNoteText: $('infoNoteText'),
+            mainTitle: $('mainTitle'),
+            birthdateLabel: $('birthdateLabel'),
+            languageLabel: $('languageLabel'),
+            musicLabel: $('musicLabel'),
+            musicSelect: $('musicSelect'),
+            calculateBtn: $('calculateBtn'),
+            shareBtn: $('shareBtn'),
+            whatsappBtn: $('whatsappBtn'),
+            facebookBtn: $('facebookBtn'),
+            resultAgeLabel: $('resultAgeLabel'),
+            resultZodiacLabel: $('resultZodiacLabel'),
+            resultLuckyLabel: $('resultLuckyLabel'),
+            resultAdviceLabel: $('resultAdviceLabel'),
+            resultFunFactLabel: $('resultFunFactLabel'),
+            footerText: $('footerText'),
+            resultAge: $('resultAge'),
+            chineseZodiac: $('chineseZodiac'),
+            luckyNumber: $('luckyNumber'),
+            lifeAdvice: $('lifeAdvice'),
+            funFact: $('funFact'),
+            resultSection: $('resultSection'),
+            dob: $('dob'),
+            language: $('language'),
+            clockText: $('clockText'),
+        };
 
-    document.getElementById("funFact").innerHTML =
-        `<b>${lang==='bn'? "ফানি ফ্যাক্ট" : "Fun Fact"}:</b> ${getFunFact(dob)}`;
+        // ============================================================
+        //  HELPERS
+        // ============================================================
+        function getLang() {
+            return elements.language.value;
+        }
 
-    if(dob.getDate()===t.getDate() && dob.getMonth()===t.getMonth())
-        celebrateBirthday();
-}
+        function t(key) {
+            const lang = getLang();
+            return LANG[lang]?.[key] ?? LANG.en[key] ?? key;
+        }
 
-/* ====== Social Share ====== */
-function toggleShare(){
-    let el = document.getElementById("socialShare");
-    el.style.display = (el.style.display==="none") ? "block" : "none";
-}
+        function getZodiacName(index) {
+            const lang = getLang();
+            const arr = LANG[lang]?.zodiac ?? LANG.en.zodiac;
+            return arr[index % arr.length] || '?';
+        }
 
-function getShareText(){
-    return document.getElementById("result").innerText + "\n" +
-           document.getElementById("chineseZodiac").innerText + "\n" +
-           document.getElementById("luckyNumber").innerText + "\n" +
-           document.getElementById("lifeAdvice").innerText + "\n" +
-           document.getElementById("funFact").innerText;
-}
+        function getZodiacEmoji(index) {
+            const emojis = ['', '', '', '', '', '', '', '', '', '', '', ''];
+            return emojis[index % emojis.length] || '';
+        }
 
-function shareWhatsApp(){
-    let text = encodeURIComponent(getShareText());
-    window.open(`https://wa.me/?text=${text}`, "_blank");
-}
+        function getLifeAdviceText(age) {
+            const lang = getLang();
+            const advice = LANG[lang]?.advice ?? LANG.en.advice;
+            if (age < 13) return advice.child;
+            if (age < 20) return advice.teen;
+            if (age < 30) return advice.young;
+            if (age < 50) return advice.mid;
+            return advice.senior;
+        }
 
-function shareFacebook(){
-    let text = encodeURIComponent(getShareText());
-    let url = encodeURIComponent(window.location.href);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, "_blank");
-}
-</script>
+        function getFunFactText(date) {
+            const lang = getLang();
+            const facts = LANG[lang]?.facts ?? LANG.en.facts;
+            return facts[date.getDate() % facts.length] || facts[0];
+        }
+
+        function getAgeText(y, m, d) {
+            const lang = getLang();
+            const fn = LANG[lang]?.ageText ?? LANG.en.ageText;
+            return fn(y, m, d);
+        }
+
+        function getLuckyNumber(d) {
+            let str = d.getDate().toString().padStart(2, '0') +
+                (d.getMonth() + 1).toString().padStart(2, '0') +
+                d.getFullYear().toString();
+            let s = 0;
+            for (let c of str) s += parseInt(c);
+            while (s >= 10) {
+                s = s.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+            }
+            return s;
+        }
+
+        // ============================================================
+        //  UPDATE UI LANGUAGE
+        // ============================================================
+        function updateUIText() {
+            const lang = getLang();
+
+            // Static UI
+            elements.appTitle.textContent = t('appTitle');
+            elements.infoNoteStrong.textContent = t('infoNoteStrong');
+            elements.infoNoteText.textContent = t('infoNoteText');
+            elements.mainTitle.innerHTML =
+                `<i class="fas fa-calculator" style="color: var(--accent);"></i> ${t('mainTitle')}`;
+            elements.birthdateLabel.innerHTML = `<i class="fas fa-calendar-alt"></i> ${t('birthdateLabel')}`;
+            elements.languageLabel.innerHTML = `<i class="fas fa-language"></i> ${t('languageLabel')}`;
+            elements.musicLabel.innerHTML = `<i class="fas fa-music"></i> ${t('musicLabel')}`;
+
+            // Music dropdown options
+            const musicOpts = elements.musicSelect.options;
+            musicOpts[0].textContent = t('musicOff');
+            musicOpts[1].textContent = t('musicOn');
+
+            elements.calculateBtn.innerHTML = `<i class="fas fa-search"></i> ${t('calculateBtn')}`;
+            elements.shareBtn.innerHTML = `<i class="fas fa-share-alt"></i> ${t('shareBtn')}`;
+            elements.whatsappBtn.innerHTML = `<i class="fab fa-whatsapp"></i> ${t('whatsappBtn')}`;
+            elements.facebookBtn.innerHTML = `<i class="fab fa-facebook"></i> ${t('facebookBtn')}`;
+
+            elements.resultAgeLabel.innerHTML = `<i class="fas fa-user"></i> ${t('resultAgeLabel')}`;
+            elements.resultZodiacLabel.innerHTML = `<i class="fas fa-dragon"></i> ${t('resultZodiacLabel')}`;
+            elements.resultLuckyLabel.innerHTML = `<i class="fas fa-star"></i> ${t('resultLuckyLabel')}`;
+            elements.resultAdviceLabel.innerHTML = `<i class="fas fa-lightbulb"></i> ${t('resultAdviceLabel')}`;
+            elements.resultFunFactLabel.innerHTML = `<i class="fas fa-smile"></i> ${t('resultFunFactLabel')}`;
+
+            elements.footerText.innerHTML = `<i class="fas fa-code"></i> ${t('footerText')}`;
+
+            // If results are visible, re-render them with new language
+            if (elements.resultSection.style.display === 'block' && lastCalculated) {
+                renderResults(lastCalculated);
+            }
+        }
+
+        // ============================================================
+        //  RENDER RESULTS
+        // ============================================================
+        function renderResults(data) {
+            const { y, m, d, dob, zodiacIdx } = data;
+            const lang = getLang();
+
+            elements.resultAge.textContent = getAgeText(y, m, d);
+            elements.chineseZodiac.textContent = `${getZodiacName(zodiacIdx)} ${getZodiacEmoji(zodiacIdx)}`;
+            elements.luckyNumber.textContent = getLuckyNumber(dob);
+            elements.lifeAdvice.textContent = getLifeAdviceText(y);
+            elements.funFact.textContent = getFunFactText(dob);
+
+            elements.resultSection.style.display = 'block';
+        }
+
+        // ============================================================
+        //  CALCULATE AGE
+        // ============================================================
+        function calculateAge() {
+            const v = elements.dob.value;
+            if (!v) {
+                alert(t('alertSelectDate'));
+                return;
+            }
+
+            const dob = new Date(v);
+            const t = new Date();
+
+            let Y = t.getFullYear() - dob.getFullYear();
+            let M = t.getMonth() - dob.getMonth();
+            let D = t.getDate() - dob.getDate();
+            if (D < 0) { M--;
+                D += new Date(t.getFullYear(), t.getMonth(), 0).getDate(); }
+            if (M < 0) { Y--;
+                M += 12; }
+
+            const zodiacIdx = dob.getFullYear() % 12;
+
+            // Store data for re-render
+            lastCalculated = { y: Y, m: M, d: D, dob, zodiacIdx };
+
+            renderResults(lastCalculated);
+
+            // Birthday celebration
+            if (dob.getDate() === t.getDate() && dob.getMonth() === t.getMonth()) {
+                confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+                alert(t('alertHappyBirthday'));
+            }
+        }
+
+        // ============================================================
+        //  CLOCK
+        // ============================================================
+        function updateClock() {
+            const now = new Date();
+            const lang = getLang();
+            let options;
+            if (lang === 'bn') {
+                options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            } else if (lang === 'hi') {
+                options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            } else {
+                options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            }
+            const dateStr = now.toLocaleDateString(lang === 'en' ? 'en-US' : lang === 'bn' ? 'bn-BD' : 'hi-IN', options);
+            const timeStr = now.toLocaleTimeString(lang === 'en' ? 'en-US' : lang === 'bn' ? 'bn-BD' : 'hi-IN');
+            elements.clockText.textContent = `${dateStr} ${timeStr}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ============================================================
+        //  MUSIC
+        // ============================================================
+        function toggleMusic(val) {
+            const m = document.getElementById('bgMusic');
+            if (val === 'on') {
+                m.play().catch(() => alert('Tap somewhere to enable sound!'));
+            } else {
+                m.pause();
+                m.currentTime = 0;
+            }
+        }
+
+        // ============================================================
+        //  SOCIAL SHARE
+        // ============================================================
+        function toggleShare() {
+            const el = document.getElementById('socialShare');
+            el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'flex' : 'none';
+        }
+
+        function getShareText() {
+            const lang = getLang();
+            const age = elements.resultAge.textContent;
+            const zodiac = elements.chineseZodiac.textContent;
+            const lucky = elements.luckyNumber.textContent;
+            const advice = elements.lifeAdvice.textContent;
+            const fact = elements.funFact.textContent;
+            const labels = LANG[lang] ?? LANG.en;
+            return ` ${labels.resultAgeLabel}: ${age}\n ${labels.resultZodiacLabel}: ${zodiac}\n ${labels.resultLuckyLabel}: ${lucky}\n ${labels.resultAdviceLabel}: ${advice}\n ${labels.resultFunFactLabel}: ${fact}`;
+        }
+
+        function shareWhatsApp() {
+            const text = encodeURIComponent(getShareText());
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+
+        function shareFacebook() {
+            const text = encodeURIComponent(getShareText());
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank');
+        }
+
+        // ============================================================
+        //  LANGUAGE CHANGE HANDLER
+        // ============================================================
+        elements.language.addEventListener('change', function() {
+            currentLang = this.value;
+            updateUIText();
+            updateClock(); // refresh clock with new locale
+        });
+
+        // ============================================================
+        //  SET DEFAULT DATE
+        // ============================================================
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0];
+            elements.dob.value = today;
+
+            // Set default language to English
+            elements.language.value = 'en';
+            currentLang = 'en';
+            updateUIText();
+            updateClock();
+        };
+    </script>
 
 </body>
-  </html>
+</html>
