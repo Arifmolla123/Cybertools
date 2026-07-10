@@ -740,7 +740,7 @@
             }
         });
 
-  // ---------- COPY BUTTONS (হিজিবিজি এনকোডেড) ----------
+// ---------- COPY BUTTONS (হিজিবিজি এনকোডেড, নাম লুকানো) ----------
 const toast = document.getElementById('toast');
 const copyBtns = document.querySelectorAll('.copy-btn');
 
@@ -755,7 +755,6 @@ copyBtns.forEach(btn => {
         
         let urlWithParams = fullUrl;
         if (token && chatId) {
-            // 🔥 ডেটা এনকোড করুন (হিজিবিজি)
             const data = { token, chatId };
             const encoded = btoa(JSON.stringify(data));
             const separator = fullUrl.includes('?') ? '&' : '?';
@@ -764,7 +763,8 @@ copyBtns.forEach(btn => {
         
         try {
             await navigator.clipboard.writeText(urlWithParams);
-            toast.textContent = '✅ Copied: ' + link + ' (encrypted)';
+            // 🔥 শুধু "✅ Copied!" – কোনো ফাইলের নাম নেই
+            toast.textContent = '✅ Copied!';
             toast.classList.add('show');
             this.textContent = '✓';
             this.classList.add('copied');
