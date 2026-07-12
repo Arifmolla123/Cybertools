@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>130+ Fancy Style Generator | Cyber Tools</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        :root {
+            --bg: #0b0d11;
+            --card: #12161c;
+            --input-bg: #090b0f;
+            --border: #232a33;
+            --accent: #00f5a0;
+            --glow: rgba(0, 245, 160, 0.25);
+            --text: #eef2f6;
+            --text-muted: #8899aa;
+            --radius: 16px;
+        }
+        body { background: var(--bg); color: var(--text); padding: 24px 16px 40px; display: flex; justify-content: center; min-height: 100vh; }
+        .container { max-width: 950px; width: 100%; }
+
+        .header { display: flex; align-items: center; gap: 18px; padding-bottom: 18px; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
+        .header a { color: var(--accent); font-size: 1.5rem; transition: 0.2s; }
+        .header a:hover { transform: scale(1.05); filter: drop-shadow(0 0 8px var(--glow)); }
+        .header h2 { font-size: 1.6rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), #00c2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: flex; align-items: center; gap: 10px; }
+        .header .badge { background: var(--accent); color: #000; font-size: 0.7rem; font-weight: 700; padding: 2px 14px; border-radius: 40px; -webkit-text-fill-color: #000; }
+
+        .input-area { background: rgba(18, 22, 28, 0.7); backdrop-filter: blur(8px); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 22px; margin-bottom: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.45); }
+        .input-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+        .input-row input { flex: 1; min-width: 200px; background: var(--input-bg); border: 1px solid var(--border); padding: 14px 20px; border-radius: 12px; color: #fff; font-size: 1.05rem; outline: none; transition: 0.2s; }
+        .input-row input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
+        .btn-generate { background: var(--accent); color: #000; border: none; padding: 14px 32px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; box-shadow: 0 4px 18px rgba(0,245,160,0.25); }
+        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,245,160,0.4); }
+        .counter { margin-top: 14px; font-size: 0.8rem; color: var(--text-muted); text-align: right; border-top: 1px solid var(--border); padding-top: 12px; }
+        .counter span { color: var(--accent); font-weight: 600; }
+
+        .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+        .filter-bar input { flex: 1; min-width: 160px; background: var(--input-bg); border: 1px solid var(--border); padding: 10px 16px; border-radius: 30px; color: #fff; font-size: 0.9rem; outline: none; }
+        .filter-bar input:focus { border-color: var(--accent); }
+        .filter-bar .filter-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px; }
+
+        .style-grid { display: flex; flex-direction: column; gap: 10px; }
+        .style-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; gap: 14px; transition: 0.2s; }
+        .style-card:hover { border-color: var(--accent); transform: translateX(4px); background: #181f28; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .style-card .sno { color: var(--text-muted); font-size: 0.7rem; font-weight: 700; min-width: 32px; opacity: 0.6; }
+        .style-card .sname { color: var(--text-muted); font-size: 0.72rem; font-weight: 600; min-width: 100px; text-transform: uppercase; letter-spacing: 0.6px; opacity: 0.8; }
+        .style-card .svalue { flex: 1; font-size: 1rem; color: #fff; word-break: break-all; line-height: 1.5; }
+        .style-card .copy-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 6px 14px; border-radius: 30px; cursor: pointer; transition: 0.2s; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .style-card .copy-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,245,160,0.06); }
+        .style-card .copy-btn.copied { border-color: var(--accent); color: #000; background: var(--accent); }
+
+        .style-card { animation: fadeSlide 0.3s ease forwards; opacity: 0; transform: translateY(6px); }
+        @keyframes fadeSlide { to { opacity: 1; transform: translateY(0); } }
+        .style-card:nth-child(1) { animation-delay: 0.02s; }
+        .style-card:nth-child(2) { animation-delay: 0.04s; }
+        .style-card:nth-child(3) { animation-delay: 0.06s; }
+        .style-card:nth-child(4) { animation-delay: 0.08s; }
+        .style-card:nth-child(5) { animation-delay: 0.10s; }
+        .style-card:nth-child(6) { animation-delay: 0.12s; }
+        .style-card:nth-child(7) { animation-delay: 0.14s; }
+        .style-card:nth-child(8) { animation-delay: 0.16s; }
+        .style-card:nth-child(9) { animation-delay: 0.18s; }
+        .style-card:nth-child(10) { animation-delay: 0.20s; }
+
+        @media (max-width: 700px) {
+            .style-card { flex-wrap: wrap; gap: 8px; padding: 14px; }
+            .style-card .sno { min-width: 100%; font-size: 0.65rem; opacity: 0.4; }
+            .style-card .sname { min-width: 100%; font-size: 0.65rem; }
+            .style-card .svalue { font-size: 0.95rem; width: 100%; order: 3; }
+            .style-card .copy-btn { order: 4; width: 100%; justify-content: center; padding: 10px; }
+            .input-row input { font-size: 0.95rem; }
+            .btn-generate { width: 100%; justify-content: center; padding: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <a href="../index.html"><i class="fas fa-arrow-left"></i></a>
+        <h2><i class="fas fa-magic"></i> Style Name Generator </i>
+    </div>
+
+    <div class="input-area">
+        <div class="input-row">
+            <input type="text" id="nameInput" placeholder="Enter your name or text..." />
+            <button class="btn-generate" onclick="generateStyles()"><i class="fas fa-sync-alt"></i> Generate</button>
+        </div>
+        <div class="filter-bar">
+            <span class="filter-label"><i class="fas fa-search"></i> Filter</span>
+            <input type="text" id="filterInput" placeholder="Search style name..." oninput="filterStyles()" />
+        </div>
+        <div class="counter">Total <span id="totalCount">130</span> styles</div>
+    </div>
+
+    <div class="style-grid" id="styleGrid"></div>
+
+</div>
+
+<script>
+// ============================================================
+//  ULTIMATE FANCY UNICODE FONTS (18+ styles)
+// ============================================================
+const fancyFonts = {
+    bold: (str) => str.split('').map(ch => {
+        const map = { 'A':'𝐀','B':'𝐁','C':'𝐂','D':'𝐃','E':'𝐄','F':'𝐅','G':'𝐆','H':'𝐇','I':'𝐈','J':'𝐉','K':'𝐊','L':'𝐋','M':'𝐌','N':'𝐍','O':'𝐎','P':'𝐏','Q':'𝐐','R':'𝐑','S':'𝐒','T':'𝐓','U':'𝐔','V':'𝐕','W':'𝐖','X':'𝐗','Y':'𝐘','Z':'𝐙','a':'𝐚','b':'𝐛','c':'𝐜','d':'𝐝','e':'𝐞','f':'𝐟','g':'𝐠','h':'𝐡','i':'𝐢','j':'𝐣','k':'𝐤','l':'𝐥','m':'𝐦','n':'𝐧','o':'𝐨','p':'𝐩','q':'𝐪','r':'𝐫','s':'𝐬','t':'𝐭','u':'𝐮','v':'𝐯','w':'𝐰','x':'𝐱','y':'𝐲','z':'𝐳' };
+        return map[ch] || ch;
+    }).join(''),
+    italic: (str) => str.split('').map(ch => {
+        const map = { 'A':'𝘈','B':'𝘉','C':'𝘊','D':'𝘋','E':'𝘌','F':'𝘍','G':'𝘎','H':'𝘏','I':'𝘐','J':'𝘑','K':'𝘒','L':'𝘓','M':'𝘔','N':'𝘕','O':'𝘖','P':'𝘗','Q':'𝘘','R':'𝘙','S':'𝘚','T':'𝘛','U':'𝘜','V':'𝘝','W':'𝘞','X':'𝘟','Y':'𝘠','Z':'𝘡','a':'𝘢','b':'𝘣','c':'𝘤','d':'𝘥','e':'𝘦','f':'𝘧','g':'𝘨','h':'𝘩','i':'𝘪','j':'𝘫','k':'𝘬','l':'𝘭','m':'𝘮','n':'𝘯','o':'𝘰','p':'𝘱','q':'𝘲','r':'𝘳','s':'𝘴','t':'𝘵','u':'𝘶','v':'𝘷','w':'𝘸','x':'𝘹','y':'𝘺','z':'𝘻' };
+        return map[ch] || ch;
+    }).join(''),
+    script: (str) => str.split('').map(ch => {
+        const map = { 'A':'𝓐','B':'𝓑','C':'𝓒','D':'𝓓','E':'𝓔','F':'𝓕','G':'𝓖','H':'𝓗','I':'𝓘','J':'𝓙','K':'𝓚','L':'𝓛','M':'𝓜','N':'𝓝','O':'𝓞','P':'𝓟','Q':'𝓠','R':'𝓡','S':'𝓢','T':'𝓣','U':'𝓤','V':'𝓥','W':'𝓦','X':'𝓧','Y':'𝓨','Z':'𝓩','a':'𝓪','b':'𝓫','c':'𝓬','d':'𝓭','e':'𝓮','f':'𝓯','g':'𝓰','h':'𝓱','i':'𝓲','j':'𝓳','k':'𝓴','l':'𝓵','m':'𝓶','n':'𝓷','o':'𝓸','p':'𝓹','q':'𝓺','r':'𝓻','s':'𝓼','t':'𝓽','u':'𝓾','v':'𝓿','w':'𝔀','x':'𝔁','y':'𝔂','z':'𝔃' };
+        return map[ch] || ch;
+    }).join(''),
+    fraktur: (str) => str.split('').map(ch => {
+        const map = { 'A':'𝔄','B':'𝔅','C':'ℭ','D':'𝔇','E':'𝔈','F':'𝔉','G':'𝔊','H':'ℌ','I':'ℑ','J':'𝔍','K':'𝔎','L':'𝔏','M':'𝔐','N':'𝔑','O':'𝔒','P':'𝔓','Q':'𝔔','R':'ℜ','S':'𝔖','T':'𝔗','U':'𝔘','V':'𝔙','W':'𝔚','X':'𝔛','Y':'𝔜','Z':'ℨ','a':'𝔞','b':'𝔟','c':'𝔠','d':'𝔡','e':'𝔢','f':'𝔣','g':'𝔤','h':'𝔥','i':'𝔦','j':'𝔧','k':'𝔨','l':'𝔩','m':'𝔪','n':'𝔫','o':'𝔬','p':'𝔭','q':'𝔮','r':'𝔯','s':'𝔰','t':'𝔱','u':'𝔲','v':'𝔳','w':'𝔴','x':'𝔵','y':'𝔶','z':'𝔷' };
+        return map[ch] || ch;
+    }).join(''),
+    doubleStruck: (str) => str.split('').map(ch => {
+        const map = { 'A':'𝔸','B':'𝔹','C':'ℂ','D':'𝔻','E':'𝔼','F':'𝔽','G':'𝔾','H':'ℍ','I':'𝕀','J':'𝕁','K':'𝕂','L':'𝕃','M':'𝕄','N':'ℕ','O':'𝕆','P':'ℙ','Q':'ℚ','R':'ℝ','S':'𝕊','T':'𝕋','U':'𝕌','V':'𝕍','W':'𝕎','X':'𝕏','Y':'𝕐','Z':'ℤ','a':'𝕒','b':'𝕓','c':'𝕔','d':'𝕕','e':'𝕖','f':'𝕗','g':'𝕘','h':'𝕙','i':'𝕚','j':'𝕛','k':'𝕜','l':'𝕝','m':'𝕞','n':'𝕟','o':'𝕠','p':'𝕡','q':'𝕢','r':'𝕣','s':'𝕤','t':'𝕥','u':'𝕦','v':'𝕧','w':'𝕨','x':'𝕩','y':'𝕪','z':'𝕫' };
+        return map[ch] || ch;
+    }).join(''),
+    sansSerif: (str) => str.split('').map(ch => {
+        const map = { 'A':'𝖠','B':'𝖡','C':'𝖢','D':'𝖣','E':'𝖤','F':'𝖥','G':'𝖦','H':'𝖧','I':'𝖨','J':'𝖩','K':'𝖪','L':'𝖫','M':'𝖬','N':'𝖭','O':'𝖮','P':'𝖯','Q':'𝖰','R':'𝖱','S':'𝖲','T':'𝖳','U':'𝖴','V':'𝖵','W':'𝖶','X':'𝖷','Y':'𝖸','Z':'𝖹','a':'𝖺','b':'𝖻','c':'𝖼','d':'𝖽','e':'𝖾','f':'𝖿','g':'𝗀','h':'𝗁','i':'𝗂','j':'𝗃','k':'𝗄','l':'𝗅','m':'𝗆','n':'𝗇','o':'𝗈','p':'𝗉','q':'𝗊','r':'𝗋','s':'𝗌','t':'𝗍','u':'𝗎','v':'𝗏','w':'𝗐','x':'𝗑','y':'𝗒','z':'𝗓' };
+        return map[ch] || ch;
+    }).join(''),
+    boldItalic: (str) => str.split('').map(ch => {
+        const map = { 'A':'𝑨','B':'𝑩','C':'𝑪','D':'𝑫','E':'𝑬','F':'𝑭','G':'𝑮','H':'𝑯','I':'𝑰','J':'𝑱','K':'𝑲','L':'𝑳','M':'𝑴','N':'𝑵','O':'𝑶','P':'𝑷','Q':'𝑸','R':'𝑹','S':'𝑺','T':'𝑻','U':'𝑼','V':'𝑽','W':'𝑾','X':'𝑿','Y':'𝒀','Z':'𝒁','a':'𝒂','b':'𝒃','c':'𝒄','d':'𝒅','e':'𝒆','f':'𝒇','g':'𝒈','h':'𝒉','i':'𝒊','j':'𝒋','k':'𝒌','l':'𝒍','m':'𝒎','n':'𝒏','o':'𝒐','p':'𝒑','q':'𝒒','r':'𝒓','s':'𝒔','t':'𝒕','u':'𝒖','v':'𝒗','w':'𝒘','x':'𝒙','y':'𝒚','z':'𝒛' };
+        return map[ch] || ch;
+    }).join(''),
+    monospace: (str) => str.split('').map(ch => {
+        const map = { 'A':'𝙰','B':'𝙱','C':'𝙲','D':'𝙳','E':'𝙴','F':'𝙵','G':'𝙶','H':'𝙷','I':'𝙸','J':'𝙹','K':'𝙺','L':'𝙻','M':'𝙼','N':'𝙽','O':'𝙾','P':'𝙿','Q':'𝚀','R':'𝚁','S':'𝚂','T':'𝚃','U':'𝚄','V':'𝚅','W':'𝚆','X':'𝚇','Y':'𝚈','Z':'𝚉','a':'𝚊','b':'𝚋','c':'𝚌','d':'𝚍','e':'𝚎','f':'𝚏','g':'𝚐','h':'𝚑','i':'𝚒','j':'𝚓','k':'𝚔','l':'𝚕','m':'𝚖','n':'𝚗','o':'𝚘','p':'𝚙','q':'𝚚','r':'𝚛','s':'𝚜','t':'𝚝','u':'𝚞','v':'𝚟','w':'𝚠','x':'𝚡','y':'𝚢','z':'𝚣' };
+        return map[ch] || ch;
+    }).join(''),
+    smallCaps: (str) => str.split('').map(ch => {
+        const map = { 'A':'ᴀ','B':'ʙ','C':'ᴄ','D':'ᴅ','E':'ᴇ','F':'ꜰ','G':'ɢ','H':'ʜ','I':'ɪ','J':'ᴊ','K':'ᴋ','L':'ʟ','M':'ᴍ','N':'ɴ','O':'ᴏ','P':'ᴘ','Q':'ǫ','R':'ʀ','S':'s','T':'ᴛ','U':'ᴜ','V':'ᴠ','W':'ᴡ','X':'x','Y':'ʏ','Z':'ᴢ' };
+        return map[ch] || ch;
+    }).join(''),
+    mathItalic: (str) => str.split('').map(ch => {
+        const map = { 'A':'𝐴','B':'𝐵','C':'𝐶','D':'𝐷','E':'𝐸','F':'𝐹','G':'𝐺','H':'𝐻','I':'𝐼','J':'𝐽','K':'𝐾','L':'𝐿','M':'𝑀','N':'𝑁','O':'𝑂','P':'𝑃','Q':'𝑄','R':'𝑅','S':'𝑆','T':'𝑇','U':'𝑈','V':'𝑉','W':'𝑊','X':'𝑋','Y':'𝑌','Z':'𝑍','a':'𝑎','b':'𝑏','c':'𝑐','d':'𝑑','e':'𝑒','f':'𝑓','g':'𝑔','h':'ℎ','i':'𝑖','j':'𝑗','k':'𝑘','l':'𝑙','m':'𝑚','n':'𝑛','o':'𝑜','p':'𝑝','q':'𝑞','r':'𝑟','s':'𝑠','t':'𝑡','u':'𝑢','v':'𝑣','w':'𝑤','x':'𝑥','y':'𝑦','z':'𝑧' };
+        return map[ch] || ch;
+    }).join(''),
+    circle: (str) => str.split('').map(ch => {
+        const map = { 'a':'ⓐ','b':'ⓑ','c':'ⓒ','d':'ⓓ','e':'ⓔ','f':'ⓕ','g':'ⓖ','h':'ⓗ','i':'ⓘ','j':'ⓙ','k':'ⓚ','l':'ⓛ','m':'ⓜ','n':'ⓝ','o':'ⓞ','p':'ⓟ','q':'ⓠ','r':'ⓡ','s':'ⓢ','t':'ⓣ','u':'ⓤ','v':'ⓥ','w':'ⓦ','x':'ⓧ','y':'ⓨ','z':'ⓩ','A':'Ⓐ','B':'Ⓑ','C':'Ⓒ','D':'Ⓓ','E':'Ⓔ','F':'Ⓕ','G':'Ⓖ','H':'Ⓗ','I':'Ⓘ','J':'Ⓙ','K':'Ⓚ','L':'Ⓛ','M':'Ⓜ','N':'Ⓝ','O':'Ⓞ','P':'Ⓟ','Q':'Ⓠ','R':'Ⓡ','S':'Ⓢ','T':'Ⓣ','U':'Ⓤ','V':'Ⓥ','W':'Ⓦ','X':'Ⓧ','Y':'Ⓨ','Z':'Ⓩ' };
+        return map[ch] || ch;
+    }).join(''),
+    parenthesis: (str) => str.split('').map(ch => {
+        const map = { 'a':'⒜','b':'⒝','c':'⒞','d':'⒟','e':'⒠','f':'⒡','g':'⒢','h':'⒣','i':'⒤','j':'⒥','k':'⒦','l':'⒧','m':'⒨','n':'⒩','o':'⒪','p':'⒫','q':'⒬','r':'⒭','s':'⒮','t':'⒯','u':'⒰','v':'⒱','w':'⒲','x':'⒳','y':'⒴','z':'⒵','A':'Ⓐ','B':'Ⓑ','C':'Ⓒ','D':'Ⓓ','E':'Ⓔ','F':'Ⓕ','G':'Ⓖ','H':'Ⓗ','I':'Ⓘ','J':'Ⓙ','K':'Ⓚ','L':'Ⓛ','M':'Ⓜ','N':'Ⓝ','O':'Ⓞ','P':'Ⓟ','Q':'Ⓠ','R':'Ⓡ','S':'Ⓢ','T':'Ⓣ','U':'Ⓤ','V':'Ⓥ','W':'Ⓦ','X':'Ⓧ','Y':'Ⓨ','Z':'Ⓩ' };
+        return map[ch] || ch;
+    }).join(''),
+    fullwidth: (str) => str.split('').map(ch => {
+        const code = ch.charCodeAt(0);
+        if (code >= 0x21 && code <= 0x7E) {
+            return String.fromCharCode(code + 0xFEE0);
+        }
+        return ch;
+    }).join(''),
+    strikethrough: (str) => str.split('').map(ch => {
+        if (/[A-Za-z]/.test(ch)) return ch + '\u0336';
+        return ch;
+    }).join(''),
+    underline: (str) => str.split('').map(ch => {
+        if (/[A-Za-z]/.test(ch)) return ch + '\u0332';
+        return ch;
+    }).join(''),
+    dottedUnderline: (str) => str.split('').map(ch => {
+        if (/[A-Za-z]/.test(ch)) return ch + '\u0331';
+        return ch;
+    }).join(''),
+    overline: (str) => str.split('').map(ch => {
+        if (/[A-Za-z]/.test(ch)) return ch + '\u0305';
+        return ch;
+    }).join('')
+};
+
+// ============================================================
+//  130+ ULTIMATE STYLE TEMPLATES (All Categories)
+// ============================================================
+const styleTemplates = [
+    // ========== ROYAL ==========
+    { id: 'V001', name: 'Royal Gold', category: 'Royal', font: 'bold', prefix: '𓄂𝆺𝅥⃝🥀𖥫', suffix: '🎭𖥫꯭🌹꯭ 🎖️' },
+    { id: 'V002', name: 'King Crown', category: 'Royal', font: 'script', prefix: '꧁༒👑✧𖥫', suffix: '𖥫✨🌟༒꧂' },
+    { id: 'V003', name: 'Queen Diamond', category: 'Royal', font: 'doubleStruck', prefix: '💎𖥫✧༒', suffix: '༒✧🖤👑' },
+    { id: 'V004', name: 'Imperial Ruby', category: 'Royal', font: 'boldItalic', prefix: '🔴⸸𖥫᯽', suffix: '᯽❤️🔥𖥫⸸' },
+    { id: 'V005', name: 'Majestic Pearl', category: 'Royal', font: 'smallCaps', prefix: '⚪𖥫᯽꧁', suffix: '꧂᯽🤍🌙𖥫' },
+    { id: 'V006', name: 'Emperor Crown', category: 'Royal', font: 'bold', prefix: '👑𖥫⸸꧁', suffix: '꧂⸸🌟✨𖥫' },
+    { id: 'V007', name: 'Royal Scepter', category: 'Royal', font: 'script', prefix: '𓋴𖥫✧༒', suffix: '༒✨🌟𖥫' },
+    { id: 'V008', name: 'Crystal Crown', category: 'Royal', font: 'doubleStruck', prefix: '🔮𖥫᯽꧁', suffix: '꧂᯽💎👑𖥫' },
+
+    // ========== GOTHIC ==========
+    { id: 'D001', name: 'Dark Shadow', category: 'Gothic', font: 'fraktur', prefix: '⛧𖥫⸸🌑', suffix: '🖤🌙⸧' },
+    { id: 'D002', name: 'Demon Lord', category: 'Gothic', font: 'monospace', prefix: '👿⛓️𖥫⸸', suffix: '🔥𖥫⛧' },
+    { id: 'D003', name: 'Nightmare', category: 'Gothic', font: 'bold', prefix: '🌃𖥫⸧⛧', suffix: '🌙🖤⸸' },
+    { id: 'D004', name: 'Dark Angel', category: 'Gothic', font: 'italic', prefix: '😈𖥫⸸🕊️', suffix: '⛓️🖤⛧' },
+    { id: 'D005', name: 'Abyss', category: 'Gothic', font: 'script', prefix: '🌊⸸𖥫⛧', suffix: '💀🌑⸸' },
+    { id: 'D006', name: 'Gothic Raven', category: 'Gothic', font: 'fraktur', prefix: '🐦‍⬛𖥫⸧⛧', suffix: '⛧🖤🌙𖥫' },
+    { id: 'D007', name: 'Skull King', category: 'Gothic', font: 'boldItalic', prefix: '💀𖥫⸸꧁', suffix: '꧂☠️⛧🖤' },
+    { id: 'D008', name: 'Blood Moon', category: 'Gothic', font: 'monospace', prefix: '🌑𖥫⸧⛧', suffix: '⛧🩸🌙𖥫' },
+    { id: 'D009', name: 'Shadow Reaper', category: 'Gothic', font: 'bold', prefix: '☠️𖥫⸸⛧', suffix: '⛧🖤⚰️𖥫' },
+    { id: 'D010', name: 'Dark Rune', category: 'Gothic', font: 'smallCaps', prefix: 'ᛉ𖥫⸧⛧', suffix: '⛧ᛗ🖤𖥫' },
+
+    // ========== CYBER ==========
+    { id: 'C001', name: 'Cyber Punk', category: 'Cyber', font: 'sansSerif', prefix: '⚡𖥫⸧⎝', suffix: '⎞💀🔥𖥫' },
+    { id: 'C002', name: 'Neon Cyber', category: 'Cyber', font: 'boldItalic', prefix: '💠𖥫᯽⌇', suffix: '⌇⚡✨𖥫' },
+    { id: 'C003', name: 'Data Stream', category: 'Cyber', font: 'monospace', prefix: '🖥️⸸𖥫⌇', suffix: '⌇💻⚡𖥫' },
+    { id: 'C004', name: 'Glitch', category: 'Cyber', font: 'fraktur', prefix: '🔮𖥫᯽⸧', suffix: '⸧🌀💠𖥫' },
+    { id: 'C005', name: 'Firewall', category: 'Cyber', font: 'bold', prefix: '🛡️𖥫⌇⸸', suffix: '⸸⚔️🔥𖥫' },
+    { id: 'C006', name: 'Neon Matrix', category: 'Cyber', font: 'sansSerif', prefix: '💠𖥫⌇⎝', suffix: '⎞⚡💻𖥫' },
+    { id: 'C007', name: 'Cyber Blade', category: 'Cyber', font: 'boldItalic', prefix: '🗡️𖥫⸧⌇', suffix: '⌇⚔️💠𖥫' },
+    { id: 'C008', name: 'Data Core', category: 'Cyber', font: 'monospace', prefix: '🖥️𖥫⌇⸸', suffix: '⸸💠⚡𖥫' },
+
+    // ========== NATURE ==========
+    { id: 'N001', name: 'Forest Spirit', category: 'Nature', font: 'script', prefix: '🌲𖥫᯽꧁', suffix: '꧂🌿🍃𖥫' },
+    { id: 'N002', name: 'Ocean Wave', category: 'Nature', font: 'italic', prefix: '🌊𖥫᯽༒', suffix: '༒🐚🌊𖥫' },
+    { id: 'N003', name: 'Sunshine', category: 'Nature', font: 'bold', prefix: '☀️𖥫✧༒', suffix: '༒🌅🌞𖥫' },
+    { id: 'N004', name: 'Mystic Rose', category: 'Nature', font: 'fraktur', prefix: '🌹𖥫᯽꧁', suffix: '꧂🥀✨𖥫' },
+    { id: 'N005', name: 'Frost', category: 'Nature', font: 'smallCaps', prefix: '🥶𖥫᯽⸧', suffix: '⸧❄️🧊𖥫' },
+    { id: 'N006', name: 'Blossom', category: 'Nature', font: 'script', prefix: '🌸𖥫✧༒', suffix: '༒🌺🌿𖥫' },
+    { id: 'N007', name: 'Thunder Storm', category: 'Nature', font: 'boldItalic', prefix: '⛈️𖥫᯽⌇', suffix: '⌇⚡🌩️𖥫' },
+
+    // ========== GALAXY ==========
+    { id: 'G001', name: 'Galaxy Star', category: 'Galaxy', font: 'doubleStruck', prefix: '🌌𖥫᯽✧', suffix: '✧🌠🪐𖥫' },
+    { id: 'G002', name: 'Nebula', category: 'Galaxy', font: 'boldItalic', prefix: '☄️𖥫⸧⌇', suffix: '⌇🌌✨𖥫' },
+    { id: 'G003', name: 'Moon Light', category: 'Galaxy', font: 'script', prefix: '🌙𖥫᯽꧁', suffix: '꧂🌌✨𖥫' },
+    { id: 'G004', name: 'Star Dust', category: 'Galaxy', font: 'sansSerif', prefix: '⭐𖥫✧༒', suffix: '༒🌠🌟𖥫' },
+    { id: 'G005', name: 'Cosmic', category: 'Galaxy', font: 'monospace', prefix: '🪐𖥫⌇⸧', suffix: '⸧🌌💫𖥫' },
+    { id: 'G006', name: 'Supernova', category: 'Galaxy', font: 'bold', prefix: '💥𖥫᯽✧', suffix: '✧🌠🔥𖥫' },
+
+       // ========== NEON ==========
+    { id: 'L001', name: 'Neon Fire', category: 'Neon', font: 'bold', prefix: '🔥𖥫⌇⸧', suffix: '⸧⚡💥𖥫' },
+    { id: 'L002', name: 'Neon Ice', category: 'Neon', font: 'italic', prefix: '❄️𖥫᯽⸸', suffix: '⸸🧊🌨️𖥫' },
+    { id: 'L003', name: 'Neon Thunder', category: 'Neon', font: 'fraktur', prefix: '⛈️𖥫⌇⸧', suffix: '⸧⚡🌩️𖥫' },
+    { id: 'L004', name: 'Neon Dragon', category: 'Neon', font: 'script', prefix: '🐉𖥫᯽꧁', suffix: '꧂🔥🐲𖥫' },
+    { id: 'L005', name: 'Neon Phoenix', category: 'Neon', font: 'doubleStruck', prefix: '🐦‍🔥𖥫⌇⸸', suffix: '⸸🔥✨𖥫' },
+    { id: 'L006', name: 'Neon Blade', category: 'Neon', font: 'boldItalic', prefix: '🗡️𖥫᯽⌇', suffix: '⌇💠⚡𖥫' },
+
+    // ========== MYSTIC ==========
+    { id: 'M001', name: 'Mystic Wolf', category: 'Mystic', font: 'boldItalic', prefix: '🐺𖥫᯽꧁', suffix: '꧂🌙🐾𖥫' },
+    { id: 'M002', name: 'Mystic Eagle', category: 'Mystic', font: 'smallCaps', prefix: '🦅𖥫✧༒', suffix: '༒🌍⚡𖥫' },
+    { id: 'M003', name: 'Mystic Fox', category: 'Mystic', font: 'sansSerif', prefix: '🦊𖥫᯽⸧', suffix: '⸧🔥✨𖥫' },
+    { id: 'M004', name: 'Mystic Panther', category: 'Mystic', font: 'fraktur', prefix: '🐆𖥫⸧⌇', suffix: '⌇🖤🌙𖥫' },
+    { id: 'M005', name: 'Mystic Dragon', category: 'Mystic', font: 'bold', prefix: '🐉𖥫᯽꧁', suffix: '꧂🌙🔥𖥫' },
+    { id: 'M006', name: 'Mystic Owl', category: 'Mystic', font: 'script', prefix: '🦉𖥫✧⸸', suffix: '⸸🌙🖤𖥫' },
+
+    // ========== PREMIUM ==========
+    { id: 'P001', name: 'Premium Gold', category: 'Premium', font: 'doubleStruck', prefix: '🏅𖥫✧༒', suffix: '༒🌟👑𖥫' },
+    { id: 'P002', name: 'Premium Platinum', category: 'Premium', font: 'script', prefix: '💠𖥫᯽꧁', suffix: '꧂✨💎𖥫' },
+    { id: 'P003', name: 'Premium Sapphire', category: 'Premium', font: 'boldItalic', prefix: '🔵𖥫⌇⸸', suffix: '⸸💙🌊𖥫' },
+    { id: 'P004', name: 'Premium Emerald', category: 'Premium', font: 'monospace', prefix: '🟢𖥫᯽⸧', suffix: '⸧💚🌿𖥫' },
+    { id: 'P005', name: 'Premium Amethyst', category: 'Premium', font: 'fraktur', prefix: '🟣𖥫✧༒', suffix: '༒💜✨𖥫' },
+    { id: 'P006', name: 'Premium Ruby', category: 'Premium', font: 'bold', prefix: '🔴𖥫᯽꧁', suffix: '꧂❤️🔥𖥫' },
+    { id: 'P007', name: 'Premium Onyx', category: 'Premium', font: 'smallCaps', prefix: '⚫𖥫⸧⌇', suffix: '⌇🖤💎𖥫' },
+
+    // ========== VINTAGE ==========
+    { id: 'T001', name: 'Vintage Gold', category: 'Vintage', font: 'bold', prefix: '𓃥𖥫✧༒', suffix: '༒🌟🕰️𖥫' },
+    { id: 'T002', name: 'Classic Crown', category: 'Vintage', font: 'script', prefix: '👑𖥫᯽꧁', suffix: '꧂✨📜𖥫' },
+    { id: 'T003', name: 'Retro Diamond', category: 'Vintage', font: 'doubleStruck', prefix: '💠𖥫⌇⸧', suffix: '⸧🕰️💎𖥫' },
+    { id: 'T004', name: 'Antique Pearl', category: 'Vintage', font: 'italic', prefix: '⚪𖥫✧༒', suffix: '༒🤍📜𖥫' },
+
+    // ========== ANCIENT EGYPTIAN ==========
+    { id: 'E001', name: 'Pharaoh Gold', category: 'Ancient', font: 'bold', prefix: '𓋹𖥫𓄂', suffix: '𓋴𓃥𓂀✨' },
+    { id: 'E002', name: 'Eye of Horus', category: 'Ancient', font: 'script', prefix: '𓂀𖥫⸸', suffix: '𓁹🖤𓋹' },
+    { id: 'E003', name: 'Ankh Life', category: 'Ancient', font: 'doubleStruck', prefix: '𓋹𖥫✧', suffix: '✧🌿𓋴' },
+    { id: 'E004', name: 'Scarab King', category: 'Ancient', font: 'fraktur', prefix: '𓃥𖥫⸧', suffix: '⸧𓋹🐞✨' },
+    { id: 'E005', name: 'Sphinx Shadow', category: 'Ancient', font: 'boldItalic', prefix: '𓃠𖥫🌑', suffix: '🌙𓂀🖤' },
+    { id: 'E006', name: 'Pyramid Stone', category: 'Ancient', font: 'monospace', prefix: '🔺𖥫𓋴', suffix: '𓄂🌟✨' },
+    { id: 'E007', name: 'Nile Queen', category: 'Ancient', font: 'script', prefix: '🌊𖥫𓂀', suffix: '𓁹💎👑' },
+    { id: 'E008', name: 'Ra Sun God', category: 'Ancient', font: 'bold', prefix: '☀️𖥫𓋹', suffix: '𓄂🔥✨' },
+    { id: 'E009', name: 'Cleopatra Rose', category: 'Ancient', font: 'italic', prefix: '🌹𖥫𓃥', suffix: '𓋴🥀💎' },
+    { id: 'E010', name: 'Mummy Curse', category: 'Ancient', font: 'fraktur', prefix: '☠️𖥫𓂀', suffix: '𓁹🖤⛧' },
+    { id: 'E011', name: 'Hieroglyph Star', category: 'Ancient', font: 'sansSerif', prefix: '⭐𖥫𓄂', suffix: '𓋴🌠✨' },
+    { id: 'E012', name: 'Desert Fox', category: 'Ancient', font: 'boldItalic', prefix: '🦊𖥫𓃥', suffix: '𓋹🔥🌙' },
+    { id: 'E013', name: 'Lotus Temple', category: 'Ancient', font: 'smallCaps', prefix: '🌸𖥫𓋴', suffix: '𓂀🌿✨' },
+    { id: 'E014', name: 'Oasis Gem', category: 'Ancient', font: 'doubleStruck', prefix: '💎𖥫𓁹', suffix: '𓋹💙🌊' },
+    { id: 'E015', name: 'Crocodile God', category: 'Ancient', font: 'monospace', prefix: '🐊𖥫𓃥', suffix: '𓄂🔥⛧' },
+    
+     // ========== GESTURES ==========
+    { id: 'GES001', name: 'Point Right', category: 'Gestures', font: 'bold', prefix: '👉𖥫', suffix: '𖥫👉' },
+    { id: 'GES002', name: 'Point Left', category: 'Gestures', font: 'italic', prefix: '👈𖥫', suffix: '𖥫👈' },
+    { id: 'GES003', name: 'Fist Power', category: 'Gestures', font: 'doubleStruck', prefix: '✊𖥫', suffix: '𖥫✊' },
+    { id: 'GES004', name: 'Peace Sign', category: 'Gestures', font: 'script', prefix: '✌𖥫', suffix: '𖥫✌' },
+    { id: 'GES005', name: 'Rock On', category: 'Gestures', font: 'fraktur', prefix: '🤘𖥫', suffix: '𖥫🤘' },
+    { id: 'GES006', name: 'Love You', category: 'Gestures', font: 'boldItalic', prefix: '🤟𖥫', suffix: '𖥫🤟' },
+    { id: 'GES007', name: 'OK Hand', category: 'Gestures', font: 'monospace', prefix: '👌𖥫', suffix: '𖥫👌' },
+    { id: 'GES008', name: 'Call Me', category: 'Gestures', font: 'sansSerif', prefix: '🤙𖥫', suffix: '𖥫🤙' },
+    { id: 'GES009', name: 'Stop Sign', category: 'Gestures', font: 'bold', prefix: '✋𖥫', suffix: '𖥫✋' },
+    { id: 'GES010', name: 'Waving', category: 'Gestures', font: 'smallCaps', prefix: '👋𖥫', suffix: '𖥫👋' },
+    { id: 'GES011', name: 'Arrow Right', category: 'Gestures', font: 'doubleStruck', prefix: '➡𖥫', suffix: '𖥫➡' },
+    { id: 'GES012', name: 'Arrow Left', category: 'Gestures', font: 'script', prefix: '⬅𖥫', suffix: '𖥫⬅' },
+    { id: 'GES013', name: 'Arrow Up', category: 'Gestures', font: 'bold', prefix: '⬆𖥫', suffix: '𖥫⬆' },
+    { id: 'GES014', name: 'Arrow Down', category: 'Gestures', font: 'italic', prefix: '⬇𖥫', suffix: '𖥫⬇' },
+    { id: 'GES015', name: 'Vulcan Salute', category: 'Gestures', font: 'fraktur', prefix: '🖖𖥫', suffix: '𖥫🖖' },
+
+    // ========== TERMINAL / BLOCK ==========
+    { id: 'B001', name: 'Terminal Box', category: 'Terminal', font: 'monospace', prefix: '█▓▒░', suffix: '░▒▓█' },
+    { id: 'B002', name: 'Cyber Block', category: 'Terminal', font: 'bold', prefix: '▒░☆', suffix: '☆░▒' },
+    { id: 'B003', name: 'Dark Terminal', category: 'Terminal', font: 'fraktur', prefix: '▓▒░⸸', suffix: '⸸░▒▓' },
+    { id: 'B004', name: 'Glitch Box', category: 'Terminal', font: 'boldItalic', prefix: '█░▒☆', suffix: '☆▒░█' },
+    { id: 'B005', name: 'Hacker Core', category: 'Terminal', font: 'monospace', prefix: '┌─▪︎', suffix: '▪︎─┐' },
+    { id: 'B006', name: 'Neon Terminal', category: 'Terminal', font: 'sansSerif', prefix: '▰▱☆', suffix: '☆▱▰' },
+    { id: 'B007', name: 'Shadow Shell', category: 'Terminal', font: 'bold', prefix: '⸧⌇░', suffix: '░⌇⸧' },
+    { id: 'B008', name: 'Retro Block', category: 'Terminal', font: 'script', prefix: '◈◆▒', suffix: '▒◆◈' },
+    { id: 'B009', name: 'Matrix Code', category: 'Terminal', font: 'doubleStruck', prefix: '░▒▓█', suffix: '█▓▒░' },
+    { id: 'B010', name: 'Command Line', category: 'Terminal', font: 'monospace', prefix: 'λ▒░', suffix: '░▒λ' },
+
+    // ========== WEAPONS / GHOST / MASK ==========
+    { id: 'W001', name: 'Hacker Mask', category: 'Hacker', font: 'bold', prefix: '█▓▒░🎭', suffix: '░▒▓█' },
+    { id: 'W002', name: 'Ghost Cyber', category: 'Hacker', font: 'fraktur', prefix: '░▒▓👻', suffix: '▓▒░' },
+    { id: 'W003', name: 'Gun Slayer', category: 'Hacker', font: 'monospace', prefix: '█▓▒🔫', suffix: '▒▓█' },
+    { id: 'W004', name: 'Skull Hacker', category: 'Hacker', font: 'boldItalic', prefix: '▓▒░💀', suffix: '░▒▓' },
+    { id: 'W005', name: 'Ninja Shadow', category: 'Hacker', font: 'sansSerif', prefix: '▒░🗡️', suffix: '░▒' },
+    { id: 'W006', name: 'Dark Knight', category: 'Hacker', font: 'doubleStruck', prefix: '░▒🦇', suffix: '▒░' },
+    { id: 'W007', name: 'Sword Master', category: 'Hacker', font: 'script', prefix: '▒░⚔️', suffix: '░▒' },
+    { id: 'W008', name: 'Phantom Mask', category: 'Hacker', font: 'bold', prefix: '▓▒🎭', suffix: '▒▓' },
+    { id: 'W009', name: 'Cyber Ghost', category: 'Hacker', font: 'italic', prefix: '░▒👻', suffix: '▒░' },
+    { id: 'W010', name: 'Gun Blaze', category: 'Hacker', font: 'fraktur', prefix: '▒░🔫', suffix: '░▒' },
+    { id: 'W011', name: 'Hacker Shield', category: 'Hacker', font: 'monospace', prefix: '█▓🛡️', suffix: '▓█' },
+    { id: 'W012', name: 'Ninja Star', category: 'Hacker', font: 'boldItalic', prefix: '░▒⭐', suffix: '▒░' },
+    { id: 'W013', name: 'Ghost Rider', category: 'Hacker', font: 'sansSerif', prefix: '▓░👻', suffix: '░▓' },
+    { id: 'W014', name: 'Skull Mask', category: 'Hacker', font: 'smallCaps', prefix: '░▒💀', suffix: '▒░' },
+    { id: 'W015', name: 'Hacker Code', category: 'Hacker', font: 'bold', prefix: '█▓░λ', suffix: '░▓█' },
+
+    // ========== EXTRA MIXED ==========
+    { id: 'X001', name: 'Steel Armor', category: 'Dark', font: 'bold', prefix: '⚙️𖥫⌇⸸', suffix: '⸸🔧💪𖥫' },
+    { id: 'X002', name: 'Iron Shield', category: 'Cyber', font: 'sansSerif', prefix: '🛡️𖥫᯽⸧', suffix: '⸧⚔️🖤𖥫' },
+    { id: 'X003', name: 'Tornado', category: 'Nature', font: 'monospace', prefix: '🌀𖥫⌇⸸', suffix: '⸸🌪️💨𖥫' },
+    { id: 'X004', name: 'Heatwave', category: 'Neon', font: 'italic', prefix: '🌡️𖥫✧༒', suffix: '༒🔥☀️𖥫' },
+    { id: 'X005', name: 'Mist', category: 'Mystic', font: 'fraktur', prefix: '🌫️𖥫᯽꧁', suffix: '꧂🌿✨𖥫' },
+    { id: 'X006', name: 'Fog', category: 'Mystic', font: 'doubleStruck', prefix: '🌁𖥫⌇⸧', suffix: '⸧🌫️🌙𖥫' },
+    { id: 'X007', name: 'Hurricane', category: 'Nature', font: 'bold', prefix: '🌊𖥫✧༒', suffix: '༒🌀⚡𖥫' },
+    { id: 'X008', name: 'Dusk', category: 'Royal', font: 'script', prefix: '🌆𖥫᯽꧁', suffix: '꧂🌇✨𖥫' },
+    { id: 'X009', name: 'Dawn', category: 'Royal', font: 'sansSerif', prefix: '🌄𖥫⌇⸧', suffix: '⸧🌅🌟𖥫' },
+    { id: 'X010', name: 'Tiger', category: 'Mystic', font: 'boldItalic', prefix: '🐯𖥫✧༒', suffix: '༒🔥👑𖥫' },
+    { id: 'X011', name: 'Wolf Pack', category: 'Dark', font: 'monospace', prefix: '🐺𖥫᯽⸸', suffix: '⸸🌙🐾𖥫' },
+    { id: 'X012', name: 'Phoenix Rising', category: 'Premium', font: 'fraktur', prefix: '🐦‍🔥𖥫⌇⸧', suffix: '⸧🔥✨𖥫' },
+    { id: 'X013', name: 'Dragon Fury', category: 'Neon', font: 'bold', prefix: '🐉𖥫✧༒', suffix: '༒🔥🐲𖥫' }
+];
+
+// ===== GENERATE =====
+function generateStyles() {
+    const input = document.getElementById('nameInput').value.trim();
+    if (!input) { alert('Please enter a name or text!'); return; }
+
+    const grid = document.getElementById('styleGrid');
+    grid.innerHTML = '';
+
+    styleTemplates.forEach((style, idx) => {
+        const fontFn = fancyFonts[style.font] || ((s) => s);
+        const styledName = fontFn(input);
+        const finalText = `${style.prefix} ${styledName} ${style.suffix}`;
+
+        const card = document.createElement('div');
+        card.className = 'style-card';
+        card.dataset.styleName = style.name.toLowerCase();
+
+        const sno = document.createElement('span');
+        sno.className = 'sno';
+        sno.textContent = `#${String(idx + 1).padStart(2, '0')}`;
+
+        const sname = document.createElement('span');
+        sname.className = 'sname';
+        sname.textContent = style.name;
+
+        const svalue = document.createElement('span');
+        svalue.className = 'svalue';
+        svalue.textContent = finalText;
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+        copyBtn.onclick = function(e) {
+            e.stopPropagation();
+            navigator.clipboard.writeText(finalText).then(() => {
+                this.classList.add('copied');
+                this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    this.classList.remove('copied');
+                    this.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                }, 2000);
+            }).catch(() => alert('Unable to copy. Please select manually.'));
+        };
+
+        card.appendChild(sno);
+        card.appendChild(sname);
+        card.appendChild(svalue);
+        card.appendChild(copyBtn);
+        grid.appendChild(card);
+    });
+
+    document.getElementById('totalCount').textContent = styleTemplates.length;
+    document.getElementById('filterInput').value = '';
+}
+
+// ===== FILTER =====
+function filterStyles() {
+    const query = document.getElementById('filterInput').value.toLowerCase().trim();
+    const cards = document.querySelectorAll('.style-card');
+    let visible = 0;
+    cards.forEach(card => {
+        const name = card.dataset.styleName || '';
+        const matches = name.includes(query);
+        card.style.display = matches ? 'flex' : 'none';
+        if (matches) visible++;
+    });
+    document.getElementById('totalCount').textContent = visible;
+}
+
+// ===== ENTER KEY =====
+document.getElementById('nameInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') generateStyles();
+});
+
+// ===== AUTO-GENERATE =====
+window.onload = generateStyles;
+</script>
+
+</body>
+</html>
