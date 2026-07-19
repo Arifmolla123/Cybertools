@@ -53,55 +53,101 @@
 
 .cat-box i { color: var(--accent); font-size: 1.5rem; margin-bottom: 8px; display: block; }
 
-        /* --- ⚡ আপডেটেড গ্রিড টুল-লিস্ট লেআউট (পাশাপাশি ২টি কার্ড) ⚡ --- */
-        .tool-list { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 12px; 
-            padding: 0 20px 12px; 
-        }
-        
-   .tool-card { 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
-    background: var(--card); 
-    padding: 15px 10px; 
-    border-radius: 15px; 
-    cursor: pointer; 
-    text-decoration: none; 
-    color: white; 
-    text-align: center;
-    min-height: 125px;
-    
-    /* ⬇️ এখানে বর্ডার এবং গ্লোয়িং ইফেক্ট বসানো হয়েছে ⬇️ */
-    border: 1px solid rgba(0, 255, 65, 0.3); /* আগের border: 1px solid #222; বদলে এই নিয়ন গ্রিন দেওয়া হলো */
-    box-shadow: 0 0 15px rgba(0, 255, 65, 0.15); /* হালকা সাইবার গ্লো */
-    transition: all 0.3s ease-in-out; /* অ্যানিমেশন স্মুথ করার জন্য */
-}
-        .tool-card:hover { 
-    /* ⬇️ মাউস নিলে বর্ডার ও গ্লো বাড়ানোর কোড ⬇️ */
-    border-color: #00ff41;                       /* হোভার করলে বর্ডার একদম উজ্জ্বল সবুজ হবে */
-    box-shadow: 0 0 25px rgba(0, 255, 65, 0.45); /* গ্লোয়িং লাইট আরও বাড়বে */
-    transform: translateY(-4px);                 /* কার্ডটি হালকা ওপরে উঠবে, দেখতে ওপি লাগবে */
-}
-        
-  .tool-icon { 
-    background: #000; 
-    width: 45px; 
-    height: 45px; 
-    border-radius: 10px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    color: var(--accent); 
-    margin-right: 0; 
-    margin-bottom: 10px; 
+      /* ===== Tool Card Animations ===== */
+.tool-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 20px 12px;
 }
 
+.tool-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--card);
+    padding: 15px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+    min-height: 125px;
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.15);
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+    /* Fade-in up animation */
+    animation: fadeInUp 0.6s ease-out both;
+}
+
+/* প্রতিটি কার্ডের জন্য আলাদা delay (যাতে ক্রমান্বয়ে আসে) */
+.tool-card:nth-child(1) { animation-delay: 0.05s; }
+.tool-card:nth-child(2) { animation-delay: 0.15s; }
+.tool-card:nth-child(3) { animation-delay: 0.25s; }
+.tool-card:nth-child(4) { animation-delay: 0.35s; }
+.tool-card:nth-child(5) { animation-delay: 0.45s; }
+.tool-card:nth-child(6) { animation-delay: 0.55s; }
+.tool-card:nth-child(7) { animation-delay: 0.65s; }
+.tool-card:nth-child(8) { animation-delay: 0.75s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* স্ক্যান লাইন (hacking vibe) */
+.tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.08), transparent);
+    transform: skewX(-25deg);
+    animation: scanLine 3.5s infinite;
+    pointer-events: none;
+}
+
+@keyframes scanLine {
+    0% { left: -100%; }
+    100% { left: 200%; }
+}
+
+/* হোভার করলে স্ক্যান দ্রুত ও গ্লো বাড়বে */
+.tool-card:hover {
+    border-color: #00ff41;
+    box-shadow: 0 0 30px rgba(0, 255, 65, 0.4);
+    transform: translateY(-4px);
+}
+.tool-card:hover::before {
+    animation-duration: 0.8s;
+}
+
+/* বাকি স্টাইল (আপনার existing CSS-এর সাথে মিলিয়ে নিন) */
+.tool-icon {
+    background: #000;
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
 .tool-card h4 { font-size: 0.85rem; margin-bottom: 4px; word-break: break-word; }
-.tool-card p { font-size: 0.68rem !important; color: #888; line-height: 1.2; }
+.tool-card p { font-size: 0.68rem; color: #888; line-height: 1.2; }
 
         /* Side Drawer */
         .drawer { position: fixed; left: -280px; width: 280px; height: 100%; background: var(--bg); transition: 0.3s; z-index: 200; padding: 25px; border-right: 1px solid #222; }
@@ -111,12 +157,78 @@
         .drawer-menu { list-style: none; margin-top: 30px; }
         .drawer-menu li a { display: flex; align-items: center; padding: 15px 0; color: #fff; text-decoration: none; border-bottom: 1px solid #111; }
         .drawer-menu i { margin-right: 15px; color: var(--accent); width: 20px; }
+/* ===== 3-Dot Menu (Advanced Cyber Design) ===== */
+.dots-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 50px;
+    background: rgba(10, 10, 10, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 255, 65, 0.25);
+    border-radius: 16px;
+    min-width: 210px;
+    padding: 8px 0;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 255, 65, 0.08);
+    z-index: 110;
+    animation: dropFade 0.25s ease-out;
+    transform-origin: top right;
+}
 
-        /* 3-Dot Menu */
-        .dots-menu { display: none; position: absolute; right: 20px; top: 55px; background: var(--card); border-radius: 10px; min-width: 150px; z-index: 110; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .dots-menu a { display: block; padding: 12px 15px; text-decoration: none; color: #fff; font-size: 0.9rem; border-bottom: 1px solid #222; cursor: pointer; }
-        .show { display: block !important; }
+@keyframes dropFade {
+    from { opacity: 0; transform: scale(0.92) translateY(-8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
 
+.dots-menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #ddd;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: all 0.25s ease;
+    gap: 12px;
+}
+
+.dots-menu a:last-child { border-bottom: none; }
+
+.dots-menu a i {
+    width: 20px;
+    color: var(--accent);
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.dots-menu a .menu-arrow {
+    margin-left: auto;
+    color: #555;
+    font-size: 1.2rem;
+    transition: 0.3s;
+}
+
+.dots-menu a:hover {
+    background: rgba(0, 255, 65, 0.06);
+    color: #fff;
+    padding-left: 26px;
+}
+
+.dots-menu a:hover i {
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.dots-menu a:hover .menu-arrow {
+    color: var(--accent);
+    transform: translateX(4px);
+}
+
+.dots-menu.show {
+    display: block;
+}
         /* Bottom Navigation */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #222; z-index: 1000; }
         .nav-btn { text-align: center; color: var(--text-muted); text-decoration: none; flex: 1; }
@@ -150,23 +262,33 @@
         </ul>
     </div>
 
-    <header>
-        <i class="fas fa-bars icon-btn" id="menu-btn"></i>
-        <h1 class="logo">CYBER TOOLS</h1>
-        <div style="position: relative;">
-            <i class="fas fa-ellipsis-v icon-btn" id="dots-btn"></i>
-            <div class="dots-menu" id="dots-content">
-                <a href="dev info.html"><i class="fas fa-user-ninja"></i> Developer info</a>
-                 <a href="join chanel.html"><i class="fas fa-users"></i> Join Now</a>
-           <a href="setting.html"> <i class="fas fa-cog"></i> Settings </a>
-       <a href="chat.html" id="chatBtn">
-    <i class="fas fa-sms"></i> Chat 
-    <span id="unreadBadge" style="background: #ff4444; color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.7rem; margin-left: 8px; display: none;">0</span>
-</a>
-
- </div>
+  <!-- ====== HEADER with 3-Dot Menu (Advanced Cyber Design) ====== -->
+<header>
+    <i class="fas fa-bars icon-btn" id="menu-btn"></i>
+    <h1 class="logo">CYBER TOOLS</h1>
+    <div style="position: relative;">
+        <i class="fas fa-ellipsis-v icon-btn" id="dots-btn"></i>
+        <div class="dots-menu" id="dots-content">
+            <a href="dev-info.html">
+                <i class="fas fa-user-ninja"></i> Developer info
+                <span class="menu-arrow">›</span>
+            </a>
+            <a href="join-channel.html">
+                <i class="fas fa-users"></i> Join Now
+                <span class="menu-arrow">›</span>
+            </a>
+            <a href="settings.html">
+                <i class="fas fa-cog"></i> Settings
+                <span class="menu-arrow">›</span>
+            </a>
+            <a href="chat.html" id="chatBtn">
+                <i class="fas fa-sms"></i> Chat
+                <span id="unreadBadge" style="background: #ff4444; color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.65rem; margin-left: 8px; display: none;">0</span>
+                <span class="menu-arrow">›</span>
+            </a>
         </div>
-    </header>
+    </div>
+</header>
 
     <div class="search-area">
         <i class="fas fa-search"></i>
