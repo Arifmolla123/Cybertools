@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Administrator - Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --neon-green: #00ff41;
+            --cyber-blue: #00e5ff;
+            --gold: #ffd700;
+            --bg-dark: #020204;
+            --panel-bg: rgba(10, 10, 15, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Share Tech Mono', monospace;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: linear-gradient(rgba(0, 255, 65, 0.01) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 255, 65, 0.01) 1px, transparent 1px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 500px; width: 100%; margin: 0 auto; }
+
+        /* Header Style */
+        .header { display: flex; align-items: center; text-align: left; margin-bottom: 25px; flex-shrink: 0; }
+        .header a {
+            color: var(--neon-green); font-size: 1.3rem; margin-right: 20px; text-decoration: none;
+            display: flex; align-items: center; justify-content: center;
+            width: 38px; height: 38px; background: rgba(0, 255, 65, 0.05);
+            border: 1px solid rgba(0, 255, 65, 0.2); border-radius: 50%; transition: 0.3s;
+        }
+        .header a:hover { box-shadow: 0 0 15px rgba(0, 255, 65, 0.4); background: rgba(0, 255, 65, 0.1); }
+        .header h2 { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; letter-spacing: 2px; }
+
+        /* Main Profile Card */
+        .profile-card {
+            background: var(--panel-bg); border: 1px solid rgba(0, 255, 65, 0.2);
+            border-radius: 24px; padding: 30px 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(0, 255, 65, 0.05);
+            backdrop-filter: blur(10px); text-align: center;
+        }
+
+        /* Glowing Ninja Avatar */
+        .avatar-wrapper {
+            width: 90px; height: 90px; background: #000; border: 2px solid var(--neon-green);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px; color: var(--neon-green); font-size: 2.5rem;
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.3); position: relative; cursor: pointer; 
+        }
+        .status-dot {
+            width: 12px; height: 12px; background: var(--neon-green); border-radius: 50%;
+            position: absolute; bottom: 5px; right: 5px; border: 2px solid var(--bg-dark); box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .admin-name { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 900; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
+        .admin-title { color: var(--gold); font-size: 0.8rem; letter-spacing: 3px; margin-top: 5px; font-weight: bold; text-transform: uppercase; }
+
+        /* Description Section */
+        .bio-section {
+            background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 14px; padding: 15px; margin: 25px 0; text-align: left;
+            font-size: 0.9rem; line-height: 1.5; color: #ccc;
+        }
+
+        /* Skills Dashboard */
+        .skills-header { text-align: left; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; color: var(--cyber-blue); margin-bottom: 12px; letter-spacing: 1px; font-weight: bold; }
+        .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .skill-badge {
+            background: rgba(0, 229, 255, 0.03); border: 1px solid rgba(0, 229, 255, 0.15);
+            padding: 12px 10px; border-radius: 10px; font-size: 0.8rem; font-weight: bold;
+            display: flex; align-items: center; gap: 8px; color: #fff; transition: 0.3s;
+        }
+        .skill-badge:hover { border-color: var(--cyber-blue); box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
+
+        .sys-note { margin-top: 30px; font-size: 0.7rem; color: #444; font-weight: bold; letter-spacing: 1px; }
+
+        /*      */
+        .cyber-modal {
+            display: none; position: fixed; z-index: 10000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(8px);
+        }
+        .modal-box {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #0d0d0d; padding: 25px; border: 2px solid var(--neon-green);
+            color: white; text-align: center; border-radius: 16px; width: 90%; max-width: 360px;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+        }
+        .modal-box p { font-size: 1rem; margin-bottom: 25px; letter-spacing: 1px; line-height: 1.5; }
+        .modal-btn {
+            font-family: 'Orbitron', sans-serif; padding: 12px 25px; margin: 0 10px;
+            cursor: pointer; border: 2px solid transparent; font-weight: bold;
+            border-radius: 8px; text-transform: uppercase; transition: 0.3s; letter-spacing: 1px; font-size: 0.85rem;
+        }
+        .btn-yes { background: var(--neon-green); color: black; }
+        .btn-yes:hover { background: transparent; color: var(--neon-green); border-color: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
+        .btn-no { background: transparent; color: #ff3333; border-color: #ff3333; }
+        .btn-no:hover { background: #ff3333; color: white; box-shadow: 0 0 15px #ff3333; }
+
+        /*      -   (  ) */
+        #halfScreenVideoBox {
+            display: none; position: fixed;
+            top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 85%;          /*        */
+            max-width: 340px;    /*     */
+            height: 60vh;        /*          */
+            background-color: #000; border: 3px solid var(--neon-green);
+            z-index: 9999; border-radius: 16px;
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.5);
+            overflow: hidden;
+        }
+        
+        /*    */
+        .close-video-btn {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(0, 0, 0, 0.7); color: #fff;
+            border: 1px solid var(--neon-green); border-radius: 50%;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: sans-serif; font-size: 1.1rem; font-weight: bold;
+            cursor: pointer; z-index: 10; transition: 0.2s;
+        }
+        .close-video-btn:hover { background: var(--neon-green); color: #000; }
+
+        /* contain              */
+        #halfScreenVideoBox video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cyberPopup" class="cyber-modal">
+        <div class="modal-box">
+            <p><i class="fas fa-video" style="color: var(--neon-green); font-size: 1.5rem;"></i> <br><br> Watch the video: Load Developer Video</p>
+            <button class="modal-btn btn-yes" onclick="startAttitudeVideo()"><i class="fas fa-play"></i> Yes</button>
+            <button class="modal-btn btn-no" onclick="closeCyberPopup()"><i class="fas fa-times"></i> No</button>
+        </div>
+    </div>
+
+    <div id="halfScreenVideoBox">
+        <div class="close-video-btn" onclick="terminateVideoAction()">X</div>
+        
+        <video id="attitudeVideo" playsinline></video>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <a href="index.html"><i class="fas fa-chevron-left"></i></a>
+            <h2>CORE // <span>DEV_INFO</span></h2>
+        </div>
+
+        <div class="profile-card">
+            
+            <div class="avatar-wrapper" id="secretAdminTrigger">
+                <i class="fas fa-user-secret"></i>
+                <div class="status-dot"></div>
+            </div>
+
+            <h2 class="admin-name">Arif</h2>
+            <div class="admin-title">System Creator & Admin</div>
+
+            <div class="bio-section">
+                <span style="color: var(--neon-green); font-weight: bold;">> ABOUT_ME:</span><br>
+                Hello! I am Arif. A passionate technology enthusiast and full-stack developer. I specialize in cybersecurity, modern web architectures, and custom application development. Breaking down security barriers and engineering premium digital experiences is what drives me forward.
+            </div>
+
+            <div class="skills-header"><i class="fas fa-terminal"></i> VERIFIED_SKILLS []</div>
+            
+            <div class="skills-grid">
+                <div class="skill-badge" style="color: var(--neon-green); border-color: rgba(0, 255, 65, 0.15);">
+                    <i class="fas fa-shield-halved"></i> Ethical Hacking
+                </div>
+                <div class="skill-badge">
+                    <i class="fas fa-code"></i> Web Designer
+                </div>
+                <div class="skill-badge">
+                    <i class="fas fa-mobile-alt"></i> App Development
+                </div>
+                <div class="skill-badge" style="color: var(--gold); border-color: rgba(255, 215, 0, 0.15);">
+                    <i class="fas fa-video"></i> Video Editor
+                </div>
+            </div>
+
+            <div class="sys-note">> SECURITY SIGNATURE: ARIF</div>
+        </div>
+    </div>
+
+    <script>
+        const cyberPopup = document.getElementById('cyberPopup');
+        const videoBox = document.getElementById('halfScreenVideoBox');
+        const attitudeVideo = document.getElementById('attitudeVideo');
+
+        //     (   )
+        const videoPlaylist = [
+            "video/attitude.mp4",
+            "video/attitude1.mp4"
+        ];
+
+        //      
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                cyberPopup.style.display = 'block';
+            }, 2000);
+        });
+
+        function closeCyberPopup() {
+            cyberPopup.style.display = 'none';
+        }
+
+        //        
+        function startAttitudeVideo() {
+            cyberPopup.style.display = 'none'; 
+
+            //           
+            let currentVideoIndex = localStorage.getItem('lastVideoIndex');
+            
+            if (currentVideoIndex === null) {
+                currentVideoIndex = 0; //     (attitude.mp4) 
+            } else {
+                //          (  ,    )
+                currentVideoIndex = (parseInt(currentVideoIndex) + 1) % videoPlaylist.length;
+            }
+
+            //      
+            attitudeVideo.src = videoPlaylist[currentVideoIndex];
+            
+            //            
+            localStorage.setItem('lastVideoIndex', currentVideoIndex);
+
+            videoBox.style.display = 'block';   
+            attitudeVideo.play().catch(error => {
+                console.log("Play interrupted: ", error);
+            });
+        }
+
+        function terminateVideoAction() {
+            attitudeVideo.pause();          
+            videoBox.style.display = 'none'; 
+        }
+
+        //        
+        attitudeVideo.onended = terminateVideoAction;
+
+
+        //    
+        let devClickCount = 0;
+        let devClickTimer;
+
+        document.getElementById('secretAdminTrigger').addEventListener('click', function() {
+            devClickCount++;
+            clearTimeout(devClickTimer);
+            devClickTimer = setTimeout(() => { devClickCount = 0; }, 3000);
+
+            if (devClickCount === 5) {
+                devClickCount = 0; 
+                window.location.href = 'admin.html'; 
+            }
+        });
+    </script>
+
+</body>
+</html>
