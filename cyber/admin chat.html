@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Cyber Tools Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #0a0a0a;
+            color: #eee;
+            padding: 20px;
+        }
+        .login-container, .panel-container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: #111;
+            padding: 25px;
+            border-radius: 24px;
+            border: 1px solid #00ff41;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        input, button {
+            padding: 10px 16px;
+            margin: 5px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 500;
+        }
+        input {
+            background: #222;
+            color: white;
+            width: 200px;
+        }
+        button {
+            background: #00ff41;
+            color: black;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #00cc33;
+            transform: scale(0.98);
+        }
+        .message-item {
+            background: #1e1e1e;
+            margin: 12px 0;
+            padding: 14px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-left: 4px solid #00ff41;
+        }
+        .delete-btn, .delete-all-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .delete-all-btn {
+            background: #cc0000;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        h2 {
+            color: #00ff41;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        hr {
+            border-color: #333;
+            margin: 20px 0;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .stats {
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, query, orderBy, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBe-BaRSbhOW8R4xrINojCxS2e_3w1Fshw",
+        authDomain: "cyber-toolbox-chat.firebaseapp.com",
+        projectId: "cyber-toolbox-chat",
+        storageBucket: "cyber-toolbox-chat.firebasestorage.app",
+        messagingSenderId: "715093305796",
+        appId: "1:715093305796:web:11a4e2b50e5505d7e5dc91"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const groupId = "cyberToolGroup";
+    const messagesRef = collection(db, "groups", groupId, "messages");
+
+    const ADMIN_PASSWORD = "arif123";  //   
+
+    function showLogin() {
+        document.getElementById('app').innerHTML = `
+            <div class="login-container">
+                <h2><i class="fas fa-lock"></i> Admin Login</h2>
+                <input type="password" id="password" placeholder="Enter password" autocomplete="off">
+                <button id="loginBtn">Login</button>
+                <p style="color:#888; margin-top:15px;">Password: arif123</p>
+            </div>
+        `;
+        document.getElementById('loginBtn').onclick = () => {
+            const pwd = document.getElementById('password').value;
+            if (pwd === ADMIN_PASSWORD) {
+                localStorage.setItem('adminLoggedIn', 'true');
+                showPanel();
+            } else {
+                alert("Wrong password!");
+            }
+        };
+    }
+
+    async function showPanel() {
+        document.getElementById('app').innerHTML = `
+            <div class="panel-container">
+                <h2><i class="fas fa-trash-alt"></i> Admin Panel - Message Manager</h2>
+                <div class="toolbar">
+                    <button id="refreshBtn" class="refresh-btn"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    <button id="deleteAllBtn" class="delete-all-btn"><i class="fas fa-trash"></i> Delete ALL Messages</button>
+                </div>
+                <div id="messagesList" class="messages-list">
+                    <p>Loading messages...</p>
+                </div>
+                <hr>
+                <button id="logoutBtn">Logout</button>
+            </div>
+        `;
+        document.getElementById('refreshBtn').onclick = () => loadMessages();
+        document.getElementById('deleteAllBtn').onclick = () => confirmDeleteAll();
+        document.getElementById('logoutBtn').onclick = () => {
+            localStorage.removeItem('adminLoggedIn');
+            showLogin();
+        };
+        await loadMessages();
+    }
+
+    async function loadMessages() {
+        const listDiv = document.getElementById('messagesList');
+        listDiv.innerHTML = '<p><i class="fas fa-spinner fa-pulse"></i> Loading...</p>';
+        try {
+            const q = query(messagesRef, orderBy("timestamp", "asc"));
+            const snapshot = await getDocs(q);
+            const total = snapshot.size;
+            console.log("Total messages:", total);
+            if (snapshot.empty) {
+                listDiv.innerHTML = '<p> No messages found.</p>';
+                return;
+            }
+            listDiv.innerHTML = `<div class="stats"> Total messages: ${total}</div>`;
+            snapshot.forEach(docSnap => {
+                const msg = docSnap.data();
+                const id = docSnap.id;
+                const time = msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleString() : 'unknown';
+                const div = document.createElement('div');
+                div.className = 'message-item';
+                div.innerHTML = `
+                    <div style="flex:1">
+                        <strong style="color:#00ff41;">${escapeHtml(msg.senderName)}</strong> 
+                        <span style="font-size:0.7rem;">(${escapeHtml(msg.senderId?.slice(0,8))})</span><br>
+                         ${escapeHtml(msg.text)}<br>
+                        <span style="font-size:0.65rem; color:#888;"> ${time}</span>
+                    </div>
+                    <button class="delete-btn" data-id="${id}"><i class="fas fa-trash"></i> Delete</button>
+                `;
+                listDiv.appendChild(div);
+            });
+            //  
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.onclick = async () => {
+                    const id = btn.getAttribute('data-id');
+                    if (confirm("Delete this message?")) {
+                        await deleteDoc(doc(db, "groups", groupId, "messages", id));
+                        await loadMessages();
+                    }
+                };
+            });
+        } catch (err) {
+            console.error(err);
+            listDiv.innerHTML = `<p style="color:red"> Error: ${err.message}</p>`;
+        }
+    }
+
+    //     ()
+    async function confirmDeleteAll() {
+        const confirmed = confirm(" DANGER: This will delete ALL messages permanently. Are you absolutely sure?");
+        if (!confirmed) return;
+        
+        const doubleConfirm = prompt("Type 'DELETE ALL' to confirm:");
+        if (doubleConfirm !== "DELETE ALL") {
+            alert("Action cancelled.");
+            return;
+        }
+        
+        const listDiv = document.getElementById('messagesList');
+        listDiv.innerHTML = '<p><i class="fas fa-spinner fa-pulse"></i> Deleting all messages...</p>';
+        
+        try {
+            const q = query(messagesRef);
+            const snapshot = await getDocs(q);
+            const deletePromises = [];
+            snapshot.forEach(docSnap => {
+                deletePromises.push(deleteDoc(doc(db, "groups", groupId, "messages", docSnap.id)));
+            });
+            await Promise.all(deletePromises);
+            alert(`Successfully deleted ${deletePromises.length} messages.`);
+            await loadMessages();
+        } catch (err) {
+            console.error(err);
+            alert("Error during bulk delete: " + err.message);
+            await loadMessages();
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    if (localStorage.getItem('adminLoggedIn') === 'true') {
+        showPanel();
+    } else {
+        showLogin();
+    }
+</script>
+</body>
+</html>
