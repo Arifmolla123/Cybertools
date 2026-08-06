@@ -309,7 +309,8 @@
         const langLabel = document.getElementById('langLabel');
 
         // ===== API =====
-        const API_URL = 'http://de3.bot-hosting.net:21007/kilwa-claude';
+        const API_BASE = 'http://de3.bot-hosting.net:21007/kilwa-claude';
+        const CORS_PROXY = 'https://corsproxy.io/?';
 
         // ===== ডকুমেন্টেশন =====
         const DOCUMENTATION = `
@@ -362,23 +363,17 @@
 
         // ===== ভাষা ডিটেক্ট (হিংলিশ সহ) =====
         function detectLanguage(text) {
-            // বাংলা
             if (/[\u0980-\u09FF]/.test(text)) return 'বাংলা';
-            // হিন্দি (দেবনাগরী)
             if (/[\u0900-\u097F]/.test(text)) return 'हिन्दी';
-            // আরবি/উর্দু
             if (/[\u0600-\u06FF]/.test(text)) return 'العربية/اردو';
-            // হিংলিশ চেক – রোমান লিপিতে হিন্দি শব্দ
             const hinglishWords = ['kya', 'hai', 'nahi', 'aap', 'hum', 'tum', 'main', 'kaise', 'kyon', 'ho', 'hain', 'tha', 'thi', 'the', 'raha', 'rahi', 'rahe', 'sakta', 'sakti', 'sakte', 'chahiye', 'mil', 'de', 'le', 'kar', 'ko', 'se', 'mein', 'pe', 'ki', 'ka', 'ke', 'ne', 'bhi', 'hi', 'to', 'nahi', 'haan', 'ji', 'sir', 'madam', 'apka', 'apko', 'mera', 'tera', 'uska', 'unki', 'inke', 'jiska', 'jiski'];
             const words = text.toLowerCase().split(/\s+/);
             let hinglishScore = 0;
             for (let w of words) {
-                // clean punctuation
                 w = w.replace(/[^a-z]/g, '');
                 if (hinglishWords.includes(w)) hinglishScore++;
             }
             if (hinglishScore >= 2) return 'Hinglish';
-            // ইংরেজি (ডিফল্ট)
             return 'English';
         }
 
@@ -411,7 +406,7 @@
             isTyping = false;
         }
 
-        // ===== API কল =====
+        // ===== API কল (CORS Proxy) =====
         async function getAIResponse(question) {
             const fullPrompt = `
 You are the "Cyber Tools" support agent for the Cyber Tools app.
@@ -436,12 +431,16 @@ ${DOCUMENTATION}
 User question: ${question}
             `.trim();
 
-            const url = `${API_URL}?text=${encodeURIComponent(fullPrompt)}`;
-            const res = await fetch(url);
+            const url = `${CORS_PROXY}${API_BASE}?text=${encodeURIComponent(fullPrompt)}`;
+            const res = await fetch(url, {
+                headers: { 'Accept': 'application/json' }
+            });
+
             if (!res.ok) {
                 const errText = await res.text();
                 throw new Error(`HTTP ${res.status} – ${errText.slice(0, 50)}`);
             }
+
             const data = await res.json();
             if (data.status && data.status === 'error') {
                 throw new Error(data.message || 'Service error');
@@ -510,7 +509,7 @@ User question: ${question}
             window.open('https://t.me/your_support', '_blank');
         });
 
-        console.log('✅ Cyber Tools Support ready (Hinglish support added)');
+        console.log('✅ Cyber Tools Support ready (CORS Proxy only – no dummy)');
     })();
 </script>
 </body>
