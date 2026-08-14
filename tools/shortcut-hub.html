@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shortcut & Command Hub</title>
+    <style>
+        /* ───────────── reset & base ───────────── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0b1a0e;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* ───────────── main glass-card ───────────── */
+        .app {
+            max-width: 1000px;
+            width: 100%;
+            background: linear-gradient(145deg, #0f2a14, #0a1f0e);
+            border-radius: 48px;
+            padding: 30px 32px 40px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(34, 197, 94, 0.15),
+                inset 0 0 80px rgba(34, 197, 94, 0.03);
+            border: 1px solid rgba(34, 197, 94, 0.12);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 10%, rgba(34, 197, 94, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        /* ───────────── header ───────────── */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            position: relative;
+            z-index: 1;
+            gap: 12px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: radial-gradient(circle at 30% 30%, #4ade80, #16a34a);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.25);
+            color: #0b1a0e;
+        }
+
+        .header h1 {
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: #e2f0e5;
+            letter-spacing: -0.3px;
+            background: linear-gradient(to right, #86efac, #4ade80);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header h1 span {
+            font-weight: 300;
+            -webkit-text-fill-color: rgba(134, 239, 172, 0.5);
+        }
+
+        .badge {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            color: #86efac;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        /* ───────────── language selector ───────────── */
+        .lang-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 8px 4px 14px;
+            border-radius: 40px;
+            border: 1px solid rgba(34, 197, 94, 0.1);
+            backdrop-filter: blur(4px);
+        }
+
+        .lang-selector .lang-label {
+            color: #94a3b8;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .lang-selector select {
+            background: rgba(0, 0, 0, 0.2);
+            border: none;
+            color: #d1f0da;
+            padding: 6px 12px 6px 8px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .lang-selector select:hover {
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .lang-selector select:focus {
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+        }
+
+        .lang-selector select option {
+            background: #0f2a14;
+            color: #e2f0e5;
+        }
+
+        /* ───────────── toggle buttons ───────────── */
+        .toggle-wrap {
+            display: flex;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 5px;
+            border-radius: 60px;
+            border: 1px solid rgba(34, 197, 94, 0.12);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(4px);
+            flex-wrap: wrap;
+        }
+
+        .toggle-btn {
+            padding: 10px 28px;
+            border: none;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background: transparent;
+            color: #94a3b8;
+            letter-spacing: 0.2px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-btn .icon {
+            font-size: 1.1rem;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(145deg, #22c55e, #16a34a);
+            color: #0b1a0e;
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transform: scale(1.02);
+        }
+
+        .toggle-btn:not(.active):hover {
+            color: #cbd5e1;
+            background: rgba(34, 197, 94, 0.06);
+        }
+
+        .toggle-btn:focus-visible {
+            outline: 2px solid #4ade80;
+            outline-offset: 2px;
+        }
+
+        /* ───────────── search ───────────── */
+        .search-section {
+            margin: 18px 0 22px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 16px 24px 16px 56px;
+            border-radius: 60px;
+            border: 1px solid rgba(34, 197, 94, 0.15);
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(8px);
+            font-size: 1rem;
+            color: #e2f0e5;
+            transition: all 0.3s ease;
+            outline: none;
+            font-weight: 400;
+        }
+
+        .search-box::placeholder {
+            color: #64748b;
+            font-weight: 300;
+            letter-spacing: 0.2px;
+        }
+
+        .search-box:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.08), 0 8px 30px rgba(34, 197, 94, 0.05);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4ade80;
+            font-size: 1.2rem;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* ───────────── content panels ───────────── */
+        .panel {
+            display: none;
+            animation: fadeSlide 0.35s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ───────────── shortcut / command cards ───────────── */
+        .card-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 520px;
+            overflow-y: auto;
+            padding-right: 6px;
+            scroll-behavior: smooth;
+        }
+
+        .card-grid::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .card-grid::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .card-grid::-webkit-scrollbar-thumb {
+            background: #22c55e;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.2);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(34, 197, 94, 0.07);
+            border-left: 4px solid #22c55e;
+            border-radius: 16px;
+            padding: 16px 20px 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            background: rgba(34, 197, 94, 0.04);
+            border-color: rgba(34, 197, 94, 0.15);
+            transform: translateX(4px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-content h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #d1f0da;
+            margin-bottom: 3px;
+            letter-spacing: -0.1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .card-content h3 .key-hint {
+            font-size: 0.65rem;
+            font-weight: 400;
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.1);
+            padding: 0 10px;
+            border-radius: 30px;
+            border: 1px solid rgba(34, 197, 94, 0.08);
+        }
+
+        .card-content p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .card-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            margin-left: 16px;
+        }
+
+        .copy-btn {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.15);
+            color: #86efac;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            background: #22c55e;
+            border-color: #22c55e;
+            color: #0b1a0e;
+            box-shadow: 0 4px 16px rgba(34, 197, 94, 0.25);
+            transform: scale(1.03);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .copy-btn .copy-icon {
+            font-size: 0.85rem;
+        }
+
+        /* ───────────── footer ───────────── */
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #334155;
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(34, 197, 94, 0.06);
+            padding-top: 20px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.2px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer span {
+            color: #4ade80;
+            opacity: 0.6;
+        }
+
+        .footer .heart {
+            color: #ef4444;
+            opacity: 0.7;
+        }
+
+        .footer .total-badge {
+            background: rgba(34, 197, 94, 0.06);
+            padding: 0 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(34, 197, 94, 0.06);
+            color: #86efac;
+            font-weight: 400;
+        }
+
+        /* ───────────── counter badge ───────────── */
+        .count-badge {
+            font-size: 0.7rem;
+            background: rgba(34, 197, 94, 0.08);
+            color: #86efac;
+            padding: 2px 12px;
+            border-radius: 30px;
+            border: 1px solid rgba(34, 197, 94, 0.06);
+            font-weight: 400;
+        }
+
+        /* ───────────── empty state ───────────── */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+        }
+
+        .empty-state .big-icon {
+            font-size: 3rem;
+            opacity: 0.3;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 0.95rem;
+        }
+
+        /* ───────────── toast ───────────── */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #0f2a14;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            color: #d1f0da;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 999;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast .toast-icon {
+            color: #4ade80;
+            font-size: 1.2rem;
+        }
+
+        /* ───────────── responsive ───────────── */
+        @media (max-width: 820px) {
+            .app {
+                padding: 22px 18px 30px;
+                border-radius: 32px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 14px;
+            }
+
+            .header-left {
+                justify-content: center;
+            }
+
+            .header h1 {
+                font-size: 1.3rem;
+                text-align: center;
+            }
+
+            .lang-selector {
+                justify-content: center;
+                padding: 4px 12px;
+            }
+
+            .toggle-wrap {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .toggle-btn {
+                padding: 8px 18px;
+                font-size: 0.8rem;
+                flex: 1;
+                justify-content: center;
+            }
+
+            .search-box {
+                padding: 14px 18px 14px 48px;
+                font-size: 0.9rem;
+            }
+
+            .search-icon {
+                left: 18px;
+            }
+
+            .card {
+                padding: 14px 16px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .card-content h3 {
+                font-size: 0.9rem;
+            }
+
+            .card-content p {
+                font-size: 0.8rem;
+            }
+
+            .card-actions {
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .copy-btn {
+                padding: 5px 14px;
+                font-size: 0.7rem;
+            }
+
+            .card-grid {
+                max-height: 400px;
+            }
+
+            .badge {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app {
+                padding: 14px 10px 22px;
+                border-radius: 24px;
+            }
+
+            .header h1 {
+                font-size: 1.05rem;
+            }
+
+            .toggle-btn {
+                padding: 6px 12px;
+                font-size: 0.7rem;
+                gap: 4px;
+            }
+
+            .toggle-btn .icon {
+                font-size: 0.9rem;
+            }
+
+            .search-box {
+                padding: 12px 14px 12px 40px;
+                font-size: 0.8rem;
+            }
+
+            .search-icon {
+                left: 14px;
+                font-size: 1rem;
+            }
+
+            .card {
+                padding: 12px 12px;
+                border-left-width: 3px;
+            }
+
+            .card-content h3 {
+                font-size: 0.8rem;
+            }
+
+            .lang-selector select {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+        }
+
+        .card-grid {
+            scrollbar-width: thin;
+            scrollbar-color: #22c55e rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── TOAST ─── -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span id="toastMsg">Copied</span>
+    </div>
+
+    <!-- ─── APP ─── -->
+    <div class="app">
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-left">
+                <div class="logo-icon">⌨️</div>
+                <h1 id="appTitle">Shortcut <span>&amp;</span> Command<span>Hub</span></h1>
+                <span class="badge">v2.0</span>
+            </div>
+            <div class="lang-selector">
+                <span class="lang-label">🌐</span>
+                <select id="langSelect" aria-label="Select language">
+                    <option value="en">English</option>
+                    <option value="hi">Hinglish</option>
+                    <option value="bn">বাংলা</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- TOGGLE + SEARCH -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:12px; position:relative; z-index:1;">
+            <div class="toggle-wrap" role="group" aria-label="Mode toggle">
+                <button class="toggle-btn active" data-panel="computer" id="btnComputer">
+                    <span class="icon">🖥️</span> <span id="btnComputerLabel">Computer</span>
+                    <span class="count-badge" id="countComputer">0</span>
+                </button>
+                <button class="toggle-btn" data-panel="linux" id="btnLinux">
+                    <span class="icon">🐧</span> <span id="btnLinuxLabel">Linux</span>
+                    <span class="count-badge" id="countLinux">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="search-section">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-box" id="searchBox" placeholder="Search shortcuts or commands…" autocomplete="off" />
+        </div>
+
+        <!-- PANELS -->
+        <div class="panel active" id="panelComputer">
+            <div class="card-grid" id="computerGrid"></div>
+        </div>
+
+        <div class="panel" id="panelLinux">
+            <div class="card-grid" id="linuxGrid"></div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <span>⚡</span> <span id="footerText">Made with <span class="heart">❤️</span> by Arif</span>
+            <span class="total-badge" id="totalCount">0 items</span>
+        </div>
+    </div>
+
+    <script>
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  DATA (multilingual descriptions)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const computerData = [
+            { key: 'Win + E', desc: { en: 'Open File Explorer.', hi: 'File Explorer kholen.', bn: 'File Explorer খুলে।' } },
+            { key: 'Win + L', desc: { en: 'Lock your computer.', hi: 'Computer lock karein.', bn: 'কম্পিউটার লক করে দেয়।' } },
+            { key: 'Ctrl + D', desc: { en: 'Bookmark current page.', hi: 'Current page bookmark karein.', bn: 'বর্তমান ওয়েবপেজ বুকমার্ক করে।' } },
+            { key: 'Ctrl + Shift + N', desc: { en: 'Open Incognito / Private tab.', hi: 'Incognito / Private tab kholen.', bn: 'Incognito / Private tab খোলে।' } },
+            { key: 'Alt + F4', desc: { en: 'Close current app or window.', hi: 'Current app ya window band karein.', bn: 'বর্তমান অ্যাপ বা উইন্ডো বন্ধ করে।' } },
+            { key: 'F5', desc: { en: 'Refresh page or folder.', hi: 'Page ya folder refresh karein.', bn: 'রিফ্রেশ করে (Page বা Folder)।' } },
+            { key: 'Ctrl + P', desc: { en: 'Open print dialog.', hi: 'Print option kholen.', bn: 'প্রিন্ট অপশন খোলে।' } },
+            { key: 'Ctrl + S', desc: { en: 'Save current document.', hi: 'Document save karein.', bn: 'ডকুমেন্ট বা কাজ সেভ করে।' } },
+            { key: 'Ctrl + Shift + Esc', desc: { en: 'Open Task Manager directly.', hi: 'Direct Task Manager kholen.', bn: 'Direct Task Manager খুলে।' } },
+            { key: 'Ctrl + Z', desc: { en: 'Undo last action.', hi: 'Last action undo karein.', bn: 'শেষ কাজ Undo করে।' } },
+            { key: 'Ctrl + Y', desc: { en: 'Redo undone action.', hi: 'Undo ki gayi action redo karein.', bn: 'Undo করা কাজ Redo করে।' } },
+            { key: 'Ctrl + A', desc: { en: 'Select all items.', hi: 'Sab kuch select karein.', bn: 'সব কিছু সিলেক্ট করে।' } },
+            { key: 'Ctrl + C', desc: { en: 'Copy selected items.', hi: 'Copy karein.', bn: 'কপি করে।' } },
+            { key: 'Ctrl + V', desc: { en: 'Paste copied items.', hi: 'Paste karein.', bn: 'পেস্ট করে।' } },
+            { key: 'Ctrl + X', desc: { en: 'Cut selected items.', hi: 'Cut karein.', bn: 'কাট করে।' } },
+            { key: 'Ctrl + F', desc: { en: 'Search within the page.', hi: 'Page mein search karein.', bn: 'পেজে কিছু সার্চ করার জন্য।' } }
+        ];
+
+        const linuxData = [
+            { key: 'pwd', desc: { en: 'Show current directory path.', hi: 'Current directory dikhayein.', bn: 'বর্তমান অবস্থান (ডিরেক্টরি) দেখায়।' } },
+            { key: 'mkdir newfolder', desc: { en: 'Create a new folder.', hi: 'Naya folder banayein.', bn: 'নতুন ফোল্ডার তৈরি করে।' } },
+            { key: 'mv old.txt new.txt', desc: { en: 'Move or rename a file.', hi: 'File move ya rename karein.', bn: 'ফাইল মুভ বা রিনেম করতে ব্যবহার হয়।' } },
+            { key: 'cp file1.txt file2.txt', desc: { en: 'Copy a file.', hi: 'File copy karein.', bn: 'ফাইল কপি করতে ব্যবহৃত হয়।' } },
+            { key: 'df -h', desc: { en: 'Show disk space usage (human readable).', hi: 'Disk space dikhayein (human readable).', bn: 'ডিস্কের স্পেসের তথ্য দেয়।' } },
+            { key: 'top', desc: { en: 'Show real-time system processes.', hi: 'Real-time system processes dikhayein.', bn: 'রিয়েল-টাইমে সিস্টেম প্রসেস দেখায়।' } },
+            { key: 'ps aux', desc: { en: 'List all running processes.', hi: 'Chal rahe processes dikhayein.', bn: 'চলমান প্রসেসসমূহ দেখায়।' } },
+            { key: 'kill 1234', desc: { en: 'Terminate a process by PID.', hi: 'PID se process band karein.', bn: 'প্রসেস বন্ধ করে (PID অনুযায়ী)।' } },
+            { key: 'man ls', desc: { en: 'Show manual for a command.', hi: 'Command ka manual dikhayein.', bn: 'কমান্ডের ম্যানুয়াল দেখায়।' } },
+            { key: 'whoami', desc: { en: 'Show current user.', hi: 'Current user dikhayein.', bn: 'বর্তমান ইউজার দেখায়।' } },
+            { key: 'hostname', desc: { en: 'Show system hostname.', hi: 'System ka hostname dikhayein.', bn: 'সিস্টেমের হোস্টনেম দেখায়।' } },
+            { key: 'ping google.com', desc: { en: 'Check internet connectivity.', hi: 'Internet connection check karein.', bn: 'ইন্টারনেট কানেকশন চেক করতে ব্যবহৃত হয়।' } },
+            { key: 'clear', desc: { en: 'Clear the terminal screen.', hi: 'Terminal screen saaf karein.', bn: 'টার্মিনাল স্ক্রিন পরিষ্কার করে।' } },
+            { key: 'shutdown now', desc: { en: 'Shut down the system.', hi: 'System band karein.', bn: 'সিস্টেম বন্ধ করে দেয়।' } },
+            { key: 'ls -la', desc: { en: 'List all files (including hidden) with details.', hi: 'Sab files (hidden samet) detail ke saath dikhayein.', bn: 'সব ফাইল ও হিডেন ফাইল লিস্ট দেখায় (ডিটেইল সহ)।' } },
+            { key: 'cd /path', desc: { en: 'Change directory to given path.', hi: 'Directory change karein.', bn: 'নির্দিষ্ট লোকেশনে যায়।' } },
+            { key: 'cat filename', desc: { en: 'Display file content.', hi: 'File content dikhayein.', bn: 'ফাইলের কনটেন্ট দেখায়।' } },
+            { key: 'nano filename', desc: { en: 'Edit file with nano editor.', hi: 'Nano editor se file edit karein.', bn: 'ফাইল এডিট করার জন্য সহজ টেক্সট এডিটর।' } },
+            { key: 'chmod +x filename', desc: { en: 'Make a file executable.', hi: 'File ko executable banayein.', bn: 'ফাইলকে executable করে তোলে।' } },
+            { key: 'sudo apt update', desc: { en: 'Update package list (Debian/Ubuntu).', hi: 'Package list update karein.', bn: 'প্যাকেজ লিস্ট আপডেট করে।' } },
+            { key: 'sudo apt upgrade', desc: { en: 'Upgrade all packages.', hi: 'Sab packages upgrade karein.', bn: 'সকল প্যাকেজ আপগ্রেড করে।' } },
+            { key: 'sudo apt install packagename', desc: { en: 'Install a new package.', hi: 'Naya package install karein.', bn: 'নতুন সফটওয়্যার ইনস্টল করে।' } },
+            { key: 'sudo apt remove packagename', desc: { en: 'Uninstall a package.', hi: 'Package uninstall karein.', bn: 'সফটওয়্যার আনইনস্টল করে।' } },
+            { key: 'history', desc: { en: 'Show command history.', hi: 'Command history dikhayein.', bn: 'ব্যবহৃত আগের কমান্ডগুলো দেখায়।' } },
+            { key: 'grep "word" file.txt', desc: { en: 'Search for a word in file.', hi: 'File mein word khojein.', bn: 'ফাইলে নির্দিষ্ট শব্দ খোঁজে।' } },
+            { key: 'du -sh folder', desc: { en: 'Show folder size.', hi: 'Folder size dikhayein.', bn: 'ফোল্ডারের সাইজ দেখায়।' } },
+            { key: 'uname -a', desc: { en: 'Show system information.', hi: 'System information dikhayein.', bn: 'সিস্টেমের তথ্য দেখায়।' } },
+            { key: 'ifconfig', desc: { en: 'Show network interface details.', hi: 'Network interface details dikhayein.', bn: 'নেটওয়ার্ক ইন্টারফেসের ডিটেইল।' } },
+            { key: 'netstat -tulpn', desc: { en: 'Show open ports and connections.', hi: 'Open ports aur connections dikhayein.', bn: 'ওপেন পোর্ট এবং কানেকশন দেখায়।' } },
+            { key: 'df -Th', desc: { en: 'Show disk usage with file system type.', hi: 'Disk usage aur file system type dikhayein.', bn: 'ডিস্কের ধরন (Type) ও ইউসেজ দেখায় (human readable)।' } },
+            { key: 'uptime', desc: { en: 'Show system uptime.', hi: 'System uptime dikhayein.', bn: 'সিস্টেম কতক্ষণ চালু আছে দেখায়।' } },
+            { key: 'reboot', desc: { en: 'Reboot the system.', hi: 'System restart karein.', bn: 'সিস্টেম রিস্টার্ট করে।' } },
+            { key: 'history | grep command', desc: { en: 'Search for a command in history.', hi: 'History mein command khojein.', bn: 'সুনির্দিষ্ট কমান্ড সার্চ করে আগের history থেকে।' } },
+            { key: 'find / -name filename', desc: { en: 'Find a file system-wide.', hi: 'System-wide file khojein.', bn: 'পুরো সিস্টেমে ফাইল খোঁজে।' } },
+            { key: 'locate filename', desc: { en: 'Quickly locate a file (updatedb index needed).', hi: 'File quickly locate karein (updatedb chahiye).', bn: 'দ্রুত ফাইল খুঁজে (updatedb ইনডেক্স দরকার)।' } },
+            { key: 'sudo updatedb', desc: { en: 'Update locate database.', hi: 'Locate database update karein.', bn: 'locate কমান্ডের জন্য ফাইল ইনডেক্স আপডেট করে।' } },
+            { key: 'chmod 755 filename', desc: { en: 'Set file permissions (owner rwx, group/others rx).', hi: 'File permissions set karein.', bn: 'ফাইল পারমিশন সেট করে (owner rwx, group/others rx)।' } },
+            { key: 'chown user:group filename', desc: { en: 'Change file owner/group.', hi: 'File owner/group change karein.', bn: 'ফাইলের মালিকানা বদলায়।' } },
+             { key: 'adduser username', desc: { en: 'Create a new user.', hi: 'Naya user banayein.', bn: 'নতুন ইউজার তৈরি করে।' } },
+            { key: 'passwd username', desc: { en: 'Set or change user password.', hi: 'User password set/change karein.', bn: 'ইউজারের পাসওয়ার্ড সেট/পরিবর্তন করে।' } },
+            { key: 'crontab -e', desc: { en: 'Edit cron jobs for scheduling.', hi: 'Cron jobs edit karein (scheduling).', bn: 'শিডিউল কাজের জন্য Cron Jobs সেট করে।' } },
+            { key: 'service service-name start', desc: { en: 'Start a service (e.g. apache2).', hi: 'Service start karein (jaise apache2).', bn: 'সার্ভিস চালু করে (যেমন: apache2)।' } },
+            { key: 'systemctl status service-name', desc: { en: 'Show service status.', hi: 'Service status dikhayein.', bn: 'কোনো সার্ভিসের স্ট্যাটাস দেখে।' } }
+        ];
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  LOCALIZATION TEXTS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const localeText = {
+            en: {
+                appTitle: 'Shortcut & Command Hub',
+                computer: 'Computer',
+                linux: 'Linux',
+                searchPlaceholder: 'Search shortcuts or commands…',
+                copy: 'Copy',
+                noItems: 'No items found',
+                searchEmpty: 'Nothing found in search',
+                footer: 'Made with ❤️ by Arif',
+                total: 'items',
+                copied: 'Copied'
+            },
+            hi: {
+                appTitle: 'Shortcut aur Command Hub',
+                computer: 'Computer',
+                linux: 'Linux',
+                searchPlaceholder: 'Shortcuts ya commands khojen…',
+                copy: 'Kopi karein',
+                noItems: 'Koi item nahi mila',
+                searchEmpty: 'Kuch nahi mila',
+                footer: '❤️ ke saath Arif ne banaya',
+                total: 'items',
+                copied: 'Kopi ho gaya'
+            },
+            bn: {
+                appTitle: 'শর্টকার্ট ও কমান্ড হাব',
+                computer: 'কম্পিউটার',
+                linux: 'লিনাক্স',
+                searchPlaceholder: 'শর্টকার্ট বা কমান্ড সার্চ করুন…',
+                copy: 'কপি',
+                noItems: 'কোনো আইটেম পাওয়া যায়নি',
+                searchEmpty: 'সার্চে কিছু পাওয়া যায়নি',
+                footer: '❤️ দিয়ে আরিফ বানিয়েছেন',
+                total: 'টি আইটেম',
+                copied: 'কপি হয়েছে'
+            }
+        };
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  STATE
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        let currentLang = 'en';
+        let currentPanel = 'computer';
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  DOM REFS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const appTitle = document.getElementById('appTitle');
+        const btnComputerLabel = document.getElementById('btnComputerLabel');
+        const btnLinuxLabel = document.getElementById('btnLinuxLabel');
+        const searchBox = document.getElementById('searchBox');
+        const footerText = document.getElementById('footerText');
+        const totalCount = document.getElementById('totalCount');
+        const toastMsg = document.getElementById('toastMsg');
+        const langSelect = document.getElementById('langSelect');
+
+        const computerGrid = document.getElementById('computerGrid');
+        const linuxGrid = document.getElementById('linuxGrid');
+        const panelComputer = document.getElementById('panelComputer');
+        const panelLinux = document.getElementById('panelLinux');
+        const btnComputer = document.getElementById('btnComputer');
+        const btnLinux = document.getElementById('btnLinux');
+        const countComputer = document.getElementById('countComputer');
+        const countLinux = document.getElementById('countLinux');
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  RENDER
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function renderCards(data, container, lang) {
+            if (!container) return;
+            if (!data || data.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="big-icon">🔍</div>
+                        <p>${localeText[lang].noItems}</p>
+                    </div>
+                `;
+                return;
+            }
+            let html = '';
+            data.forEach(item => {
+                const desc = item.desc[lang] || item.desc.en;
+                const safeKey = item.key.replace(/"/g, '&quot;');
+                const safeDesc = desc.replace(/"/g, '&quot;');
+                html += `
+                    <div class="card" data-key="${safeKey.toLowerCase()}" data-desc="${safeDesc.toLowerCase()}">
+                        <div class="card-content">
+                            <h3>${item.key} <span class="key-hint">⏎</span></h3>
+                            <p>${desc}</p>
+                        </div>
+                        <div class="card-actions">
+                            <button class="copy-btn" data-copy="${safeKey}">
+                                <span class="copy-icon">📋</span> ${localeText[lang].copy}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            // attach copy events
+            container.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const text = this.getAttribute('data-copy');
+                    if (text) copyToClipboard(text, lang);
+                });
+            });
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  UPDATE UI TEXTS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function updateUITexts(lang) {
+            const t = localeText[lang];
+            // title
+            appTitle.innerHTML = t.appTitle.replace('&', '<span>&amp;</span>');
+            // toggle labels
+            btnComputerLabel.textContent = t.computer;
+            btnLinuxLabel.textContent = t.linux;
+            // search placeholder
+            searchBox.placeholder = t.searchPlaceholder;
+            // footer
+            footerText.innerHTML = t.footer;
+            // update total count label
+            updateTotalCount(lang);
+            // copy button texts inside cards are updated via re-render
+             }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  COUNTS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function updateCounts() {
+            countComputer.textContent = computerData.length;
+            countLinux.textContent = linuxData.length;
+        }
+
+        function updateTotalCount(lang) {
+            const gridId = currentPanel === 'computer' ? computerGrid : linuxGrid;
+            const container = gridId;
+            if (!container) return;
+            const cards = container.querySelectorAll('.card');
+            let visible = 0;
+            cards.forEach(c => { if (c.style.display !== 'none') visible++; });
+            const total = cards.length;
+            const shown = visible;
+            const t = localeText[lang];
+            totalCount.textContent = `${shown} ${t.total}`;
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  SEARCH FILTER
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function filterGrid(container, query) {
+            if (!container) return;
+            const cards = container.querySelectorAll('.card');
+            const q = query.toLowerCase().trim();
+            let visible = 0;
+            cards.forEach(card => {
+                const key = card.getAttribute('data-key') || '';
+                const desc = card.getAttribute('data-desc') || '';
+                const match = key.includes(q) || desc.includes(q);
+                card.style.display = match ? 'flex' : 'none';
+                if (match) visible++;
+            });
+
+            // show empty state if no visible
+            const existingEmpty = container.querySelector('.empty-state');
+            if (visible === 0 && cards.length > 0) {
+                if (!existingEmpty) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-state';
+                    const lang = currentLang;
+                    empty.innerHTML = `<div class="big-icon">🔍</div><p>${localeText[lang].searchEmpty}</p>`;
+                    container.appendChild(empty);
+                }
+            } else {
+                if (existingEmpty) existingEmpty.remove();
+            }
+            // update total count
+            updateTotalCount(currentLang);
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  PANEL SWITCH
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function switchPanel(panel) {
+            currentPanel = panel;
+            panelComputer.classList.toggle('active', panel === 'computer');
+            panelLinux.classList.toggle('active', panel === 'linux');
+            btnComputer.classList.toggle('active', panel === 'computer');
+            btnLinux.classList.toggle('active', panel === 'linux');
+
+            const query = searchBox.value || '';
+            const container = panel === 'computer' ? computerGrid : linuxGrid;
+            filterGrid(container, query);
+            updateTotalCount(currentLang);
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  LANGUAGE CHANGE
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            // re-render both panels
+            renderCards(computerData, computerGrid, lang);
+            renderCards(linuxData, linuxGrid, lang);
+            // update UI texts
+            updateUITexts(lang);
+            // re-apply search filter
+            const query = searchBox.value || '';
+            const container = currentPanel === 'computer' ? computerGrid : linuxGrid;
+            filterGrid(container, query);
+            updateCounts();
+            updateTotalCount(lang);
+            // update copy buttons inside cards (they were re-rendered)
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  COPY
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        let toastTimer = null;
+
+        function copyToClipboard(text, lang) {
+            if (!text) return;
+            const t = localeText[lang] || localeText.en;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(`✅ "${text}" ${t.copied}`);
+                }).catch(() => {
+                    fallbackCopy(text, lang);
+                });
+            } else {
+                fallbackCopy(text, lang);
+            }
+        }
+
+        function fallbackCopy(text, lang) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            ta.style.top = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            const t = localeText[lang] || localeText.en;
+            try {
+                document.execCommand('copy');
+                showToast(`✅ "${text}" ${t.copied}`);
+            } catch (e) {
+                showToast('❌ Copy failed');
+            }
+            document.body.removeChild(ta);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toastMsg');
+            if (!toast || !msgEl) return;
+            msgEl.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  INIT
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function init() {
+            // set default language from select
+            currentLang = langSelect.value;
+            renderCards(computerData, computerGrid, currentLang);
+            renderCards(linuxData, linuxGrid, currentLang);
+            updateUITexts(currentLang);
+            updateCounts();
+            switchPanel('computer');
+            // event listeners
+            langSelect.addEventListener('change', function() {
+                changeLanguage(this.value);
+            });
+
+            searchBox.addEventListener('input', function() {
+                const query = this.value;
+                const container = currentPanel === 'computer' ? computerGrid : linuxGrid;
+                filterGrid(container, query);
+                updateTotalCount(currentLang);
+            });
+
+            btnComputer.addEventListener('click', () => switchPanel('computer'));
+            btnLinux.addEventListener('click', () => switchPanel('linux'));
+
+            // keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === '1') {
+                    e.preventDefault();
+                    switchPanel('computer');
+                    searchBox.focus();
+                } else if (e.ctrlKey && e.key === '2') {
+                    e.preventDefault();
+                    switchPanel('linux');
+                    searchBox.focus();
+                } else if (e.ctrlKey && e.key === 'k') {
+                    e.preventDefault();
+                    searchBox.focus();
+                    searchBox.select();
+                }
+            });
+
+            // toast click to dismiss
+            document.getElementById('toast').addEventListener('click', function() {
+                this.classList.remove('show');
+                clearTimeout(toastTimer);
+            });
+
+            console.log('🚀 Shortcut & Command Hub loaded');
+            console.log(`💻 Computer: ${computerData.length} items`);
+            console.log(`🐧 Linux: ${linuxData.length} items`);
+            console.log('🌐 Language:', currentLang);
+            console.log('⌨️  Ctrl+1 → Computer  |  Ctrl+2 → Linux  |  Ctrl+K → Search');
+        }
+
+        // go
+        init();
+    </script>
+
+</body>
+</html>
