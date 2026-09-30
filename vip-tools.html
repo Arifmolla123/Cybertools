@@ -1,237 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Tools - VIP Premium</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Tools - VIP Premium</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-        :root { --accent: gold; --bg: #0d0d0d; --card: #1a1a1a; --text-muted: #888; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: #000; color: #fff; overflow-x: hidden; padding-bottom: 80px; }
+  :root { --accent: gold; --bg: #0d0d0d; --card: #1a1a1a; --text-muted: #888; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+  body { background-color: #000; color: #fff; overflow-x: hidden; padding-bottom: 80px; }
 
-        #mainPageContent { display: block; }
+  #mainPageContent { display: block; }
 
-        header { display: flex; justify-content: space-between; padding: 15px 20px; align-items: center; position: sticky; top: 0; background: #000; z-index: 100; border-bottom: 1px solid #222; }
-        .logo { color: var(--accent); font-weight: bold; letter-spacing: 2px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
-        .icon-btn { font-size: 1.2rem; cursor: pointer; color: #fff; }
+  header { display: flex; justify-content: space-between; padding: 15px 20px; align-items: center; position: sticky; top: 0; background: #000; z-index: 100; border-bottom: 1px solid #222; }
+  .logo { color: var(--accent); font-weight: bold; letter-spacing: 2px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+  .icon-btn { font-size: 1.2rem; cursor: pointer; color: #fff; }
 
-        /* Search Bar */
-        .search-area { padding: 15px 20px 10px; position: relative; }
-        .search-area input { width: 100%; background: var(--card); border: 1px solid #333; padding: 12px 45px; border-radius: 12px; color: #fff; outline: none; font-size: 0.9rem; }
-        .search-area input:focus { border-color: var(--accent); }
-        .search-area i { position: absolute; top: 28px; color: var(--text-muted); }
-        .search-area .fa-search { left: 35px; }
+  .search-area { padding: 15px 20px 10px; position: relative; }
+  .search-area input { width: 100%; background: var(--card); border: 1px solid #333; padding: 12px 45px; border-radius: 12px; color: #fff; outline: none; font-size: 0.9rem; }
+  .search-area input:focus { border-color: var(--accent); }
+  .search-area i { position: absolute; top: 28px; color: var(--text-muted); }
+  .search-area .fa-search { left: 35px; }
 
-        .section-label { display: flex; justify-content: space-between; padding: 15px 20px 10px; font-size: 0.75rem; color: var(--accent); font-weight: bold; letter-spacing: 1px; }
+  .section-label { display: flex; justify-content: space-between; padding: 15px 20px 10px; font-size: 0.75rem; color: var(--accent); font-weight: bold; letter-spacing: 1px; }
 
-        /* Grid Layout */
-        .tool-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 20px 12px; }
-        .tool-card { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--card); padding: 15px 10px; border-radius: 15px; cursor: pointer; border: 1px solid gold; text-decoration: none; color: white; text-align: center; min-height: 135px; transition: 0.3s; box-shadow: 0 0 10px rgba(255, 215, 0, 0.05); }
-        .tool-card:hover { transform: translateY(-2px); box-shadow: 0 0 15px rgba(255, 215, 0, 0.15); }
-        
-        .tool-icon { background: #000; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 10px; font-size: 1.2rem; }
-        .tool-card h4 { font-size: 0.85rem; margin-bottom: 4px; font-weight: 600; }
-        .tool-card p { font-size: 0.7rem !important; color: #aaa; line-height: 1.3; }
+  .tool-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 20px 12px; }
+  .tool-card {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--card); padding: 15px 10px; border-radius: 15px; cursor: pointer;
+    border: 1px solid gold; text-decoration: none; color: white; text-align: center;
+    min-height: 135px; transition: 0.3s; box-shadow: 0 0 10px rgba(255, 215, 0, 0.05);
+  }
+  .tool-card:hover { transform: translateY(-2px); box-shadow: 0 0 15px rgba(255, 215, 0, 0.15); }
+  .tool-icon { background: #000; width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 10px; font-size: 1.2rem; }
+  .tool-card h4 { font-size: 0.85rem; margin-bottom: 4px; font-weight: 600; }
+  .tool-card p { font-size: 0.7rem !important; color: #aaa; line-height: 1.3; }
 
-        /* Bottom Navigation */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #222; z-index: 1000; }
-        .nav-btn { text-align: center; color: var(--text-muted); text-decoration: none; flex: 1; }
-        .nav-btn.active { color: var(--accent); }
-        .nav-btn i { display: block; font-size: 1.2rem; margin-bottom: 4px; }
-        .nav-btn span { font-size: 0.75rem; font-weight: 500; }
+  .empty-msg { grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px 20px; font-size: 0.9rem; }
 
-        /*      -  CSS */
-        .popup-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9999; opacity: 0; pointer-events: none; transition: 0.3s ease-in-out;
-        }
-        .popup-overlay.show { opacity: 1; pointer-events: auto; }
-        
-        .popup-box {
-            background: #111; border: 2px solid #ff3333; width: 85%; max-width: 340px;
-            padding: 30px 20px; border-radius: 20px; text-align: center;
-            box-shadow: 0 0 25px rgba(255, 51, 51, 0.25);
-            transform: scale(0.7); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .popup-overlay.show .popup-box { transform: scale(1); }
+  .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #222; z-index: 1000; }
+  .nav-btn { text-align: center; color: var(--text-muted); text-decoration: none; flex: 1; }
+  .nav-btn.active { color: var(--accent); }
+  .nav-btn i { display: block; font-size: 1.2rem; margin-bottom: 4px; }
+  .nav-btn span { font-size: 0.75rem; font-weight: 500; }
 
-        .popup-icon {
-            font-size: 3rem; color: #ff3333; margin-bottom: 15px;
-            animation: pulse 1.5s infinite;
-        }
-        .popup-box h2 { font-size: 1.25rem; color: #ff3333; font-weight: 700; letter-spacing: 1px; margin-bottom: 10px; }
-        .popup-box p { font-size: 0.85rem; color: #ccc; line-height: 1.5; margin-bottom: 22px; }
-        
-        .popup-btn {
-            background: #ff3333; color: #fff; border: none; padding: 12px 30px;
-            font-size: 0.9rem; font-weight: 600; border-radius: 10px; cursor: pointer;
-            box-shadow: 0 4px 10px rgba(255, 51, 51, 0.3); transition: 0.2s;
-        }
-        .popup-btn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(255, 51, 51, 0.2); }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-    </style>
+  /* Access denied popup */
+  .popup-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999; opacity: 0; pointer-events: none; transition: 0.3s ease-in-out;
+  }
+  .popup-overlay.show { opacity: 1; pointer-events: auto; }
+  .popup-box {
+    background: #111; border: 2px solid #ff3333; width: 85%; max-width: 340px;
+    padding: 30px 20px; border-radius: 20px; text-align: center;
+    box-shadow: 0 0 25px rgba(255, 51, 51, 0.25);
+    transform: scale(0.7); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .popup-overlay.show .popup-box { transform: scale(1); }
+  .popup-icon { font-size: 3rem; color: #ff3333; margin-bottom: 15px; animation: pulse 1.5s infinite; }
+  .popup-box h2 { font-size: 1.25rem; color: #ff3333; font-weight: 700; letter-spacing: 1px; margin-bottom: 10px; }
+  .popup-box p { font-size: 0.85rem; color: #ccc; line-height: 1.5; margin-bottom: 22px; }
+  .popup-btn {
+    background: #ff3333; color: #fff; border: none; padding: 12px 30px;
+    font-size: 0.9rem; font-weight: 600; border-radius: 10px; cursor: pointer;
+    box-shadow: 0 4px 10px rgba(255, 51, 51, 0.3); transition: 0.2s;
+  }
+  .popup-btn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(255, 51, 51, 0.2); }
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+</style>
 </head>
 <body>
 
-    <!--   -   -->
-    <div class="popup-overlay" id="accessDeniedPopup">
-        <div class="popup-box">
-            <div class="popup-icon"><i class="fas fa-shield-alt"></i></div>
-            <h2>ACCESS DENIED!</h2>
-            <p>Please activate your account with a valid VIP Key from the Main Menu first.</p>
-            <button class="popup-btn" onclick="redirectToVip()">ACTIVATE NOW</button>
-        </div>
-    </div>
+<div class="popup-overlay" id="accessDeniedPopup">
+  <div class="popup-box">
+    <div class="popup-icon"><i class="fas fa-shield-alt"></i></div>
+    <h2>ACCESS DENIED!</h2>
+    <p>Please activate your account with a valid VIP Key from the Main Menu first.</p>
+    <button class="popup-btn" onclick="redirectToVip()">ACTIVATE NOW</button>
+  </div>
+</div>
 
-    <div id="mainPageContent">
-        <header>
-            <a href="index.html" style="color: white; text-decoration: none;"><i class="fas fa-arrow-left icon-btn"></i></a>
-            <h1 class="logo"><i class="fas fa-crown"></i> PREMIUM VIP TOOLS</h1>
-            <div style="width: 20px;"></div>
-        </header>
+<div id="mainPageContent">
+  <header>
+    <a href="index.html" style="color: white; text-decoration: none;"><i class="fas fa-arrow-left icon-btn"></i></a>
+    <h1 class="logo"><i class="fas fa-crown"></i> PREMIUM VIP TOOLS</h1>
+    <div style="width: 20px;"></div>
+  </header>
 
-        <div class="search-area">
-            <i class="fas fa-search"></i>
-            <input type="text" id="vipSearch" placeholder="Search premium tools...">
-        </div>
+  <div class="search-area">
+    <i class="fas fa-search"></i>
+    <input type="text" id="vipSearch" placeholder="Search premium tools...">
+  </div>
 
-        <div class="section-label"><span>UNLOCKED PREMIUM TOOLS</span></div>
-        <div class="tool-list">
-            <a href="vip tools/hacking app html/app bar.html" class="tool-card">
-                <div class="tool-icon"><i class="fas fa-cubes"></i></div>
-                <h4>Premium Apps</h4>
-                <p>Premium tools and customized resource collection.</p>
-            </a>
-            <a href="vip tools/ip tracker.html" class="tool-card">
-                <div class="tool-icon"><i class="fas fa-crosshairs"></i></div>
-                <h4>IP Tracker</h4>
-                <p>Advanced real-time network geolocation lookup tool.</p>
-            </a>
-            <a href="https://vip-tools-backend.onrender.com/hard_bomber/" class="tool-card">
-                <div class="tool-icon"><i class="fas fa-bomb"></i></div>
-                <h4>Cyber bomber</h4>
-                <p>You can send unlimited OTP from here.</p>
-            </a>
-               
-            <a href="https://vip-tools-backend.onrender.com/phis" class="tool-card">
-                <div class="tool-icon"><i class="fas fa-user-secret"></i></div>
-                <h4>Cyber Phish</h4>
-                <p>Hack the account by luring the victim</p>
-            </a>
-                 <a href="vip tools/telegram track/link-pranks.html" class="tool-card">
-    <div class="tool-icon"><i class="fab fa-telegram-plane"></i></div>
-    <h4>Telegram Tracker</h4>
-    <p>you can hack all the victim's data and bring it to the Telegram bot.</p>
-</a>
-            <a href="https://vip-tools-backend.onrender.com/spy" class="tool-card">
-                <div class="tool-icon"><i class="fas fa-smile"></i></div>
-                <h4>Cyber SPY</h4>
-                <p>With the link you can see the victim's information, photos, audio,mobile info.</p>
-            </a>
-        <a href="https://vip-tools-backend.onrender.com/bot" class="tool-card">
-    <div class="tool-icon"><i class="fas fa-robot"></i></div>
-    <h4>TG MD Bot</h4>
-    <p>Click this link to access all the bot's features, tools, and instant responses.</p>
-        </a>
-     
-        </div>
+  <div class="section-label"><span>UNLOCKED PREMIUM TOOLS</span></div>
+  <div class="tool-list" id="vipToolList"></div>
 
-        <nav class="bottom-nav">
-            <a href="index.html" class="nav-btn"><i class="fas fa-home"></i><span>Home</span></a>
-            <a href="vip-tools.html" class="nav-btn active"><i class="fas fa-crown"></i><span>VIP Tools</span></a>
-            <a href="favorite.html" class="nav-btn"><i class="fas fa-fire"></i><span>Popular</span></a>
-        </nav>
-    </div>
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-btn"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="vip-tools.html" class="nav-btn active"><i class="fas fa-crown"></i><span>VIP Tools</span></a>
+    <a href="favorite.html" class="nav-btn"><i class="fas fa-fire"></i><span>Popular</span></a>
+  </nav>
+</div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<script src="tools.js"></script>
 
-    <script>
-        //  
-        const firebaseConfig = {
-            apiKey: "AIzaSyDS2PkxK-i6I8ayI-l_f5XctS8YG1mbbI0",
-            authDomain: "admin-panel-1946a.firebaseapp.com",
-            databaseURL: "https://admin-panel-1946a-default-rtdb.firebaseio.com/",
-            projectId: "admin-panel-1946a",
-            storageBucket: "admin-panel-1946a.firebasestorage.app",
-            messagingSenderId: "78923664766",
-            appId: "1:78923664766:web:e599e323cca341ab14772f"
-        };
+<script>
+(function () {
+  "use strict";
 
-        //  
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+  // ---------- Firebase ----------
+  const firebaseConfig = {
+    apiKey: "AIzaSyDS2PkxK-i6I8ayI-l_f5XctS8YG1mbbI0",
+    authDomain: "admin-panel-1946a.firebaseapp.com",
+    databaseURL: "https://admin-panel-1946a-default-rtdb.firebaseio.com/",
+    projectId: "admin-panel-1946a",
+    storageBucket: "admin-panel-1946a.firebasestorage.app",
+    messagingSenderId: "78923664766",
+    appId: "1:78923664766:web:e599e323cca341ab14772f"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
 
-        window.addEventListener('DOMContentLoaded', () => {
-            checkVipStatus();
-        });
+  // ---------- Render VIP tools from tools.js ----------
+  const vipListEl = document.getElementById("vipToolList");
+  const vipTools = window.VIP_TOOLS || [];
 
-        //     +   -
-        function checkVipStatus() {
-            let localStatus = localStorage.getItem('vip_status');
-            let myUsername = localStorage.getItem('my_username');
-            let deviceToken = localStorage.getItem('app_device_token'); 
+  function renderVipTools(items) {
+    vipListEl.innerHTML = "";
+    if (!items.length) {
+      vipListEl.innerHTML = '<div class="empty-msg">No premium tools match your search.</div>';
+      return;
+    }
+    items.forEach(function (tool) {
+      const a = document.createElement("a");
+      a.className = "tool-card";
+      a.href = tool.url;
+      a.innerHTML =
+        '<div class="tool-icon"><i class="' + tool.icon + '"></i></div>' +
+        '<h4>' + tool.title + '</h4>' +
+        '<p>' + tool.desc + '</p>';
+      vipListEl.appendChild(a);
+    });
+  }
+  renderVipTools(vipTools);
 
-            if (localStatus === 'active' && myUsername) {
-                //         
-                document.getElementById('mainPageContent').style.display = 'block';
-                document.getElementById('mainPageContent').style.pointerEvents = 'auto';
+  // ---------- Search ----------
+  document.getElementById("vipSearch").addEventListener("input", function () {
+    const q = this.value.toLowerCase().trim();
+    if (!q) { renderVipTools(vipTools); return; }
+    const filtered = vipTools.filter(function (t) {
+      return t.title.toLowerCase().indexOf(q) !== -1 ||
+             t.desc.toLowerCase().indexOf(q) !== -1;
+    });
+    renderVipTools(filtered);
+  });
 
-                //  
-                database.ref('vip_users/' + myUsername).once('value').then((snapshot) => {
-                    let userData = snapshot.val();
-                    
-                    if (!userData || userData.status !== 'active' || userData.device_id !== deviceToken) {
-                        showCustomPopup();
-                    }
-                }).catch(() => {
-                    //  
-                });
+  // ---------- VIP status check ----------
+  function checkVipStatus() {
+    const localStatus = localStorage.getItem("vip_status");
+    const myUsername = localStorage.getItem("my_username");
+    const deviceToken = localStorage.getItem("app_device_token");
 
-            } else {
-                showCustomPopup();
-            }
+    if (localStatus === "active" && myUsername) {
+      document.getElementById("mainPageContent").style.display = "block";
+      document.getElementById("mainPageContent").style.pointerEvents = "auto";
+
+      database.ref("vip_users/" + myUsername).once("value").then(function (snapshot) {
+        const userData = snapshot.val();
+        if (!userData || userData.status !== "active" || userData.device_id !== deviceToken) {
+          showCustomPopup();
         }
+      }).catch(function () {
+        // silent — offline is allowed
+      });
 
-        //   -   ( alert()     )
-        function showCustomPopup() {
-            //          
-            document.getElementById('mainPageContent').style.pointerEvents = 'none';
-            document.getElementById('accessDeniedPopup').classList.add('show');
-        }
+    } else {
+      showCustomPopup();
+    }
+  }
 
-        //       
-        function redirectToVip() {
-            localStorage.removeItem('vip_status');
-            localStorage.removeItem('my_username');
-            window.location.href = "vip.html"; 
-        }
+  window.showCustomPopup = function () {
+    document.getElementById("mainPageContent").style.pointerEvents = "none";
+    document.getElementById("accessDeniedPopup").classList.add("show");
+  };
 
-        //   
-        const bottomNav = document.querySelector('.bottom-nav');
-        const originalHeight = window.innerHeight;
-        window.addEventListener('resize', () => {
-            if (window.innerHeight < originalHeight - 50) { bottomNav.style.display = 'none'; } 
-            else { bottomNav.style.display = 'flex'; }
-        });
+  window.redirectToVip = function () {
+    localStorage.removeItem("vip_status");
+    localStorage.removeItem("my_username");
+    window.location.href = "vip.html";
+  };
 
-        //   
-        document.getElementById('vipSearch').oninput = function() {
-            let val = this.value.toLowerCase();
-            document.querySelectorAll('.tool-list .tool-card').forEach(card => {
-                card.style.display = card.innerText.toLowerCase().includes(val) ? "flex" : "none";
-            });
-        };
-    </script>
+  // ---------- Keyboard hide bottom nav ----------
+  const bottomNav = document.querySelector(".bottom-nav");
+  const originalHeight = window.innerHeight;
+  window.addEventListener("resize", function () {
+    if (window.innerHeight < originalHeight - 50) bottomNav.style.display = "none";
+    else bottomNav.style.display = "flex";
+  });
+
+  // ---------- Init ----------
+  checkVipStatus();
+})();
+</script>
+
 </body>
 </html>

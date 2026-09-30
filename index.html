@@ -1,67 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Tools - Home</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Tools - Home</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-        /* --- Internal CSS --- */
-        :root { --accent: #00ff41; --bg: #0d0d0d; --card: #1a1a1a; --text-muted: #888; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #000; color: #fff; overflow-x: hidden; padding-bottom: 80px; }
+  :root { --accent: #00ff41; --bg: #0d0d0d; --card: #1a1a1a; --text-muted: #888; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+  body { background-color: #000; color: #fff; overflow-x: hidden; padding-bottom: 80px; }
 
-        header { display: flex; justify-content: space-between; padding: 15px 20px; align-items: center; position: sticky; top: 0; background: #000; z-index: 100; }
-        .logo { color: var(--accent); font-weight: bold; letter-spacing: 2px; }
-        .icon-btn { font-size: 1.2rem; cursor: pointer; color: #fff; }
+  header { display: flex; justify-content: space-between; padding: 15px 20px; align-items: center; position: sticky; top: 0; background: #000; z-index: 100; }
+  .logo { color: var(--accent); font-weight: bold; letter-spacing: 2px; }
+  .icon-btn { font-size: 1.2rem; cursor: pointer; color: #fff; }
 
-        /* Search Bar */
-        .search-area { padding: 10px 20px; position: relative; }
-        .search-area input { width: 100%; background: var(--card); border: 1px solid #222; padding: 12px 45px; border-radius: 12px; color: #fff; outline: none; }
-        .search-area i { position: absolute; top: 23px; color: var(--text-muted); }
-        .search-area .fa-search { left: 35px; }
-        .search-area .fa-sliders-h { right: 35px; color: var(--accent); }
+  .search-area { padding: 10px 20px; position: relative; }
+  .search-area input { width: 100%; background: var(--card); border: 1px solid #222; padding: 12px 45px; border-radius: 12px; color: #fff; outline: none; }
+  .search-area i { position: absolute; top: 23px; color: var(--text-muted); }
+  .search-area .fa-search { left: 35px; }
+  .search-area .fa-sliders-h { right: 35px; color: var(--accent); }
 
-        /* Sections */
-        .section-label { display: flex; justify-content: space-between; padding: 15px 20px 10px; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; }
-        .cat-scroll { display: flex; gap: 15px; overflow-x: auto; padding: 0 20px 15px; }
-        .cat-scroll::-webkit-scrollbar { display: none; }
-        
-   /* Category Links and Box */
-.cat-link { text-decoration: none; color: inherit; display: inline-block; }
+  .section-label { display: flex; justify-content: space-between; padding: 15px 20px 10px; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; letter-spacing: 1px; }
+  .cat-scroll { display: flex; gap: 15px; overflow-x: auto; padding: 0 20px 15px; }
+  .cat-scroll::-webkit-scrollbar { display: none; }
 
-.cat-box { 
-    min-width: 90px; 
-    background: var(--card); 
-    padding: 15px; 
-    border-radius: 15px; 
-    text-align: center; 
-    cursor: pointer; 
-    
-    /* ⬇️ ক্যাটাগরির বর্ডার ও হালকা গ্লো ⬇️ */
-    border: 1px solid rgba(0, 229, 255, 0.25); /* সুন্দর সায়ান/ব্লু সাইবার বর্ডার */
-    box-shadow: 0 0 12px rgba(0, 229, 255, 0.1);  /* হালকা ব্যাকগ্রাউন্ড গ্লো */
-    transition: all 0.3s ease-in-out;           /* অ্যানিমেশন স্মুথ করার জন্য */
-}
+  .cat-link { text-decoration: none; color: inherit; display: inline-block; }
+  .cat-box {
+    min-width: 90px; background: var(--card); padding: 15px;
+    border-radius: 15px; text-align: center; cursor: pointer;
+    border: 1px solid rgba(0, 229, 255, 0.25);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.1);
+    transition: all 0.3s ease-in-out;
+  }
+  .cat-box:hover, .cat-box:active {
+    border-color: #00e5ff;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.45);
+    transform: translateY(-3px);
+  }
+  .cat-box i { color: var(--accent); font-size: 1.5rem; margin-bottom: 8px; display: block; }
+  .cat-box span { font-size: 0.8rem; }
 
-/* 📱 ক্যাটাগরিতে আঙুল দিয়ে টাচ (Click/Touch) করলে যা ঘটবে */
-.cat-box:hover, .cat-box:active {
-    border-color: #00e5ff;                       /* টাচ করলে বর্ডার পুরো উজ্জ্বল নীল হবে */
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.45); /* গ্লোয়িং লাইট আরও বাড়বে */
-    transform: translateY(-3px);                 /* কার্ডটি হালকা ওপরে উঠবে */
-}
-
-.cat-box i { color: var(--accent); font-size: 1.5rem; margin-bottom: 8px; display: block; }
-
-      /* ===== Tool Card Animations ===== */
-.tool-list {
+  /* ===== Tool Card Animations ===== */
+  .tool-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     padding: 0 20px 12px;
-}
+  }
 
-.tool-card {
+  .tool-card {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -81,31 +68,31 @@
     overflow: hidden;
     /* Fade-in up animation */
     animation: fadeInUp 0.6s ease-out both;
-}
+  }
 
-/* প্রতিটি কার্ডের জন্য আলাদা delay (যাতে ক্রমান্বয়ে আসে) */
-.tool-card:nth-child(1) { animation-delay: 0.05s; }
-.tool-card:nth-child(2) { animation-delay: 0.15s; }
-.tool-card:nth-child(3) { animation-delay: 0.25s; }
-.tool-card:nth-child(4) { animation-delay: 0.35s; }
-.tool-card:nth-child(5) { animation-delay: 0.45s; }
-.tool-card:nth-child(6) { animation-delay: 0.55s; }
-.tool-card:nth-child(7) { animation-delay: 0.65s; }
-.tool-card:nth-child(8) { animation-delay: 0.75s; }
+  /* প্রতিটি কার্ডের জন্য আলাদা delay (যাতে ক্রমান্বয়ে আসে) */
+  .tool-card:nth-child(1) { animation-delay: 0.05s; }
+  .tool-card:nth-child(2) { animation-delay: 0.15s; }
+  .tool-card:nth-child(3) { animation-delay: 0.25s; }
+  .tool-card:nth-child(4) { animation-delay: 0.35s; }
+  .tool-card:nth-child(5) { animation-delay: 0.45s; }
+  .tool-card:nth-child(6) { animation-delay: 0.55s; }
+  .tool-card:nth-child(7) { animation-delay: 0.65s; }
+  .tool-card:nth-child(8) { animation-delay: 0.75s; }
 
-@keyframes fadeInUp {
+  @keyframes fadeInUp {
     from {
-        opacity: 0;
-        transform: translateY(20px);
+      opacity: 0;
+      transform: translateY(20px);
     }
     to {
-        opacity: 1;
-        transform: translateY(0);
+      opacity: 1;
+      transform: translateY(0);
     }
-}
+  }
 
-/* স্ক্যান লাইন (hacking vibe) */
-.tool-card::before {
+  /* স্ক্যান লাইন (hacking vibe) */
+  .tool-card::before {
     content: '';
     position: absolute;
     top: 0;
@@ -116,483 +103,342 @@
     transform: skewX(-25deg);
     animation: scanLine 3.5s infinite;
     pointer-events: none;
-}
+  }
 
-@keyframes scanLine {
+  @keyframes scanLine {
     0% { left: -100%; }
     100% { left: 200%; }
-}
+  }
 
-/* হোভার করলে স্ক্যান দ্রুত ও গ্লো বাড়বে */
-.tool-card:hover {
+  /* হোভার করলে স্ক্যান দ্রুত ও গ্লো বাড়বে */
+  .tool-card:hover {
     border-color: #00ff41;
     box-shadow: 0 0 30px rgba(0, 255, 65, 0.4);
     transform: translateY(-4px);
-}
-.tool-card:hover::before {
+  }
+  .tool-card:hover::before {
     animation-duration: 0.8s;
-}
+  }
 
-/* বাকি স্টাইল (আপনার existing CSS-এর সাথে মিলিয়ে নিন) */
-.tool-icon {
-    background: #000;
-    width: 45px;
-    height: 45px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--accent);
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-}
-.tool-card h4 { font-size: 0.85rem; margin-bottom: 4px; word-break: break-word; }
-.tool-card p { font-size: 0.68rem; color: #888; line-height: 1.2; }
+  .tool-icon {
+    background: #000; width: 45px; height: 45px;
+    border-radius: 10px; display: flex;
+    align-items: center; justify-content: center;
+    color: var(--accent); margin-bottom: 10px; font-size: 1.2rem;
+  }
+  .tool-card h4 { font-size: 0.85rem; margin-bottom: 4px; word-break: break-word; }
+  .tool-card p { font-size: 0.68rem; color: #888; line-height: 1.2; }
 
-        /* Side Drawer */
-        .drawer { position: fixed; left: -280px; width: 280px; height: 100%; background: var(--bg); transition: 0.3s; z-index: 200; padding: 25px; border-right: 1px solid #222; }
-        .drawer.open { left: 0; }
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 150; }
-        .overlay.active { display: block; }
-        .drawer-menu { list-style: none; margin-top: 30px; }
-        .drawer-menu li a { display: flex; align-items: center; padding: 15px 0; color: #fff; text-decoration: none; border-bottom: 1px solid #111; }
-        .drawer-menu i { margin-right: 15px; color: var(--accent); width: 20px; }
-/* ===== 3-Dot Menu (Advanced Cyber Design) ===== */
-.dots-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 50px;
+  .empty-msg {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px 20px;
+    font-size: 0.9rem;
+  }
+
+  .drawer { position: fixed; left: -280px; width: 280px; height: 100%; background: var(--bg); transition: 0.3s; z-index: 200; padding: 25px; border-right: 1px solid #222; }
+  .drawer.open { left: 0; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 150; }
+  .overlay.active { display: block; }
+  .drawer-menu { list-style: none; margin-top: 30px; }
+  .drawer-menu li a { display: flex; align-items: center; padding: 15px 0; color: #fff; text-decoration: none; border-bottom: 1px solid #111; }
+  .drawer-menu i { margin-right: 15px; color: var(--accent); width: 20px; }
+
+  .dots-menu {
+    display: none; position: absolute; right: 0; top: 50px;
     background: rgba(10, 10, 10, 0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(0, 255, 65, 0.25);
-    border-radius: 16px;
-    min-width: 210px;
-    padding: 8px 0;
+    border-radius: 16px; min-width: 210px; padding: 8px 0;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 255, 65, 0.08);
     z-index: 110;
-    animation: dropFade 0.25s ease-out;
-    transform-origin: top right;
-}
+  }
+  .dots-menu a {
+    display: flex; align-items: center; padding: 12px 20px;
+    text-decoration: none; color: #ddd; font-size: 0.85rem;
+    font-weight: 500; border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: all 0.25s ease; gap: 12px;
+  }
+  .dots-menu a:last-child { border-bottom: none; }
+  .dots-menu a i { width: 20px; color: var(--accent); font-size: 1rem; }
+  .dots-menu a:hover { background: rgba(0, 255, 65, 0.06); color: #fff; padding-left: 26px; }
+  .dots-menu.show { display: block; }
 
-@keyframes dropFade {
-    from { opacity: 0; transform: scale(0.92) translateY(-8px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.dots-menu a {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    text-decoration: none;
-    color: #ddd;
-    font-size: 0.85rem;
-    font-weight: 500;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    transition: all 0.25s ease;
-    gap: 12px;
-}
-
-.dots-menu a:last-child { border-bottom: none; }
-
-.dots-menu a i {
-    width: 20px;
-    color: var(--accent);
-    font-size: 1rem;
-    transition: 0.3s;
-}
-
-.dots-menu a .menu-arrow {
-    margin-left: auto;
-    color: #555;
-    font-size: 1.2rem;
-    transition: 0.3s;
-}
-
-.dots-menu a:hover {
-    background: rgba(0, 255, 65, 0.06);
-    color: #fff;
-    padding-left: 26px;
-}
-
-.dots-menu a:hover i {
-    color: #fff;
-    transform: scale(1.1);
-}
-
-.dots-menu a:hover .menu-arrow {
-    color: var(--accent);
-    transform: translateX(4px);
-}
-
-.dots-menu.show {
-    display: block;
-}
-        /* Bottom Navigation */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #222; z-index: 1000; }
-        .nav-btn { text-align: center; color: var(--text-muted); text-decoration: none; flex: 1; }
-        .nav-btn.active { color: var(--accent); }
-        .nav-btn i { display: block; font-size: 1.2rem; margin-bottom: 4px; }
-        .nav-btn span { font-size: 0.7rem; }
-    </style>
+  .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #222; z-index: 1000; }
+  .nav-btn { text-align: center; color: var(--text-muted); text-decoration: none; flex: 1; }
+  .nav-btn.active { color: var(--accent); }
+  .nav-btn i { display: block; font-size: 1.2rem; margin-bottom: 4px; }
+  .nav-btn span { font-size: 0.7rem; }
+</style>
 </head>
-<script>
-
- 
-</script>
 <body>
 
-    <div class="overlay" id="overlay"></div>
+<div class="overlay" id="overlay"></div>
 
-    <div class="drawer" id="drawer">
-        <div style="text-align: center; padding-bottom: 20px; border-bottom: 1px solid #222;">
-            <div style="width: 60px; height: 60px; background: var(--accent); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; color: #000; font-size: 1.5rem;"><i class="fas fa-user"></i></div>
-            <h4>Cyber User</h4>
-        </div>
-        <ul class="drawer-menu">
-            <li><a href="profile.html"><i class="fas fa-id-card"></i> My Profile</a></li>
-            <li onclick="checkVipAccess()"><a href="vip.html"><i class="fas fa-crown" style="color: gold;"></i> VIP Menu</a></li>
-            <li><a href="about.html"><i class="fas fa-info-circle"></i> About Us</a></li>
-          <li><a href="https://vip-tools-backend.onrender.com/support"><i class="fas fa-headset"></i> Support</a></li>
-            <li><a href="contact.html"><i class="fas fa-id-card"></i> Contact </a></li>
-            <li onclick="shareApp()" style="padding: 15px 0; cursor: pointer; border-bottom: 1px solid #111; display: flex; align-items: center;">
-                <i class="fas fa-share-alt" style="margin-right: 15px; color: var(--accent); width: 20px;"></i> 
-                <span>Share App</span>
-            </li>
-        </ul>
+<div class="drawer" id="drawer">
+  <div style="text-align: center; padding-bottom: 20px; border-bottom: 1px solid #222;">
+    <div id="drawerAvatar" style="width: 60px; height: 60px; background: var(--accent); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; color: #000; font-size: 1.5rem;">
+      <i class="fas fa-user"></i>
     </div>
+    <h4 id="drawerName">Cyber User</h4>
+  </div>
+  <ul class="drawer-menu">
+    <li><a href="profile.html"><i class="fas fa-id-card"></i> My Profile</a></li>
+    <li onclick="checkVipAccess()"><a href="vip.html"><i class="fas fa-crown" style="color: gold;"></i> VIP Menu</a></li>
+    <li><a href="about.html"><i class="fas fa-info-circle"></i> About Us</a></li>
+    <li><a href="https://vip-tools-backend.onrender.com/support"><i class="fas fa-headset"></i> Support</a></li>
+    <li><a href="contact.html"><i class="fas fa-id-card"></i> Contact</a></li>
+    <li onclick="shareApp()" style="padding: 15px 0; cursor: pointer; border-bottom: 1px solid #111; display: flex; align-items: center;">
+      <i class="fas fa-share-alt" style="margin-right: 15px; color: var(--accent); width: 20px;"></i>
+      <span>Share App</span>
+    </li>
+  </ul>
+</div>
 
-  <!-- ====== HEADER with 3-Dot Menu (Advanced Cyber Design) ====== -->
 <header>
-    <i class="fas fa-bars icon-btn" id="menu-btn"></i>
-    <h1 class="logo">CYBER TOOLS</h1>
-    <div style="position: relative;">
-        <i class="fas fa-ellipsis-v icon-btn" id="dots-btn"></i>
-        <div class="dots-menu" id="dots-content">
-            <a href="dev-info.html">
-                <i class="fas fa-user-ninja"></i> Developer info
-                <span class="menu-arrow"></span>
-            </a>
-            <a href="join-channel.html">
-                <i class="fas fa-users"></i> Join Now
-                <span class="menu-arrow"></span>
-            </a>
-            <a href="settings.html">
-                <i class="fas fa-cog"></i> Settings
-                <span class="menu-arrow"></span>
-            </a>
-            <a href="chat.html" id="chatBtn">
-                <i class="fas fa-sms"></i> Chat
-                <span id="unreadBadge" style="background: #ff4444; color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.65rem; margin-left: 8px; display: none;">0</span>
-                <span class="menu-arrow"></span>
-            </a>
-        </div>
+  <i class="fas fa-bars icon-btn" id="menu-btn"></i>
+  <h1 class="logo">CYBER TOOLS</h1>
+  <div style="position: relative;">
+    <i class="fas fa-ellipsis-v icon-btn" id="dots-btn"></i>
+    <div class="dots-menu" id="dots-content">
+      <a href="dev-info.html"><i class="fas fa-user-ninja"></i> Developer info</a>
+      <a href="join-channel.html"><i class="fas fa-users"></i> Join Now</a>
+      <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+      <a href="chat.html" id="chatBtn">
+        <i class="fas fa-sms"></i> Chat
+        <span id="unreadBadge" style="background: #ff4444; color: white; border-radius: 20px; padding: 2px 8px; font-size: 0.65rem; margin-left: 8px; display: none;">0</span>
+      </a>
     </div>
+  </div>
 </header>
 
-    <div class="search-area">
-        <i class="fas fa-search"></i>
-        <input type="text" id="toolSearch" placeholder="Search tools...">
-        <i class="fas fa-sliders-h"></i>
-    </div>
-
-    <div class="section-label"><span>CATEGORIES</span></div>
-    <div class="cat-scroll">
-        <a href="category-tools-list/network.html" class="cat-link"><div class="cat-box"><i class="fas fa-wifi"></i><span>Network</span></div></a>
-        <a href="category-tools-list/security.html" class="cat-link"><div class="cat-box"><i class="fas fa-shield-alt"></i><span>Security</span></div></a>
-        <a href="category-tools-list/web.html" class="cat-link"><div class="cat-box"><i class="fas fa-code"></i><span>Web </span></div></a>
-        <a href="category-tools-list/system.html" class="cat-link"><div class="cat-box"><i class="fas fa-terminal"></i><span>System</span></div></a>
-    </div>
-
-    <div class="section-label"><span>TOOLS</span></div>
-    <div class="tool-list">
-        <a href="tools/device-info.html" class="tool-card">
-            <div class="tool-icon"><i class="fas fa-microchip"></i></div>
-            <h4>Device info</h4><p>Will show information of all devices.</p>
-        </a>
-        <a href="tools/news- generetor.html" class="tool-card">
-            <div class="tool-icon"><i class="fas fa-newspaper"></i></div>
-            <h4>News Generetor</h4><p>Here you can generate news with your own photos.</p>
-        </a>
-          <a href="tools/age.html" class="tool-card">
-            <div class="tool-icon" style="color: #00ff41;"><i class="fas fa-calculator"></i></div>
-            <h4>Age Calculator</h4>
-            <p>Calculate exact age and next birthday</p>
-        </a>
-
-        <a href="tools/day-finder.html" class="tool-card">
-            <div class="tool-icon" style="color: #00ff41;"><i class="fas fa-calendar-day"></i></div>
-            <h4>Day Finder</h4>
-            <p>Find which day it was on any date</p>
-        </a>
-    
-    <a href="tools/url-shortner.html" class="tool-card">
-    <div class="tool-icon" style="color: #00ff41;"><i class="fas fa-link"></i></div>
-    <h4>URL Shortener</h4>
-    <p>Convert long and ugly URLs into short premium links instantly.</p>
-</a>
-
-<a href="tools/qr-tool.html" class="tool-card">
-    <div class="tool-icon" style="color: #00ff41;">
-        <i class="fas fa-qrcode"></i>
-    </div>
-    <div class="tool-info">
-        <h4>QR Code Scan/Generet</h4>
-        <p>Scan & generate QR codes</p>
-    </div>
-</a>
-<a href="tools/style-name.html" class="tool-card">
-    <div class="tool-icon" style="color: #00ff41;"><i class="fas fa-magic"></i></div>
-    <h4>Style Name/Text Generator</h4>
-    <p>130+ fancy styles, glitch, gothic, hacker & more</p>
-</a>
-<a href="http://hostfile.is-great.net/" class="tool-card">
-    <div class="tool-icon" style="color: #00ff41;"><i class="fas fa-code-branch"></i></div>
-    <h4>Free Host file</h4>
-    <p>From here you can host any file, html, css, java, php, image, zip.</p>
-</a>
-<a href="shortcut-hub.html" class="tool-card">
-    <div class="tool-icon" style="color: #00ff41;"><i class="fas fa-terminal"></i></div>
-    <h4>Computer &amp; Linux Shortcut Hub</h4>
-    <p>Huge collection of Windows shortcuts and Linux commands. </p>
-</a>
-<a href="tools/yt%20thumblain.html" class="tool-card">
-    <div class="tool-icon" style="color: #00ff41;"><i class="fab fa-youtube"></i></div>
-    <h4>YouTube Thumbnail Downloader</h4>
-    <p>Download any thumbnail in every resolution</p>
-</a>
+<div class="search-area">
+  <i class="fas fa-search"></i>
+  <input type="text" id="toolSearch" placeholder="Search tools...">
+  <i class="fas fa-sliders-h"></i>
 </div>
-       
-       
-       
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-btn active"><i class="fas fa-home"></i><span>Home</span></a>
-          <a href="vip-tools.html" class="nav-btn"><i class="fas fa-crown"></i><span>VIP Tools</span></a>
-        <a href="favorite.html" class="nav-btn"><i class="fas fa-fire"></i><span>Popular</span></a>
-    </nav>
 
-    <script>
-    // হোম পেজ লোড হওয়ার সাথে সাথে ইউজারের প্রোফাইল পিক ও নাম সেট করার লজিক
-    window.addEventListener('DOMContentLoaded', () => {
-        let savedName = localStorage.getItem('user_profile_name');
-        let savedImage = localStorage.getItem('user_profile_image');
+<div class="section-label"><span>CATEGORIES</span></div>
+<div class="cat-scroll" id="categoryList"></div>
 
-        const drawerName = document.querySelector('.drawer h4');
-        const drawerIconContainer = document.querySelector('.drawer div div');
+<div class="section-label"><span id="toolsLabel">TOOLS</span></div>
+<div class="tool-list" id="toolList"></div>
 
-        if (savedName) {
-            drawerName.innerText = savedName;
-        }
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-btn active"><i class="fas fa-home"></i><span>Home</span></a>
+  <a href="vip-tools.html" class="nav-btn"><i class="fas fa-crown"></i><span>VIP Tools</span></a>
+  <a href="favorite.html" class="nav-btn"><i class="fas fa-fire"></i><span>Popular</span></a>
+</nav>
 
-        if (savedImage) {
-            drawerIconContainer.innerHTML = `<img src="${savedImage}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-        }
+<script src="tools.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var catListEl = document.getElementById("categoryList");
+  var toolListEl = document.getElementById("toolList");
+  var toolsLabel = document.getElementById("toolsLabel");
+  var searchInput = document.getElementById("toolSearch");
+
+  var allTools = window.TOOLS || [];
+  var allCategories = window.CATEGORIES || [];
+  var activeCategory = null;
+
+  // ---- Render categories ----
+  function renderCategories() {
+    catListEl.innerHTML = "";
+    allCategories.forEach(function (cat, idx) {
+      var a = document.createElement("a");
+      a.className = "cat-link";
+      a.style.animationDelay = Math.min(idx * 40, 300) + "ms";
+
+      if (cat.url) {
+        a.href = cat.url;
+      } else {
+        a.href = "javascript:void(0)";
+        a.addEventListener("click", function () { applyCategory(cat.name); });
+      }
+
+      a.innerHTML =
+        '<div class="cat-box">' +
+          '<i class="' + cat.icon + '"></i>' +
+          '<span>' + cat.name + '</span>' +
+        '</div>';
+      catListEl.appendChild(a);
     });
-
-        // কীবোর্ড ওপেন হলে ফুটার মেনু হাইড করার লজিক
-        const bottomNav = document.querySelector('.bottom-nav');
-        const originalHeight = window.innerHeight;
-
-        window.addEventListener('resize', () => {
-            if (window.innerHeight < originalHeight - 50) {
-                bottomNav.style.display = 'none';
-            } else {
-                bottomNav.style.display = 'flex';
-            }
-        });
-
-        // --- VIP Access Logic (Name + Secret Word Method) ---
-        function checkVipAccess() {
-            if (localStorage.getItem('vip_status') === 'active') {
-                window.location.href = "vip.html";
-                return;
-            }
-
-            let modal = document.createElement('div');
-            modal.id = 'vipModal';
-            modal.style.position = 'fixed';
-            modal.style.inset = '0';
-            modal.style.background = 'rgba(0,0,0,0.85)';
-            modal.style.zIndex = '9999';
-            modal.style.display = 'flex';
-            modal.style.justifyContent = 'center';
-            modal.style.alignItems = 'center';
-            modal.style.padding = '20px';
-
-            modal.innerHTML = `
-                <div style="background: #111; border: 1px solid gold; padding: 25px 20px; border-radius: 20px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 0 20px rgba(255,215,0,0.2);">
-                    <i class="fas fa-crown" style="color: gold; font-size: 3rem; margin-bottom: 15px;"></i>
-                    <h3 style="color: gold; font-size: 1.2rem; margin-bottom: 10px;">VIP ACCESS LOCKED</h3>
-                    
-                    <p style="color: #ccc; font-size: 0.85rem; line-height: 1.5; margin-bottom: 20px;">
-                        টাকা দেওয়ার সময় যে নাম/নম্বর দিয়েছেন সেটি দিয়ে VIP Key অ্যাক্টিভেট করুন। যদি আপনার কাছে Key না থাকে, তবে নিচের হোয়াটসঅ্যাপ বাটনে ক্লিক করে আমাদের থেকে Key সংগ্রহ করুন।
-                    </p>
-
-                    <a href="https://wa.me/917865875762?text=Hello%20Arif,%20I%20want%20to%20buy%20VIP%20Key" 
-                       style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #25D366; color: #fff; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 0.95rem; text-decoration: none; margin-bottom: 15px;" 
-                       target="_blank">
-                        <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Buy VIP Key via WhatsApp
-                    </a>
-
-                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; border-top: 1px solid #222; padding-top: 15px;">
-                        <input type="text" id="modalName" placeholder="রেজিস্টার্ড নাম / ফোন নম্বর..." style="background: #000; border: 1px solid #333; padding: 10px; border-radius: 8px; color: #fff; font-size: 0.85rem; outline: none;">
-                        <input type="text" id="modalKey" placeholder="আপনার VIP Key পেস্ট করুন..." style="background: #000; border: 1px solid #333; padding: 10px; border-radius: 8px; color: #fff; font-size: 0.85rem; outline: none;">
-                        <button onclick="submitModalKey()" style="background: gold; color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem;">Activate VIP</button>
-                    </div>
-
-                    <button onclick="document.getElementById('vipModal').remove()" style="background: transparent; border: none; color: #888; margin-top: 15px; font-size: 0.8rem; cursor: pointer;">Close / Cancel</button>
-                </div>
-            `;
-
-            document.body.appendChild(modal);
-        }
-
-        function submitModalKey() {
-            let nameInput = document.getElementById('modalName').value.trim();
-            let keyInput = document.getElementById('modalKey').value.trim();
-
-            if (!nameInput || !keyInput) {
-                alert("দয়া করে নাম এবং Key দুটি باکسই পূরণ করুন!");
-                return;
-            }
-
-            const secretWord = "ARIF_KING_786"; 
-            const validKey = btoa(nameInput.toLowerCase() + secretWord).substring(0, 10).toUpperCase();
-
-            if (keyInput.toUpperCase() === validKey) {
-                localStorage.setItem('vip_status', 'active');
-                localStorage.setItem('vip_user', nameInput);
-                alert("Access Granted! Welcome to VIP.");
-                document.getElementById('vipModal').remove();
-                window.location.href = "vip.html"; 
-            } else {
-                alert("Invalid Key! আপনার নাম বা কী ভুল হয়েছে। সঠিক Key-র জন্য হোয়াটসঅ্যাপে যোগাযোগ করুন।");
-            }
-        }
-
-        // --- VIP Tool Lock Checker ---
-        function checkVipTool(pageLink) {
-            if (localStorage.getItem('vip_status') === 'active') {
-                window.location.href = pageLink;
-            } else {
-                alert("This is a Premium Tool! Please unlock VIP Menu first.");
-                checkVipAccess();
-            }
-        }
-
-        // --- Drawer Logic ---
-        const drawer = document.getElementById('drawer');
-        const overlay = document.getElementById('overlay');
-        const dotsContent = document.getElementById('dots-content');
-
-        document.getElementById('menu-btn').onclick = () => {
-            drawer.classList.add('open');
-            overlay.classList.add('active');
-        }
-        overlay.onclick = () => {
-            drawer.classList.remove('open');
-            overlay.classList.remove('active');
-        }
-
-        // 3-Dots Menu
-        document.getElementById('dots-btn').onclick = (e) => {
-            e.stopPropagation();
-            dotsContent.classList.toggle('show');
-        }
-        window.onclick = () => dotsContent.classList.remove('show');
-
-        // Search Filter (কোণাকুণি গ্রিডের ক্ষেত্রেও ফিল্টার সঠিকভাবে কাজ করার জন্য পরিবর্তিত)
-        document.getElementById('toolSearch').oninput = function() {
-            let val = this.value.toLowerCase();
-            document.querySelectorAll('.tool-list .tool-card').forEach(card => {
-                card.style.display = card.innerText.toLowerCase().includes(val) ? "flex" : "none";
-            });
-        };
-
-     // Share Feature - Custom social share dialog
-function shareApp() {
-    var downloadLink = "cybertools12.netlify.app/share-app.html";
-    var shareText = "Download Cyber Tools, this tool has all in all hacking tools.:";
-    
-    // কাস্টম শেয়ার ডায়ালগ তৈরি
-    let modal = document.createElement('div');
-    modal.id = 'shareModal';
-    modal.style.position = 'fixed';
-    modal.style.inset = '0';
-    modal.style.background = 'rgba(0,0,0,0.9)';
-    modal.style.zIndex = '10000';
-    modal.style.display = 'flex';
-    modal.style.justifyContent = 'center';
-    modal.style.alignItems = 'center';
-    modal.style.padding = '20px';
-    
-    modal.innerHTML = `
-        <div style="background: #1a1a1a; border-radius: 25px; max-width: 320px; width: 100%; padding: 20px; text-align: center; border: 1px solid #00ff41;">
-            <h3 style="color: #00ff41; margin-bottom: 15px;"><i class="fas fa-share-alt"></i> Share the app</h3>
-            <div style="display: flex; justify-content: space-around; margin: 20px 0;">
-                <a href="https://wa.me/?text=${encodeURIComponent(shareText + ' ' + downloadLink)}" target="_blank" style="background: #25D366; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; text-decoration: none;"><i class="fab fa-whatsapp"></i></a>
-                <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(downloadLink)}" target="_blank" style="background: #1877F2; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; text-decoration: none;"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://t.me/share/url?url=${encodeURIComponent(downloadLink)}&text=${encodeURIComponent(shareText)}" target="_blank" style="background: #0088cc; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; text-decoration: none;"><i class="fab fa-telegram-plane"></i></a>
-            </div>
-            <div style="margin: 15px 0;">
-                <input type="text" value="${downloadLink}" id="copyLinkInput" readonly style="width: 100%; padding: 8px; background: #000; border: 1px solid #444; border-radius: 8px; color: #fff; text-align: center;">
-                <button onclick="navigator.clipboard.writeText('${downloadLink}'); alert('Link copied!');" style="margin-top: 8px; background: #444; border: none; padding: 6px 12px; border-radius: 20px; color: #fff; cursor: pointer;"><i class="fas fa-copy"></i> Copy link</button>
-            </div>
-            <button onclick="document.getElementById('shareModal').remove()" style="background: none; border: none; color: #aaa; margin-top: 10px; cursor: pointer;">Close</button>
-        </div>
-    `;
-    document.body.appendChild(modal);
-}
-    </script>
-</body>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBe-BaRSbhOW8R4xrINojCxS2e_3w1Fshw",
-    authDomain: "cyber-toolbox-chat.firebaseapp.com",
-    projectId: "cyber-toolbox-chat",
-    storageBucket: "cyber-toolbox-chat.firebasestorage.app",
-    messagingSenderId: "715093305796",
-    appId: "1:715093305796:web:11a4e2b50e5505d7e5dc91"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  let userId = localStorage.getItem('chatUserId');
-  if (!userId) {
-    userId = crypto.randomUUID ? crypto.randomUUID() : 'user_' + Date.now();
-    localStorage.setItem('chatUserId', userId);
   }
 
-  const lastSeenKey = `lastSeen_${userId}`;
-  let lastSeen = localStorage.getItem(lastSeenKey) || 0;
-
-  const messagesRef = collection(db, "groups", "cyberToolGroup", "messages");
-  const q = query(messagesRef, where("timestamp", ">", new Date(parseInt(lastSeen))));
-
-  const badgeSpan = document.getElementById('unreadBadge');
-  let unreadCount = 0;
-
-  const unsubscribe = onSnapshot(q, (snapshot) => {
-    unreadCount = snapshot.size;
-    if (unreadCount > 0) {
-      badgeSpan.style.display = 'inline-block';
-      badgeSpan.innerText = unreadCount > 99 ? '99+' : unreadCount;
-    } else {
-      badgeSpan.style.display = 'none';
+  // ---- Render tools ----
+  // nth-child handles the first 8 cards via CSS.
+  // JS handles cards 9+ with the same stagger pattern (0.85s, 0.95s, … capped).
+  function renderTools(items) {
+    toolListEl.innerHTML = "";
+    if (!items.length) {
+      toolListEl.innerHTML = '<div class="empty-msg">No tools match your search.</div>';
+      return;
     }
+    items.forEach(function (tool, idx) {
+      var a = document.createElement("a");
+      a.className = "tool-card";
+      a.href = tool.url;
+      // Only apply JS delay for card 9+ — first 8 handled by CSS nth-child
+      if (idx >= 8) {
+        a.style.animationDelay = Math.min(0.85 + (idx - 8) * 0.1, 1.5) + "s";
+      }
+      a.innerHTML =
+        '<div class="tool-icon"><i class="' + tool.icon + '"></i></div>' +
+        '<h4>' + tool.title + '</h4>' +
+        '<p>' + tool.desc + '</p>';
+      toolListEl.appendChild(a);
+    });
+  }
+
+  // ---- Filter by category ----
+  function applyCategory(catName) {
+    if (activeCategory === catName) activeCategory = null;
+    else activeCategory = catName;
+    searchInput.value = "";
+    refresh();
+  }
+
+  // ---- Combined refresh ----
+  function refresh() {
+    var q = searchInput.value.toLowerCase().trim();
+    var list = allTools;
+
+    if (activeCategory) {
+      list = list.filter(function (t) {
+        return (t.category || "").toLowerCase() === activeCategory.toLowerCase();
+      });
+    }
+
+    if (q) {
+      list = list.filter(function (t) {
+        return t.title.toLowerCase().indexOf(q) !== -1 ||
+               t.desc.toLowerCase().indexOf(q) !== -1;
+      });
+    }
+
+    toolsLabel.textContent = activeCategory
+      ? "TOOLS · " + activeCategory.toUpperCase()
+      : "TOOLS";
+
+    renderTools(list);
+  }
+
+  searchInput.addEventListener("input", refresh);
+
+  // ---- Profile from localStorage ----
+  var savedName = localStorage.getItem("user_profile_name");
+  var savedImage = localStorage.getItem("user_profile_image");
+  var drawerName = document.getElementById("drawerName");
+  var drawerAvatar = document.getElementById("drawerAvatar");
+  if (savedName) drawerName.textContent = savedName;
+  if (savedImage) {
+    drawerAvatar.innerHTML = '<img src="' + savedImage + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+  }
+
+  // ---- Keyboard hide bottom nav ----
+  var bottomNav = document.querySelector(".bottom-nav");
+  var originalHeight = window.innerHeight;
+  window.addEventListener("resize", function () {
+    if (window.innerHeight < originalHeight - 50) bottomNav.style.display = "none";
+    else bottomNav.style.display = "flex";
   });
 
-  // চ্যাট লিংকে ক্লিক করলে বর্তমান সময় lastSeen হিসেবে সেভ হবে
-  const chatLink = document.getElementById('chatBtn');
-  if (chatLink) {
-    chatLink.addEventListener('click', () => {
-      localStorage.setItem(lastSeenKey, Date.now().toString());
-    });
-  }
+  // ---- Drawer ----
+  var drawer = document.getElementById("drawer");
+  var overlay = document.getElementById("overlay");
+  var dotsContent = document.getElementById("dots-content");
+
+  document.getElementById("menu-btn").onclick = function () {
+    drawer.classList.add("open");
+    overlay.classList.add("active");
+  };
+  overlay.onclick = function () {
+    drawer.classList.remove("open");
+    overlay.classList.remove("active");
+  };
+
+  document.getElementById("dots-btn").onclick = function (e) {
+    e.stopPropagation();
+    dotsContent.classList.toggle("show");
+  };
+  window.addEventListener("click", function () { dotsContent.classList.remove("show"); });
+
+  // ---- VIP ----
+  window.checkVipAccess = function () {
+    if (localStorage.getItem("vip_status") === "active") {
+      window.location.href = "vip.html";
+      return;
+    }
+    var modal = document.createElement("div");
+    modal.id = "vipModal";
+    modal.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;justify-content:center;align-items:center;padding:20px;";
+    modal.innerHTML =
+      '<div style="background:#111;border:1px solid gold;padding:25px 20px;border-radius:20px;width:100%;max-width:360px;text-align:center;">' +
+      '<i class="fas fa-crown" style="color:gold;font-size:3rem;margin-bottom:15px;"></i>' +
+      '<h3 style="color:gold;font-size:1.2rem;margin-bottom:10px;">VIP ACCESS LOCKED</h3>' +
+      '<p style="color:#ccc;font-size:0.85rem;line-height:1.5;margin-bottom:20px;">টাকা দেওয়ার সময় যে নাম/নম্বর দিয়েছেন সেটি দিয়ে VIP Key অ্যাক্টিভেট করুন।</p>' +
+      '<a href="https://wa.me/917865875762?text=Hello%20Arif,%20I%20want%20to%20buy%20VIP%20Key" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;padding:12px;border-radius:10px;font-weight:bold;font-size:0.95rem;text-decoration:none;margin-bottom:15px;" target="_blank"><i class="fab fa-whatsapp"></i> Buy VIP Key</a>' +
+      '<input type="text" id="modalName" placeholder="রেজিস্টার্ড নাম / ফোন..." style="width:100%;background:#000;border:1px solid #333;padding:10px;border-radius:8px;color:#fff;font-size:0.85rem;outline:none;margin-bottom:10px;">' +
+      '<input type="text" id="modalKey" placeholder="VIP Key..." style="width:100%;background:#000;border:1px solid #333;padding:10px;border-radius:8px;color:#fff;font-size:0.85rem;outline:none;margin-bottom:10px;">' +
+      '<button onclick="submitModalKey()" style="width:100%;background:gold;color:#000;border:none;padding:10px;border-radius:8px;font-weight:bold;cursor:pointer;">Activate VIP</button>' +
+      '<button onclick="document.getElementById(\'vipModal\').remove()" style="background:transparent;border:none;color:#888;margin-top:15px;font-size:0.8rem;cursor:pointer;">Close</button>' +
+      '</div>';
+    document.body.appendChild(modal);
+  };
+
+  window.submitModalKey = function () {
+    var nameInput = document.getElementById("modalName").value.trim();
+    var keyInput = document.getElementById("modalKey").value.trim();
+    if (!nameInput || !keyInput) { alert("দয়া করে নাম এবং Key দুটি পূরণ করুন!"); return; }
+    var secretWord = "ARIF_KING_786";
+    var validKey = btoa(nameInput.toLowerCase() + secretWord).substring(0, 10).toUpperCase();
+    if (keyInput.toUpperCase() === validKey) {
+      localStorage.setItem("vip_status", "active");
+      localStorage.setItem("vip_user", nameInput);
+      alert("Access Granted!");
+      document.getElementById("vipModal").remove();
+      window.location.href = "vip.html";
+    } else {
+      alert("Invalid Key!");
+    }
+  };
+
+  window.checkVipTool = function (link) {
+    if (localStorage.getItem("vip_status") === "active") window.location.href = link;
+    else { alert("Premium tool. Unlock VIP first."); window.checkVipAccess(); }
+  };
+
+  // ---- Share ----
+  window.shareApp = function () {
+    var link = "https://cybertools12.netlify.app/share-app.html";
+    var text = "Download Cyber Tools — all hacking tools in one place:";
+    var modal = document.createElement("div");
+    modal.id = "shareModal";
+    modal.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:10000;display:flex;justify-content:center;align-items:center;padding:20px;";
+    modal.innerHTML =
+      '<div style="background:#1a1a1a;border-radius:25px;max-width:320px;width:100%;padding:20px;text-align:center;border:1px solid #00ff41;">' +
+      '<h3 style="color:#00ff41;margin-bottom:15px;"><i class="fas fa-share-alt"></i> Share</h3>' +
+      '<div style="display:flex;justify-content:space-around;margin:20px 0;">' +
+      '<a href="https://wa.me/?text=' + encodeURIComponent(text + " " + link) + '" target="_blank" style="background:#25D366;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:white;text-decoration:none;"><i class="fab fa-whatsapp"></i></a>' +
+      '<a href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(link) + '" target="_blank" style="background:#1877F2;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:white;text-decoration:none;"><i class="fab fa-facebook-f"></i></a>' +
+      '<a href="https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text) + '" target="_blank" style="background:#0088cc;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:white;text-decoration:none;"><i class="fab fa-telegram-plane"></i></a>' +
+      '</div>' +
+      '<input type="text" value="' + link + '" readonly style="width:100%;padding:8px;background:#000;border:1px solid #444;border-radius:8px;color:#fff;text-align:center;margin-bottom:8px;">' +
+      '<button onclick="navigator.clipboard.writeText(\'' + link + '\');alert(\'Copied!\')" style="background:#444;border:none;padding:6px 14px;border-radius:20px;color:#fff;cursor:pointer;"><i class="fas fa-copy"></i> Copy</button><br>' +
+      '<button onclick="document.getElementById(\'shareModal\').remove()" style="background:none;border:none;color:#aaa;margin-top:12px;cursor:pointer;">Close</button>' +
+      '</div>';
+    document.body.appendChild(modal);
+  };
+
+  // ---- Init ----
+  renderCategories();
+  refresh();
+})();
 </script>
-    </html>
+
+</body>
+</html>
