@@ -1,178 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categories - Cyber Tools</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root { --accent: #00ff41; --bg: #0d0d0d; --card: #1a1a1a; --text-muted: #888; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #000; color: #fff; overflow-x: hidden; padding-bottom: 90px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Category - Cyber Tools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root { --accent: #00ff41; --bg: #0d0d0d; --card: #1a1a1a; --text-muted: #888; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+  body { background-color: #000; color: #fff; overflow-x: hidden; padding-bottom: 80px; }
 
-        header { display: flex; justify-content: space-between; padding: 15px 20px; align-items: center; position: sticky; top: 0; background: #000; z-index: 100; border-bottom: 1px solid #222; }
-        .logo { color: var(--accent); font-weight: bold; letter-spacing: 2px; }
+  header { display: flex; justify-content: space-between; padding: 15px 20px; align-items: center; position: sticky; top: 0; background: #000; z-index: 100; }
+  .logo { color: var(--accent); font-weight: bold; letter-spacing: 2px; font-size: 1.05rem; }
+  .icon-btn { font-size: 1.2rem; cursor: pointer; color: #fff; }
 
-        /* Drawer Design - Match with your Index */
-        .drawer { position: fixed; left: -280px; width: 280px; height: 100%; background: #111; transition: 0.3s; z-index: 200; padding: 25px; border-right: 1px solid #222; }
-        .drawer.open { left: 0; }
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 150; }
-        .overlay.active { display: block; }
-        .drawer-menu { list-style: none; margin-top: 30px; }
-        .drawer-menu li { padding: 15px 0; border-bottom: 1px solid #222; }
-        .drawer-menu a { text-decoration: none; color: #fff; display: flex; align-items: center; }
-        .drawer-menu i { margin-right: 15px; color: var(--accent); }
+  .search-area { padding: 10px 20px; position: relative; }
+  .search-area input { width: 100%; background: var(--card); border: 1px solid #222; padding: 12px 45px; border-radius: 12px; color: #fff; outline: none; }
+  .search-area input:focus { border-color: var(--accent); }
+  .search-area i { position: absolute; top: 23px; color: var(--text-muted); }
+  .search-area .fa-search { left: 35px; }
 
-        /* Category Grid */
-        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
-        .cat-card {
-            background: var(--card); border-radius: 20px; padding: 25px 15px;
-            text-align: center; border: 1px solid #222; position: relative; transition: 0.3s;
-        }
-        .cat-card i.main-icon { font-size: 2.2rem; color: var(--accent); margin-bottom: 10px; display: block; }
-        .cat-card span { font-weight: 600; font-size: 0.9rem; }
+  .section-label { display: flex; justify-content: space-between; padding: 15px 20px 10px; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; letter-spacing: 1px; }
+  .count-badge { color: var(--accent); font-weight: 700; }
 
-        /* Star Button */
-        .fav-star { position: absolute; top: 12px; right: 12px; color: #333; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
-        .fav-star.active { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+  .tool-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 20px 12px;
+  }
 
-        /* Bottom Nav - Match with Index */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #222; z-index: 1000; }
-        .nav-btn { text-align: center; color: var(--text-muted); text-decoration: none; flex: 1; }
-        .nav-btn.active { color: var(--accent); }
-        .nav-btn i { display: block; font-size: 1.2rem; margin-bottom: 4px; }
-        .nav-btn span { font-size: 0.7rem; }
-    </style>
+  .tool-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--card);
+    padding: 15px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+    min-height: 125px;
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.15);
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out both;
+  }
+  .tool-card:nth-child(1) { animation-delay: 0.05s; }
+  .tool-card:nth-child(2) { animation-delay: 0.15s; }
+  .tool-card:nth-child(3) { animation-delay: 0.25s; }
+  .tool-card:nth-child(4) { animation-delay: 0.35s; }
+  .tool-card:nth-child(5) { animation-delay: 0.45s; }
+  .tool-card:nth-child(6) { animation-delay: 0.55s; }
+  .tool-card:nth-child(7) { animation-delay: 0.65s; }
+  .tool-card:nth-child(8) { animation-delay: 0.75s; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.08), transparent);
+    transform: skewX(-25deg);
+    animation: scanLine 3.5s infinite;
+    pointer-events: none;
+  }
+  @keyframes scanLine { 0% { left: -100%; } 100% { left: 200%; } }
+
+  .tool-card:hover {
+    border-color: #00ff41;
+    box-shadow: 0 0 30px rgba(0, 255, 65, 0.4);
+    transform: translateY(-4px);
+  }
+  .tool-card:hover::before { animation-duration: 0.8s; }
+
+  .tool-icon {
+    background: #000; width: 45px; height: 45px;
+    border-radius: 10px; display: flex;
+    align-items: center; justify-content: center;
+    color: var(--accent); margin-bottom: 10px; font-size: 1.2rem;
+  }
+  .tool-card h4 { font-size: 0.85rem; margin-bottom: 4px; word-break: break-word; }
+  .tool-card p { font-size: 0.68rem; color: #888; line-height: 1.2; }
+
+  .empty-msg {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px 20px;
+    font-size: 0.9rem;
+  }
+  .empty-msg i {
+    display: block;
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    opacity: 0.4;
+  }
+
+  .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #222; z-index: 1000; }
+  .nav-btn { text-align: center; color: var(--text-muted); text-decoration: none; flex: 1; }
+  .nav-btn.active { color: var(--accent); }
+  .nav-btn i { display: block; font-size: 1.2rem; margin-bottom: 4px; }
+  .nav-btn span { font-size: 0.7rem; }
+</style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay"></div>
-    <div class="drawer" id="drawer">
-        <h3 style="color:var(--accent)">MENU</h3>
-        <ul class="drawer-menu">
-            <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-            <li onclick="checkVipAccess()"><a href="#"><i class="fas fa-crown" style="color: gold;"></i> VIP Menu</a></li>
-            <li><a href="#"><i class="fas fa-info-circle"></i> About Us</a></li>
-            <li onclick="shareApp()"><a href="#"><i class="fas fa-share-alt"></i> Share App</a></li>
-        </ul>
-    </div>
+<header>
+  <a href="index.html" style="color:white;text-decoration:none;"><i class="fas fa-arrow-left icon-btn"></i></a>
+  <h1 class="logo" id="pageTitle">CATEGORY</h1>
+  <div style="width:20px;"></div>
+</header>
 
-    <header>
-        <i class="fas fa-bars" id="menu-btn" style="cursor:pointer"></i>
-        <div class="logo">CATEGORIES</div>
-        <i class="fas fa-bell"></i>
-    </header>
+<div class="search-area">
+  <i class="fas fa-search"></i>
+  <input type="text" id="toolSearch" placeholder="Search in this category...">
+</div>
 
-    <div class="grid-container">
-        <div class="cat-card">
-            <i class="fas fa-star fav-star" onclick="toggleTool(this, 'id_net', 'Network Tools', 'network.html', 'fa-wifi')"></i>
-            <i class="fas fa-wifi main-icon"></i>
-            <span>Network</span>
-        </div>
-        <div class="cat-card">
-            <i class="fas fa-star fav-star" onclick="toggleTool(this, 'id_web', 'Web Tools', 'web.html', 'fa-code')"></i>
-            <i class="fas fa-code main-icon"></i>
-            <span>Web Tools</span>
-        </div>
-        <div class="cat-card">
-            <i class="fas fa-star fav-star" onclick="toggleTool(this, 'id_sec', 'Security Tools', 'security.html', 'fa-shield-alt')"></i>
-            <i class="fas fa-shield-alt main-icon"></i>
-            <span>Security</span>
-        </div>
-        <div class="cat-card">
-            <i class="fas fa-star fav-star" onclick="toggleTool(this, 'id_pri', 'Privacy Tools', 'privacy.html', 'fa-user-secret')"></i>
-            <i class="fas fa-user-secret main-icon"></i>
-            <span>Privacy</span>
-        </div>
-    </div>
+<div class="section-label">
+  <span id="label">TOOLS</span>
+  <span class="count-badge" id="countBadge">0</span>
+</div>
+<div class="tool-list" id="toolList"></div>
 
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-btn"><i class="fas fa-home"></i><span>Home</span></a>
-        <a href="category.html" class="nav-btn active"><i class="fas fa-th-large" style="color: gold;"></i><span>Category</span></a>
-        <a href="favorite.html" class="nav-btn"><i class="fas fa-star"></i><span>Favorite</span></a>
-    </nav>
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-btn"><i class="fas fa-home"></i><span>Home</span></a>
+  <a href="vip-tools.html" class="nav-btn"><i class="fas fa-crown"></i><span>VIP Tools</span></a>
+  <a href="favorite.html" class="nav-btn"><i class="fas fa-fire"></i><span>Popular</span></a>
+</nav>
 
-    <script>
-        // কীবোর্ড ওপেন হলে ফুটার মেনু হাইড করার লজিক
-        const bottomNav = document.querySelector('.bottom-nav');
-        const originalHeight = window.innerHeight;
+<script src="tools.js"></script>
+<script>
+(function () {
+  "use strict";
 
-        window.addEventListener('resize', () => {
-            if (window.innerHeight < originalHeight - 50) {
-                bottomNav.style.display = 'none';
-            } else {
-                bottomNav.style.display = 'flex';
-            }
-        });
+  var toolListEl = document.getElementById("toolList");
+  var pageTitle = document.getElementById("pageTitle");
+  var labelEl = document.getElementById("label");
+  var countBadge = document.getElementById("countBadge");
+  var searchInput = document.getElementById("toolSearch");
 
-        // VIP Access Logic (Name + Secret Word Method)
-        function checkVipAccess() {
-            if (localStorage.getItem('vip_status') === 'active') {
-                window.location.href = "vip.html";
-                return;
-            }
+  // ---- Read ?cat=Name from URL ----
+  var params = new URLSearchParams(window.location.search);
+  var catName = params.get("cat") || "";
+  var catKey = catName.toLowerCase();
 
-            let userName = prompt("Enter Registered Name / Phone (টাকা দেওয়ার সময় যা দিয়েছেন):");
-            if (!userName) return;
+  // ---- Filter tools by category ----
+  var allTools = window.TOOLS || [];
+  var catTools = catName
+    ? allTools.filter(function (t) {
+        return (t.category || "").toLowerCase() === catKey;
+      })
+    : allTools;
 
-            let inputKey = prompt("Enter your VIP Key:");
-            if (!inputKey) return;
+  // ---- Update title and label ----
+  var titleText = catName ? catName.toUpperCase() + " TOOLS" : "ALL TOOLS";
+  pageTitle.textContent = titleText;
+  labelEl.textContent = titleText;
+  countBadge.textContent = catTools.length + (catTools.length === 1 ? " tool" : " tools");
 
-            const secretWord = "ARIF_KING_786"; 
-            const validKey = btoa(userName.trim().toLowerCase() + secretWord).substring(0, 10).toUpperCase();
+  // ---- Render ----
+  function renderTools(items) {
+    toolListEl.innerHTML = "";
+    if (!items.length) {
+      toolListEl.innerHTML =
+        '<div class="empty-msg">' +
+          '<i class="fas fa-inbox"></i>' +
+          'No tools in this category yet.<br>' +
+          '<span style="font-size:0.8rem;opacity:0.7;">Add tools from tools.js</span>' +
+        '</div>';
+      return;
+    }
+    items.forEach(function (tool, idx) {
+      var a = document.createElement("a");
+      a.className = "tool-card";
+      a.href = tool.url;
+      if (idx >= 8) a.style.animationDelay = Math.min(0.85 + (idx - 8) * 0.1, 1.5) + "s";
+      a.innerHTML =
+        '<div class="tool-icon"><i class="' + tool.icon + '"></i></div>' +
+        '<h4>' + tool.title + '</h4>' +
+        '<p>' + tool.desc + '</p>';
+      toolListEl.appendChild(a);
+    });
+  }
 
-            if (inputKey.trim().toUpperCase() === validKey) {
-                localStorage.setItem('vip_status', 'active');
-                localStorage.setItem('vip_user', userName.trim());
-                alert("Access Granted! Welcome to VIP.");
-                window.location.href = "vip.html";
-            } else {
-                alert("Invalid Key! আপনার নাম বা কী ভুল হয়েছে।");
-            }
-        }
+  // ---- Search inside this category ----
+  searchInput.addEventListener("input", function () {
+    var q = this.value.toLowerCase().trim();
+    if (!q) {
+      countBadge.textContent = catTools.length + (catTools.length === 1 ? " tool" : " tools");
+      renderTools(catTools);
+      return;
+    }
+    var filtered = catTools.filter(function (t) {
+      return t.title.toLowerCase().indexOf(q) !== -1 ||
+             t.desc.toLowerCase().indexOf(q) !== -1;
+    });
+    countBadge.textContent = filtered.length + " of " + catTools.length;
+    renderTools(filtered);
+  });
 
-        function toggleTool(element, id, name, link, icon) {
-            let favorites = JSON.parse(localStorage.getItem('CyberArif_Vault')) || [];
-            const index = favorites.findIndex(item => item.id === id);
+  // ---- Init ----
+  renderTools(catTools);
+})();
+</script>
 
-            if (index > -1) {
-                favorites.splice(index, 1);
-                element.classList.remove('active');
-            } else {
-                favorites.push({ id, name, link, icon });
-                element.classList.add('active');
-            }
-            localStorage.setItem('CyberArif_Vault', JSON.stringify(favorites));
-        }
-
-        window.onload = () => {
-            let favorites = JSON.parse(localStorage.getItem('CyberArif_Vault')) || [];
-            document.querySelectorAll('.fav-star').forEach(star => {
-                const id = star.getAttribute('onclick').split("'")[1];
-                if (favorites.some(item => item.id === id)) {
-                    star.classList.add('active');
-                }
-            });
-        }
-
-        // Drawer Logic
-        const drawer = document.getElementById('drawer');
-        const overlay = document.getElementById('overlay');
-        document.getElementById('menu-btn').onclick = () => { drawer.classList.add('open'); overlay.classList.add('active'); }
-        overlay.onclick = () => { drawer.classList.remove('open'); overlay.classList.remove('active'); }
-
-        // Share App
-        function shareApp() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Cyber Tools Pro',
-                    text: 'Check out this awesome Cyber Tools App by Arif!',
-                    url: window.location.href
-                }).catch(console.error);
-            } else {
-                alert("Share link: " + window.location.href);
-            }
-        }
-    </script>
 </body>
 </html>
