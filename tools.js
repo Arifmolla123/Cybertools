@@ -105,7 +105,7 @@ window.TOOLS = [
     title: "YouTube Thumbnail Downloader",
     desc: "Download any thumbnail in every resolution",
     icon: "fab fa-youtube",
-    url: "tools/yt-thumbnail.html",
+    url: "tools/yt thumbnail.html",
     category: "Web"
   }
 
