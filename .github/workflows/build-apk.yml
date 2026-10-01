@@ -30,13 +30,13 @@ jobs:
       - name: Install npm dependencies
         run: npm install
 
-      - name: Verify www folder exists
+      - name: Verify www folder
         run: |
           if [ ! -f www/index.html ]; then
-            echo "❌ www/index.html missing!"
+            echo "ERROR: www/index.html missing"
             exit 1
           fi
-          echo "✅ www/index.html found"
+          echo "OK: www/index.html found"
 
       - name: Add Android platform
         run: npx cap add android
@@ -44,300 +44,29 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      # ============================================================
-      #  INJECT CUSTOM JAVA CODE — Native Download + Fullscreen + Zoom off
-      # ============================================================
-
-      - name: Find MainActivity path
-        id: find_path
+      - name: Copy MainActivity.java override
         run: |
           MAIN_PATH=$(find android/app/src/main/java -name "MainActivity.java" | head -n 1)
-          echo "main_path=$MAIN_PATH" >> $GITHUB_OUTPUT
-          echo "Found: $MAIN_PATH"
-
-      - name: Inject advanced MainActivity.java
-        run: |
-          MAIN_PATH="${{ steps.find_path.outputs.main_path }}"
-          cat > "$MAIN_PATH" << 'EOF'
-          package com.arif.cybertools;
-
-          import android.annotation.SuppressLint;
-          import android.app.DownloadManager;
-          import android.content.Context;
-          import android.net.Uri;
-          import android.os.Build;
-          import android.os.Bundle;
-          import android.os.Environment;
-          import android.util.Base64;
-          import android.view.View;
-          import android.view.WindowManager;
-          import android.webkit.CookieManager;
-          import android.webkit.DownloadListener;
-          import android.webkit.JavascriptInterface;
-          import android.webkit.URLUtil;
-          import android.webkit.WebSettings;
-          import android.webkit.WebView;
-          import android.widget.Toast;
-
-          import com.getcapacitor.BridgeActivity;
-
-          import java.io.File;
-          import java.io.FileOutputStream;
-
-          public class MainActivity extends BridgeActivity {
-
-              private WebView webView;
-
-              @SuppressLint("SetJavaScriptEnabled")
-              @Override
-              public void onCreate(Bundle savedInstanceState) {
-                  super.onCreate(savedInstanceState);
-
-                  // Fullscreen / immersive mode
-                  getWindow().setFlags(
-                      WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                      WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-                  );
-
-                  // Wait for the Capacitor WebView
-                  this.bridge.getWebView().post(new Runnable() {
-                      @Override
-                      public void run() {
-                          setupWebView();
-                      }
-                  });
-              }
-
-              private void setupWebView() {
-                  webView = this.bridge.getWebView();
-                  if (webView == null) return;
-
-                  WebSettings settings = webView.getSettings();
-
-                  // Enable JavaScript, DOM storage, zoom OFF
-                  settings.setJavaScriptEnabled(true);
-                  settings.setDomStorageEnabled(true);
-                  settings.setDatabaseEnabled(true);
-                  settings.setSupportZoom(false);
-                  settings.setBuiltInZoomControls(false);
-                  settings.setDisplayZoomControls(false);
-                  settings.setLoadWithOverviewMode(true);
-                  settings.setUseWideViewPort(true);
-                  settings.setAllowFileAccess(true);
-                  settings.setAllowContentAccess(true);
-                  settings.setMediaPlaybackRequiresUserGesture(false);
-                  settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-
-                  // Cookies
-                  CookieManager.getInstance().setAcceptCookie(true);
-                  CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
-
-                  // JS Bridge — Web থেকে native download call করার জন্য
-                  webView.addJavascriptInterface(new NativeDownloadBridge(this, webView), "AndroidDownload");
-
-                  // ✅ DOWNLOAD LISTENER — এটাই সবচেয়ে গুরুত্বপূর্ণ!
-                  webView.setDownloadListener(new DownloadListener() {
-                      @Override
-                      public void onDownloadStart(String url, String userAgent, String contentDisposition,
-                                                  String mimetype, long contentLength) {
-
-                          try {
-                              if (url.startsWith("data:")) {
-                                  // Base64 data URL — সরাসরি ডিকোড করে সেভ করি
-                                  handleDataUrl(url, contentDisposition);
-                              } else if (url.startsWith("blob:")) {
-                                  // Blob URL — JS দিয়ে data URL এ convert করি
-                                  convertBlobAndDownload(url);
-                              } else {
-                                  // সাধারণ HTTP download
-                                  handleHttpDownload(url, userAgent, contentDisposition, mimetype);
-                              }
-                          } catch (Exception e) {
-                              Toast.makeText(MainActivity.this,
-                                  "Download failed: " + e.getMessage(),
-                                  Toast.LENGTH_LONG).show();
-                          }
-                      }
-                  });
-
-                  // Long-press disable (optional)
-                  webView.setOnLongClickListener(v -> true);
-                  webView.setHapticFeedbackEnabled(false);
-              }
-
-              private void handleHttpDownload(String url, String userAgent,
-                                              String contentDisposition, String mimetype) {
-                  try {
-                      String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
-                      DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                      request.setMimeType(mimetype);
-                      request.addRequestHeader("User-Agent", userAgent);
-                      request.setDescription("Downloading...");
-                      request.setTitle(fileName);
-                      request.allowScanningByMediaScanner();
-                      request.setNotificationVisibility(
-                          DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
-                      );
-                      request.setDestinationInExternalPublicDir(
-                          Environment.DIRECTORY_DOWNLOADS, fileName
-                      );
-
-                      DownloadManager dm = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-                      if (dm != null) {
-                          dm.enqueue(request);
-                          notifyJS("onNativeDownloadComplete", fileName);
-                      }
-                  } catch (Exception e) {
-                      notifyJS("onNativeDownloadError", e.getMessage());
-                  }
-              }
-
-              private void handleDataUrl(String dataUrl, String contentDisposition) {
-                  try {
-                      // data:image/png;base64,AAA...
-                      String[] parts = dataUrl.split(",", 2);
-                      String meta = parts[0];
-                      String base64Data = parts[1];
-
-                      String mime = "image/png";
-                      if (meta.contains("image/jpeg") || meta.contains("image/jpg")) mime = "image/jpeg";
-                      else if (meta.contains("image/webp")) mime = "image/webp";
-                      else if (meta.contains("application/pdf")) mime = "application/pdf";
-
-                      String ext = mime.split("/")[1];
-                      String fileName = "cybertools-" + System.currentTimeMillis() + "." + ext;
-
-                      byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
-                      File downloadsDir = Environment.getExternalStoragePublicDirectory(
-                          Environment.DIRECTORY_DOWNLOADS
-                      );
-                      if (!downloadsDir.exists()) downloadsDir.mkdirs();
-                      File outFile = new File(downloadsDir, fileName);
-                      FileOutputStream fos = new FileOutputStream(outFile);
-                      fos.write(bytes);
-                      fos.close();
-
-                      // Media scanner এ notify করি
-                      android.media.MediaScannerConnection.scanFile(
-                          MainActivity.this,
-                          new String[]{outFile.getAbsolutePath()},
-                          new String[]{mime},
-                          null
-                      );
-
-                      Toast.makeText(MainActivity.this,
-                          "✓ Saved to Downloads: " + fileName,
-                          Toast.LENGTH_LONG).show();
-                      notifyJS("onNativeDownloadComplete", fileName);
-                  } catch (Exception e) {
-                      Toast.makeText(MainActivity.this,
-                          "Save failed: " + e.getMessage(),
-                          Toast.LENGTH_LONG).show();
-                      notifyJS("onNativeDownloadError", e.getMessage());
-                  }
-              }
-
-              private void convertBlobAndDownload(final String blobUrl) {
-                  // Blob URL থেকে FileReader দিয়ে data URL বানাই, তারপর native download
-                  String js = "(function(){" +
-                      "fetch('" + blobUrl + "')" +
-                      ".then(r => r.blob())" +
-                      ".then(b => {" +
-                      "  const reader = new FileReader();" +
-                      "  reader.onloadend = () => {" +
-                      "    window.AndroidDownload.download(reader.result, 'cybertools.png');" +
-                      "  };" +
-                      "  reader.readAsDataURL(b);" +
-                      "});" +
-                      "})();";
-                  webView.evaluateJavascript(js, null);
-              }
-
-              private void notifyJS(String method, String arg) {
-                  final String safeArg = arg.replace("'", "\\'");
-                  final String js = "if(typeof window." + method + " === 'function'){ window." +
-                                    method + "('" + safeArg + "'); }";
-                  webView.post(() -> webView.evaluateJavascript(js, null));
-              }
-
-              // JS Bridge class
-              public class NativeDownloadBridge {
-                  Context context;
-                  WebView webView;
-
-                  NativeDownloadBridge(Context c, WebView w) {
-                      this.context = c;
-                      this.webView = w;
-                  }
-
-                  @JavascriptInterface
-                  public void download(String url, String filename) {
-                      if (url == null) return;
-                      if (url.startsWith("data:")) {
-                          handleDataUrl(url, filename);
-                      } else {
-                          handleHttpDownload(url, "", "", "application/octet-stream");
-                      }
-                  }
-              }
-
-              @Override
-              public void onBackPressed() {
-                  if (webView != null && webView.canGoBack()) {
-                      webView.goBack();
-                  } else {
-                      super.onBackPressed();
-                  }
-              }
-          }
-          EOF
-          echo "✅ MainActivity.java injected"
+          echo "Found MainActivity at: $MAIN_PATH"
+          cp android-overrides/MainActivity.java "$MAIN_PATH"
+          echo "Replaced with custom MainActivity"
 
       - name: Update AndroidManifest.xml
         run: |
-          MANIFEST="android/app/src/main/AndroidManifest.xml"
-          python3 - << 'PYEOF'
-          import re
-          with open('android/app/src/main/AndroidManifest.xml', 'r') as f:
-              content = f.read()
+          python3 .github/scripts/update_manifest.py
 
-          permissions = '''    <uses-permission android:name="android.permission.INTERNET" />
-              <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-              <uses-permission android:name="android.permission.CAMERA" />
-              <uses-permission android:name="android.permission.RECORD_AUDIO" />
-              <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-              <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-              <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-              <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-              <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-              <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-          </manifest>'''
-
-          content = content.replace('</manifest>', permissions)
-          content = content.replace('<application', '<application android:usesCleartextTraffic="true" android:hardwareAccelerated="true" android:largeHeap="true"')
-
-          with open('android/app/src/main/AndroidManifest.xml', 'w') as f:
-              f.write(content)
-
-          print("✅ AndroidManifest.xml updated")
-          PYEOF
-          cat android/app/src/main/AndroidManifest.xml
-
-      - name: Update build.gradle for minimum SDK
+      - name: Update variables.gradle
         run: |
-          # minSdkVersion 23 (Android 6.0) set করি — ডাউনলোড সাপোর্টের জন্য
           GRADLE_FILE="android/variables.gradle"
-          if [ -f "$GRADLE_FILE" ]; then
-            sed -i 's/minSdkVersion = .*/minSdkVersion = 23/' $GRADLE_FILE
-            sed -i 's/compileSdkVersion = .*/compileSdkVersion = 34/' $GRADLE_FILE
-            sed -i 's/targetSdkVersion = .*/targetSdkVersion = 34/' $GRADLE_FILE
-            cat $GRADLE_FILE
-          fi
+          sed -i 's/minSdkVersion = .*/minSdkVersion = 23/' $GRADLE_FILE
+          sed -i 's/compileSdkVersion = .*/compileSdkVersion = 34/' $GRADLE_FILE
+          sed -i 's/targetSdkVersion = .*/targetSdkVersion = 34/' $GRADLE_FILE
+          cat $GRADLE_FILE
 
       - name: Make gradlew executable
         run: chmod +x android/gradlew
 
-      - name: Build Release APK (unsigned)
+      - name: Build Debug APK
         working-directory: ./android
         run: ./gradlew assembleDebug --stacktrace
 
@@ -346,7 +75,8 @@ jobs:
           mkdir -p output
           cp android/app/build/outputs/apk/debug/app-debug.apk output/CyberTools.apk
           ls -lh output/
- - name: Upload APK Artifact
+
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: CyberTools-APK
