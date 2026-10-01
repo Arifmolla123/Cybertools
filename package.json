@@ -1,0 +1,21 @@
+{
+  "name": "cyber-tools",
+  "version": "1.0.0",
+  "description": "Cyber Tools - All in One Privacy & Hacking Toolkit",
+  "author": "Arif",
+  "license": "MIT",
+  "scripts": {
+    "build": "echo 'Static site - no build needed'"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/splash-screen": "^6.0.2",
+    "@capacitor/status-bar": "^6.0.1",
+    "@capacitor/filesystem": "^6.0.1",
+    "@capacitor/share": "^6.0.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}
