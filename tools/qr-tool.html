@@ -822,58 +822,98 @@
     /* ================================================================
        🆕 DOWNLOAD — WebView-Compatible (Overlay + Long-press)
        ================================================================ */
-    function downloadQR() {
-        const img = document.getElementById('qrImg');
-        if (!img || !img.src) {
-            showToast('QR Not ready yet!', 'error');
+   async function downloadQR() {
+    const img = document.getElementById('qrImg');
+    if (!img || !img.src) {
+        showToast('QR code not ready yet!', 'error');
+        return;
+    }
+
+    showToast('Preparing download...', 'info');
+
+    const filename = 'cybertools-qr-' + Date.now() + '.png';
+
+    // Convert data URL to Blob manually (more reliable in WebView than fetch)
+    function dataURLtoBlob(dataURL) {
+        const parts = dataURL.split(',');
+        const mime = parts[0].match(/:(.*?);/)[1];
+        const bstr = atob(parts[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    }
+
+    let blob;
+    try {
+        blob = dataURLtoBlob(img.src);
+    } catch (e) {
+        showToast('Could not prepare file', 'error');
+        return;
+    }
+
+    // ============================================================
+    // Method 1: Web Share API (best for WebView)
+    // ============================================================
+    try {
+        const file = new File([blob], filename, { type: 'image/png' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                files: [file],
+                title: 'Cyber Tools QR Code'
+            });
+            showToast('✓ Save to Files selected', 'success');
             return;
         }
-
-        // Overlay এ ছবিটা দেখাই — ইউজার লং-প্রেস করে save করবে
-        const overlay = document.getElementById('save-overlay');
-        const overlayImg = document.getElementById('save-overlay-img');
-        overlayImg.src = img.src;
-        overlay.classList.add('show');
-
-        showToast('Long-press the image to save.', 'info');
-    }
-
-    function closeSaveOverlay(didSave) {
-        const overlay = document.getElementById('save-overlay');
-        overlay.classList.remove('show');
-
-        if (didSave) {
-            showToast('✓ QR Code Saved!', 'success');
+    } catch (err) {
+        if (err.name === 'AbortError') {
+            // User cancelled — do nothing
+            return;
         }
+        console.log('Share API failed:', err);
     }
 
-    function resetQR() {
-        document.getElementById('resultCard').classList.remove('show');
-        document.getElementById('qrcode-box').innerHTML = '';
-        document.getElementById('textInput').value = '';
-        document.getElementById('wifiSsid').value = '';
-        document.getElementById('wifiPass').value = '';
-        document.getElementById('contactName').value = '';
-        document.getElementById('contactPhone').value = '';
-        document.getElementById('contactEmail').value = '';
-        document.getElementById('imageUrlInput').value = '';
-
-        selectedImageFile = null;
-        selectedImageDataUrl = null;
-        document.getElementById('imgFileInput').value = '';
-        document.getElementById('imgPreviewWrap').classList.remove('show');
-        document.getElementById('imgMeta').innerText = '';
-        document.getElementById('imgStatus').innerText = '';
-        document.getElementById('uploadModeRow').style.display = 'none';
-        document.getElementById('apiKeyBox').style.display = 'none';
-
-        showToast('Create a new QR!', 'info');
+    // ============================================================
+    // Method 2: Blob URL + a.download
+    // ============================================================
+    try {
+        const blobURL = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobURL;
+        a.download = filename;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobURL), 10000);
+        showToast('✓ Download started', 'success');
+        return;
+    } catch (err) {
+        console.log('Blob method failed:', err);
     }
- /* ============ INIT ============ */
-    window.addEventListener('DOMContentLoaded', () => {
-        initScanner();
-        scannerStarted = true;
-    });
+
+    // ============================================================
+    // Method 3: Data URI + a.download (final fallback)
+    // ============================================================
+    try {
+        const a = document.createElement('a');
+        a.href = img.src;
+        a.download = filename;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast('✓ Download started', 'success');
+        return;
+    } catch (err) {
+        console.log('Data URI method failed:', err);
+    }
+
+    showToast('Download not supported on this device', 'error');
+}
 </script>
 
 </body>
