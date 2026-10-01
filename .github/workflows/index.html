@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
+    <title>Cyber Tools</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; overflow: hidden; background: #000; }
+
+        /* ============ MAIN IFRAME ============ */
+        #app-frame {
+            position: fixed; inset: 0;
+            width: 100%; height: 100%;
+            border: none; background: #000;
+            opacity: 0; transition: opacity .35s ease;
+        }
+        #app-frame.loaded { opacity: 1; }
+
+        /* ============ LOADER — BLACK + GREEN ============ */
+        #loader {
+            position: fixed; inset: 0; z-index: 10;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: radial-gradient(circle at 50% 40%, #0a1f0a 0%, #000 70%);
+            color: #fff;
+            transition: opacity .4s ease, visibility .4s ease;
+            overflow: hidden;
+        }
+        #loader.hide { opacity: 0; visibility: hidden; }
+
+        /* Green grid background */
+        #loader::before {
+            content: '';
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(0,255,100,.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,100,.06) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 12s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes gridMove {
+            from { transform: translate(0, 0); }
+            to   { transform: translate(40px, 40px); }
+        }
+
+        /* Radial green glow behind logo */
+        #loader::after {
+            content: '';
+            position: absolute;
+            top: 40%; left: 50%;
+            width: 320px; height: 320px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(0,255,100,.22) 0%, transparent 70%);
+            animation: glowPulse 2.4s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes glowPulse {
+            0%, 100% { opacity: .6; transform: translate(-50%,-50%) scale(1); }
+            50%      { opacity: 1;  transform: translate(-50%,-50%) scale(1.15); }
+        }
+
+        /* Floating green particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: #00ff64;
+            box-shadow: 0 0 10px #00ff64;
+            animation: floatUp linear infinite;
+            pointer-events: none;
+        }
+        @keyframes floatUp {
+            from { transform: translateY(100vh) scale(0); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            to   { transform: translateY(-20vh) scale(1); opacity: 0; }
+        }
+
+        /* ============ LOGO — FULL FIT ============ */
+        .logo-wrap {
+            position: relative;
+            width: 140px; height: 140px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 24px;
+            z-index: 2;
+        }
+
+        /* Outer rotating green ring */
+        .ring-outer {
+            position: absolute; inset: -6px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: #00ff64;
+            border-right-color: rgba(0,255,100,.25);
+            animation: spinCW 1.4s linear infinite;
+            filter: drop-shadow(0 0 6px #00ff64);
+        }
+        /* Middle rotating ring (opposite) */
+        .ring-middle {
+            position: absolute; inset: -14px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-bottom-color: rgba(0,255,100,.7);
+            border-left-color: transparent;
+            animation: spinCCW 2s linear infinite;
+        }
+        /* Static thin green ring right at logo edge */
+        .ring-static {
+            position: absolute; inset: -2px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,255,100,.15);
+        }
+        @keyframes spinCW  { to { transform: rotate(360deg); } }
+        @keyframes spinCCW { to { transform: rotate(-360deg); } }
+
+        /* 👇 Logo image — FULL FIT, no padding, rounded */
+        .logo-img {
+            position: relative; z-index: 2;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
+            background: #000;
+            box-shadow:
+                0 0 0 2px #00ff64,
+                0 0 24px rgba(0,255,100,.5),
+                0 0 60px rgba(0,255,100,.25);
+            animation: logoBounce .8s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes logoBounce {
+            0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+
+        /* ============ TEXT ============ */
+        .title {
+            font-size: 26px; font-weight: 700; letter-spacing: 1px;
+            color: #fff;
+            text-shadow: 0 0 12px rgba(0,255,100,.6);
+            animation: fadeSlideUp .5s ease .15s both;
+            z-index: 2;
+        }
+        .tagline {
+            font-size: 12px; opacity: .7; margin-top: 8px;
+            color: #00ff64; letter-spacing: 2px; text-transform: uppercase;
+            text-align: center; padding: 0 24px;
+            animation: fadeSlideUp .5s ease .25s both;
+            z-index: 2;
+        }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============ PROGRESS BAR — GREEN ============ */
+        .progress-wrap {
+            width: 200px; margin-top: 32px;
+            animation: fadeSlideUp .5s ease .35s both;
+            z-index: 2;
+        }
+        .progress-track {
+            width: 100%; height: 4px;
+            background: rgba(0,255,100,.12);
+            border-radius: 99px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 6px rgba(0,255,100,.2);
+        }
+        .progress-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #00ff64, #4cffaa);
+            border-radius: 99px;
+            box-shadow: 0 0 12px #00ff64, 0 0 24px rgba(0,255,100,.5);
+            animation: fillFast 1.4s cubic-bezier(.4,0,.2,1) forwards;
+            position: relative;
+        }
+        @keyframes fillFast {
+            0%   { width: 0%; }
+            40%  { width: 55%; }
+            70%  { width: 82%; }
+            100% { width: 100%; }
+        }
+        .progress-fill::after {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            height: 100%; width: 30%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
+            animation: shimmer 1.2s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            from { transform: translateX(-100%); }
+            to   { transform: translateX(400%); }
+        }
+
+        .percent {
+            font-size: 11px; color: #00ff64; margin-top: 10px;
+            text-align: center; font-variant-numeric: tabular-nums;
+            letter-spacing: 1px;
+            animation: fadeSlideUp .5s ease .4s both;
+        }
+
+        /* ============ ERROR SCREEN ============ */
+        #error {
+            position: fixed; inset: 0; z-index: 20; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            background: #000; color: #fff; padding: 24px; text-align: center;
+        }
+        #error.show { display: flex; }
+        #error .icon { font-size: 64px; margin-bottom: 16px; }
+        #error h2 { font-size: 20px; margin-bottom: 8px; color: #00ff64; }
+        #error p { font-size: 13px; opacity: .7; margin-bottom: 24px; max-width: 300px; }
+        #error button {
+            padding: 12px 32px; border-radius: 12px; border: 1px solid #00ff64;
+            background: transparent; color: #00ff64; font-size: 14px; font-weight: 600;
+        }
+        #error button:active { transform: scale(.95); background: rgba(0,255,100,.1); }
+
+        /* ============================================================
+           🔴 NEW: OFFLINE POPUP STYLES
+           ============================================================ */
+        #offlinePopup {
+            position: fixed; inset: 0; z-index: 100;
+            display: none;
+            align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, .92);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 24px;
+            animation: popupFade .3s ease;
+        }
+        #offlinePopup.show { display: flex; }
+
+        @keyframes popupFade {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        .popup-card {
+            width: 100%;
+            max-width: 340px;
+            background: linear-gradient(180deg, #0a1f0a 0%, #000 100%);
+            border: 1.5px solid #00ff64;
+            border-radius: 24px;
+            padding: 32px 24px 24px;
+            text-align: center;
+            box-shadow:
+                0 0 40px rgba(0,255,100,.3),
+                0 0 80px rgba(0,255,100,.15),
+                inset 0 0 30px rgba(0,255,100,.05);
+            animation: popupBounce .45s cubic-bezier(.34,1.56,.64,1);
+            position: relative;
+            overflow: hidden;
+        }
+        @keyframes popupBounce {
+            0%   { transform: scale(.7) translateY(30px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        /* Animated top bar */
+        .popup-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #00ff64, transparent);
+            animation: scanLine 2s ease-in-out infinite;
+        }
+        @keyframes scanLine {
+            0%, 100% { transform: translateX(-100%); }
+            50%      { transform: translateX(100%); }
+        }
+
+        .popup-icon-wrap {
+            position: relative;
+            width: 90px; height: 90px;
+            margin: 0 auto 20px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .popup-icon-ring {
+            position: absolute; inset: 0;
+            border-radius: 50%;
+            border: 2px solid #ff3b3b;
+            animation: ringPulse 1.6s ease-out infinite;
+        }
+        .popup-icon-ring:nth-child(2) { animation-delay: .5s; }
+        @keyframes ringPulse {
+            0%   { transform: scale(.9); opacity: 1; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+        .popup-icon {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff3b3b 0%, #7a0000 100%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 0 30px rgba(255,59,59,.6);
+        }
+
+        .popup-title {
+            font-size: 22px; font-weight: 700;
+            color: #fff; margin-bottom: 8px;
+            letter-spacing: .5px;
+        }
+        .popup-title span { color: #ff3b3b; }
+        .popup-text {
+            font-size: 13px;
+            color: rgba(255,255,255,.65);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        .popup-text small {
+            display: block; margin-top: 8px;
+            color: rgba(0,255,100,.7); font-size: 11px;
+        }
+
+        .popup-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #00ff64 0%, #00cc50 100%);
+            color: #000;
+            font-size: 15px; font-weight: 700;
+            letter-spacing: .5px;
+            box-shadow: 0 8px 24px rgba(0,255,100,.35);
+            transition: transform .15s ease;
+        }
+        .popup-btn:active {
+            transform: scale(.96);
+        }
+        .popup-btn.checking {
+            background: rgba(0,255,100,.15);
+            color: #00ff64;
+            pointer-events: none;
+        }
+        .popup-btn .spin {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(0,255,100,.3);
+            border-top-color: #00ff64;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============ LOADER ============ -->
+    <div id="loader">
+        <div id="particles"></div>
+
+        <div class="logo-wrap">
+            <div class="ring-static"></div>
+            <div class="ring-middle"></div>
+            <div class="ring-outer"></div>
+            <!-- 👇 আপনার আইকন এখানে — পুরো ফ্রেমে ফিট হবে -->
+            <img class="logo-img" src="icon.png" alt="Cyber Tools"
+                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23000%22/><text x=%2250%22 y=%2266%22 font-size=%2255%22 text-anchor=%22middle%22>🛡️</text></svg>';">
+        </div>
+
+        <div class="title">Cyber Tools</div>
+        <div class="tagline">Privacy Toolkit</div>
+
+        <div class="progress-wrap">
+            <div class="progress-track">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="percent" id="percentText">0%</div>
+        </div>
+    </div>
+
+    <!-- ============ ERROR SCREEN ============ -->
+    <div id="error">
+        <div class="icon">📡</div>
+        <h2>No Internet</h2>
+        <p>Cyber Tools needs an internet connection. Please check your network and try again.</p>
+        <button onclick="retry()">Retry</button>
+    </div>
+
+    <!-- ============ MAIN APP ============ -->
+    <iframe id="app-frame"
+            src="https://arifmolla123.github.io/Cybertools/"
+            allow="clipboard-read; clipboard-write; camera; microphone"
+            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-clipboard-read allow-clipboard-write">
+    </iframe>
+
+    <!-- ============================================================
+         🔴 NEW: OFFLINE POPUP (নেটওয়ার্ক অফ হলে দেখাবে)
+         ============================================================ -->
+    <div id="offlinePopup">
+        <div class="popup-card">
+            <div class="popup-icon-wrap">
+                <div class="popup-icon-ring"></div>
+                <div class="popup-icon-ring"></div>
+                <div class="popup-icon">📡</div>
+            </div>
+            <div class="popup-title">No <span>Internet</span></div>
+            <div class="popup-text">
+                Your device is offline. Please turn on Wi-Fi or mobile data to continue.
+                <small>⚡ Auto-reconnect when network is back</small>
+            </div>
+            <button class="popup-btn" id="retryBtn" onclick="retryConnection()">Try Again</button>
+        </div>
+    </div>
+
+  <script>
+    const frame   = document.getElementById('app-frame');
+    const loader  = document.getElementById('loader');
+    const error   = document.getElementById('error');
+    const percent = document.getElementById('percentText');
+
+    // ---- Green floating particles ----
+    (function createParticles() {
+        const container = document.getElementById('particles');
+        const count = 16;
+        for (let i = 0; i < count; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = 2 + Math.random() * 5;
+            p.style.width  = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left   = Math.random() * 100 + '%';
+            p.style.opacity = 0.3 + Math.random() * 0.6;
+            p.style.animationDuration = (6 + Math.random() * 6) + 's';
+            p.style.animationDelay    = (Math.random() * 4) + 's';
+            container.appendChild(p);
+        }
+    })();
+
+    // ---- Fast percentage counter ----
+    let pct = 0;
+    let pctInterval = null;
+    function startPctCounter() {
+        pct = 0;
+        percent.textContent = '0%';
+        if (pctInterval) clearInterval(pctInterval);
+        pctInterval = setInterval(() => {
+            pct += Math.floor(Math.random() * 8) + 4;
+            if (pct >= 100) { pct = 100; clearInterval(pctInterval); }
+            percent.textContent = pct + '%';
+        }, 60);
+    }
+    startPctCounter();
+
+    // ---- Load handling ----
+    let loadTimeout = null;
+    function startLoadTimeout() {
+        if (loadTimeout) clearTimeout(loadTimeout);
+        loadTimeout = setTimeout(() => {
+            if (!frame.classList.contains('loaded')) {
+                loader.classList.add('hide');
+                // Timeout হলে নেট চেক করে দেখি
+                realNetworkTest().then(online => {
+                    if (!online) showOffline();
+                    else error.classList.add('show');
+                });
+            }
+        }, 10000);
+    }
+    startLoadTimeout();
+
+    frame.addEventListener('load', () => {
+        // iframe load event দিলেও, সত্যিই কনটেন্ট লোড হয়েছে কিনা চেক করি
+        // Cross-origin এর কারণে content দেখা যায় না, তাই network test ব্যবহার করি
+        realNetworkTest().then(online => {
+            if (online) {
+                clearTimeout(loadTimeout);
+                clearInterval(pctInterval);
+                percent.textContent = '100%';
+                setTimeout(() => {
+                    loader.classList.add('hide');
+                    frame.classList.add('loaded');
+                    error.classList.remove('show');
+                }, 200);
+            }
+            // online না হলে কিছু করি না — পপআপ দেখাব
+        });
+    });
+
+    function retry() {
+        error.classList.remove('show');
+        loader.classList.remove('hide');
+        frame.classList.remove('loaded');
+        frame.src = frame.src;
+        startPctCounter();
+        startLoadTimeout();
+    }
+
+    let backPressed = false;
+    document.addEventListener('backbutton', (e) => {
+        e.preventDefault();
+        if (offlinePopup.classList.contains('show')) return;
+        if (backPressed) { navigator.app.exitApp(); }
+        else {
+            backPressed = true;
+            setTimeout(() => { backPressed = false; }, 2000);
+        }
+    }, false);
+
+    /* ============================================================
+       🔴 REAL NETWORK DETECTION + OFFLINE POPUP
+       ============================================================ */
+    const offlinePopup = document.getElementById('offlinePopup');
+    const retryBtn     = document.getElementById('retryBtn');
+
+    let isCheckingNetwork = false;
+
+    /**
+     * সত্যিকারের নেটওয়ার্ক টেস্ট — GitHub Pages এ পৌঁছানো যায় কিনা দেখে।
+     * navigator.onLine এর চেয়ে অনেক বেশি নির্ভরযোগ্য।
+     */
+    async function realNetworkTest() {
+        // প্রথমে browser এর signal check
+        if (navigator.onLine === false) return false;
+
+        // আসল fetch test
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            const testUrl = 'https://arifmolla123.github.io/Cybertools/?_=' + Date.now();
+            const res = await fetch(testUrl, {
+                method: 'GET',
+                cache: 'no-store',
+                signal: controller.signal,
+                mode: 'no-cors'  // CORS সমস্যা এড়াতে
+            });
+            clearTimeout(timeoutId);
+            // no-cors mode এ response.status = 0 হলে সফল ধরি
+            return true;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    function showOffline() {
+        offlinePopup.classList.add('show');
+    }
+
+    function hideOffline() {
+        offlinePopup.classList.remove('show');
+        retryBtn.classList.remove('checking');
+        retryBtn.textContent = 'Try Again';
+    }
+
+    /** App reload করার হেল্পার */
+    function reloadApp() {
+        frame.classList.remove('loaded');
+        loader.classList.remove('hide');
+        error.classList.remove('show');
+        frame.src = frame.src;
+        startPctCounter();
+        startLoadTimeout();
+    }
+
+    /** Try Again বাটনের হ্যান্ডলার */
+    async function retryConnection() {
+        retryBtn.classList.add('checking');
+        retryBtn.innerHTML = '<span class="spin"></span> Checking...';
+
+        const online = await realNetworkTest();
+        if (online) {
+            hideOffline();
+            reloadApp();
+        } else {
+            retryBtn.classList.remove('checking');
+            retryBtn.textContent = 'Still Offline — Try Again';
+            setTimeout(() => {
+                retryBtn.textContent = 'Try Again';
+            }, 2000);
+        }
+    }
+
+    // ---- Browser online/offline event ----
+    window.addEventListener('online', async () => {
+        const online = await realNetworkTest();
+        if (online) {
+            hideOffline();
+            reloadApp();
+        }
+    });
+
+    window.addEventListener('offline', () => {
+        showOffline();
+    });
+
+    /* ============================================================
+       🔄 PERIODIC CHECK — প্রতি ৫ সেকেন্ডে ব্যাকগ্রাউন্ডে চেক করবে
+       ============================================================ */
+    setInterval(async () => {
+        if (isCheckingNetwork) return;
+        isCheckingNetwork = true;
+
+        const online = await realNetworkTest();
+
+        if (!online && !offlinePopup.classList.contains('show')) {
+            // নেট চলে গেছে → পপআপ দেখাও
+            showOffline();
+        } else if (online && offlinePopup.classList.contains('show')) {
+            // নেট ফিরে এসেছে → পপআপ সরাও এবং অ্যাপ রিলোড করো
+            hideOffline();
+            reloadApp();
+        }
+
+        isCheckingNetwork = false;
+    }, 5000);
+
+    // ---- App চালু হওয়ার সাথে সাথে একবার চেক ----
+    (async function initialCheck() {
+        // একটু দেরি করে চেক, যাতে navigator.onLine সেট হতে পারে
+        await new Promise(r => setTimeout(r, 300));
+        const online = await realNetworkTest();
+        if (!online) {
+            showOffline();
+            loader.classList.add('hide');
+        }
+    })();
+</script>
+</body>
+</html>
