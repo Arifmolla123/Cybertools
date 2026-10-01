@@ -70,7 +70,7 @@ window.TOOLS = [
     title: "URL Shortener",
     desc: "Convert long URLs into short links instantly",
     icon: "fas fa-link",
-    url: "tools/url-shortener.html",
+    url: "tools/url-shortner.html",
     category: "Web"
   },
   {
@@ -98,14 +98,14 @@ window.TOOLS = [
     title: "Computer & Linux Shortcut Hub",
     desc: "Huge collection of Windows shortcuts and Linux commands",
     icon: "fas fa-terminal",
-    url: "shortcut-hub.html",
+    url: "tools/shortcut-hub.html",
     category: "System"
   },
   {
     title: "YouTube Thumbnail Downloader",
     desc: "Download any thumbnail in every resolution",
     icon: "fab fa-youtube",
-    url: "tools/yt thumblain.html",
+    url: "tools/yt thumbnail.html",
     category: "Web"
   }
 
