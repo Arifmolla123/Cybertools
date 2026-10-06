@@ -154,14 +154,13 @@ window.VIP_TOOLS = [
     icon: "fas fa-smile",
     url: "https://vip-tools-backend.onrender.com/spy"
   },
-  {
    {
   "title": "PK Sim Info",
   "desc": "Pakistan SIM owner lookup",
   "icon": "fas fa-mobile-alt",
   "url": "vip tools/Pakistan-sim.html"
 }
-   }
+  
   // Example — add a new VIP tool:
   // {
   //   title: "WiFi Cracker",
