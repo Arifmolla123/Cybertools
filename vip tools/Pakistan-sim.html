@@ -1,0 +1,153 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PK SIM Lookup</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:radial-gradient(circle at 20% 10%,rgba(230,179,37,.12),transparent 45%),radial-gradient(circle at 85% 90%,rgba(201,152,31,.08),transparent 50%),linear-gradient(180deg,#0a0a0d,#0f0f14);color:#eaeaea;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:14px}
+.app{width:100%;max-width:460px}
+.header{text-align:center;padding:8px 0 18px}
+.flag{width:64px;height:64px;margin:0 auto 10px;background:linear-gradient(145deg,#f9d976,#c9981f);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:0 0 0 3px rgba(249,217,118,.15),0 0 30px rgba(230,179,37,.5),inset 0 -4px 10px rgba(0,0,0,.3),inset 0 4px 10px rgba(255,255,255,.3);animation:fl 3s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(-2deg)}}
+h1{font-size:1.55rem;font-weight:800;letter-spacing:.5px;background:linear-gradient(135deg,#fff,#f9d976 30%,#e6b325 60%,#fff);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:sh 4s linear infinite;filter:drop-shadow(0 2px 8px rgba(230,179,37,.3))}
+@keyframes sh{to{background-position:200% center}}
+.sub{color:#8a8a95;font-size:.78rem;margin-top:6px;letter-spacing:.5px}
+.sub .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#e6b325;margin:0 8px;vertical-align:middle;box-shadow:0 0 8px #e6b325;animation:pd 1.5s infinite}
+@keyframes pd{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.card{background:linear-gradient(180deg,rgba(28,28,36,.9),rgba(20,20,26,.95));border-radius:20px;padding:20px;margin-bottom:14px;border:1px solid rgba(249,217,118,.15);box-shadow:0 15px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:blur(10px);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#e6b325,transparent);opacity:.6}
+.label{display:flex;align-items:center;gap:7px;font-size:.78rem;color:#f9d976;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px}
+.label::before{content:"";width:3px;height:14px;border-radius:2px;background:linear-gradient(180deg,#f9d976,#c9981f);box-shadow:0 0 8px rgba(230,179,37,.5)}
+.iw{position:relative}
+.iw .cc{position:absolute;left:14px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:6px;padding-right:12px;border-right:1px solid rgba(249,217,118,.15);font-weight:700;color:#f9d976;font-size:.9rem;pointer-events:none}
+input{width:100%;padding:16px 16px 16px 82px;border-radius:14px;border:1px solid rgba(249,217,118,.15);background:rgba(10,10,13,.8);color:#fff;font-size:1.05rem;letter-spacing:1.5px;outline:none;transition:.3s;font-weight:500}
+input::placeholder{color:#555;letter-spacing:.5px}
+input:focus{border-color:#e6b325;box-shadow:0 0 0 3px rgba(230,179,37,.15),0 0 20px rgba(230,179,37,.2);background:rgba(10,10,13,.95)}
+.pv{font-size:.72rem;color:#f9d976;margin-top:7px;min-height:14px;text-align:right;font-weight:600;letter-spacing:.5px}
+.btn{width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,#f9d976,#e6b325 50%,#c9981f);background-size:200% auto;color:#0a0a0d;font-weight:800;font-size:1.05rem;cursor:pointer;transition:.3s;letter-spacing:1px;box-shadow:0 8px 24px rgba(230,179,37,.35),inset 0 -3px 8px rgba(139,103,15,.4),inset 0 3px 8px rgba(255,255,255,.4);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn::after{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);transition:.7s}
+.btn:hover::after{left:100%}
+.btn:hover:not(:disabled){background-position:right center;transform:translateY(-2px);box-shadow:0 12px 32px rgba(230,179,37,.5)}
+.btn:disabled{background:linear-gradient(135deg,#3a3a42,#2a2a32);color:#666;box-shadow:none;cursor:not-allowed}
+.msg{background:rgba(10,10,13,.85);border-radius:14px;padding:14px;margin-top:14px;font-family:'SF Mono','Courier New',monospace;font-size:.78rem;white-space:pre-wrap;word-break:break-all;border:1px solid rgba(249,217,118,.15);display:none;line-height:1.6}
+.msg.show{display:block;animation:fu .35s}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.msg.err{color:#ff7b7b;border-color:rgba(255,123,123,.3);background:rgba(50,10,10,.4)}
+.msg.info{color:#f9d976}
+.msg.ok{color:#7ee6b8;border-color:rgba(126,230,184,.3);background:rgba(10,40,25,.4)}
+.res{background:linear-gradient(180deg,rgba(28,28,36,.9),rgba(20,20,26,.95));border-radius:18px;padding:18px;margin-top:14px;border:1px solid rgba(249,217,118,.15);display:none;box-shadow:0 12px 32px rgba(0,0,0,.5);position:relative;overflow:hidden}
+.res.show{display:block;animation:fu .4s}
+.res::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#f9d976,transparent)}
+.rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(249,217,118,.15)}
+.rt{display:flex;align-items:center;gap:9px;font-size:.8rem;font-weight:800;color:#f9d976;letter-spacing:1.5px;text-transform:uppercase}
+.rt .ic{width:28px;height:28px;border-radius:8px;background:linear-gradient(145deg,#e6b325,#8a6b0f);display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 12px rgba(230,179,37,.5)}
+.bdg{padding:4px 12px;border-radius:20px;font-size:.68rem;font-weight:800;background:linear-gradient(135deg,#f9d976,#c9981f);color:#0a0a0d;box-shadow:0 0 12px rgba(230,179,37,.4)}
+.bdg.tc{background:linear-gradient(135deg,#5ec8ff,#2a9df4);color:#fff;box-shadow:0 0 12px rgba(42,157,244,.5)}
+.f{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid rgba(249,217,118,.07);font-size:.88rem}
+.f:last-child{border:none}
+.f .k{color:#7a7a85;font-weight:600;flex-shrink:0;font-size:.78rem;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.f .k::before{content:"";width:4px;height:4px;border-radius:50%;background:#c9981f}
+.f .v{color:#fff;text-align:right;word-break:break-word;font-weight:500;letter-spacing:.3px}
+.f .v.em{color:#3a3a42;font-style:italic;font-size:.8rem}
+.f .v.hl{color:#f9d976;font-weight:700;text-shadow:0 0 12px rgba(230,179,37,.4)}
+hr.dv{border:0;border-top:1px dashed rgba(249,217,118,.15);margin:12px 0}
+.acts{display:flex;gap:10px;margin-top:14px}
+.acts button{flex:1;padding:13px;border:1px solid rgba(249,217,118,.15);border-radius:12px;background:rgba(28,28,36,.8);color:#f9d976;font-weight:700;font-size:.82rem;cursor:pointer;transition:.25s;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;gap:7px}
+.acts button:hover{background:rgba(40,40,52,.9);border-color:#e6b325;box-shadow:0 0 16px rgba(230,179,37,.2);transform:translateY(-2px)}
+.acts button.al{color:#ff8080;border-color:rgba(255,128,128,.2)}
+.acts button.al:hover{background:rgba(50,15,15,.7);border-color:#ff8080}
+.raw{background:#050508;border-radius:14px;padding:14px;margin-top:14px;font-family:'SF Mono','Courier New',monospace;font-size:.7rem;white-space:pre-wrap;word-break:break-all;border:1px solid rgba(249,217,118,.15);display:none;color:#8a8a95;max-height:280px;overflow:auto;line-height:1.5}
+.raw.show{display:block;animation:fu .3s}
+.sp{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,.2);border-top-color:#0a0a0d;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ft{text-align:center;padding:22px 0 10px;margin-top:6px;position:relative}
+.ft::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:1px;background:linear-gradient(90deg,transparent,#c9981f,transparent)}
+.dev{display:inline-flex;align-items:center;gap:10px;padding:9px 18px;border-radius:30px;background:linear-gradient(135deg,rgba(249,217,118,.08),rgba(230,179,37,.04));border:1px solid rgba(249,217,118,.15);font-size:.78rem;color:#8a8a95;letter-spacing:.5px}
+.dev .h{color:#ff5c7a;animation:bt 1.4s infinite;filter:drop-shadow(0 0 6px rgba(255,92,122,.6))}
+@keyframes bt{0%,100%{transform:scale(1)}15%{transform:scale(1.3)}30%{transform:scale(1)}45%{transform:scale(1.2)}}
+.dev strong{background:linear-gradient(135deg,#f9d976,#e6b325);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;letter-spacing:.8px;filter:drop-shadow(0 0 6px rgba(230,179,37,.4))}
+.ver{font-size:.65rem;color:#3a3a42;margin-top:8px;letter-spacing:1px}
+</style></head><body>
+<div class="app">
+<div class="header">
+<div class="flag">🇵🇰</div>
+<h1>PK SIM LOOKUP</h1>
+<div class="sub">Pakistan<span class="dot"></span>SIM Owner Info</div>
+</div>
+<div class="card">
+<div class="label">Phone Number</div>
+<div class="iw"><div class="cc">🇵🇰 +92</div><input id="num" type="tel" placeholder="3XXXXXXXXX" maxlength="15" inputmode="numeric" autocomplete="off"></div>
+<div class="pv" id="pv"></div>
+<button class="btn" id="go" onclick="lk()" style="margin-top:12px"><span style="font-size:1.1rem">🔍</span><span>SEARCH NOW</span></button>
+</div>
+<div class="msg" id="msg"></div>
+<div class="res" id="sc"><div class="rh"><div class="rt"><div class="ic">📇</div>SIM DATA</div><div class="bdg" id="scn">0</div></div><div id="sb"></div></div>
+<div class="res" id="tc"><div class="rh"><div class="rt"><div class="ic">☎️</div>TRUECALLER</div><div class="bdg tc" id="tcn">0</div></div><div id="tb"></div></div>
+<div class="acts" id="acts" style="display:none">
+<button onclick="cp()">📋 Copy All</button>
+<button onclick="rw()">🔍 Raw</button>
+<button class="al" onclick="cl()">🗑 Clear</button>
+</div>
+<div class="raw" id="rwb"></div>
+<div class="ft">
+<div class="dev"><span class="h">❤</span><span>Developer by <strong>Arif</strong></span><span class="h">❤</span></div>
+<div class="ver">v2.0 • PREMIUM EDITION</div>
+</div>
+</div>
+<script>
+const API="https://simtrueok-4son.vercel.app/api/search?query=";
+const PX=[u=>u,u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.codetabs.com/v1/proxy?quest="+encodeURIComponent(u)];
+let LD=null,LR='';
+const $=id=>document.getElementById(id);
+
+function fn(r){let s=r.replace(/\D/g,'');if(s.length===10&&s[0]==='3')s='0'+s;else if(s.length===12&&s.startsWith('92'))s='0'+s.slice(2);else if(s.length===13&&s.startsWith('0092'))s='0'+s.slice(4);return s}
+function vp(s){return /^03\d{9}$/.test(s)}
+function fm(l){const n=l.slice(1);return[l,'92'+n,'+92'+n,n]}
+
+$('num').addEventListener('input',e=>{e.target.value=e.target.value.replace(/[^\d+]/g,'');const f=fn(e.target.value);$('pv').textContent=f?(vp(f)?'✓ '+f:f.length+' digits'):''});
+$('num').addEventListener('keydown',e=>{if(e.key==='Enter')lk()});
+
+async function f1(q){
+const t=API+encodeURIComponent(q);let le='';
+for(let i=0;i<PX.length;i++){
+try{const r=await fetch(PX[i](t));if(!r.ok)throw new Error('HTTP '+r.status);const x=await r.text();const j=JSON.parse(x);return{ok:1,data:j,raw:x,q}}
+catch(e){le='#'+(i+1)+': '+e.message}}
+return{ok:0,err:le,q}}
+
+async function lk(){
+const m=$('msg'),b=$('go'),l=fn($('num').value);
+if(!vp(l)){sm(m,'⚠️ Enter valid Pakistan number\n10 digit: 3455376663\n11 digit: 03455376663','err');return}
+b.disabled=true;b.innerHTML='<span class="sp"></span><span>SEARCHING...</span>';hc();
+const fs=fm(l);let best=null;
+for(const q of fs){
+sm(m,'🔎 Trying '+q+' ...','info');
+const r=await f1(q);
+if(r.ok){const s=r.data.sim_data||[];if(s.some(x=>x.name||x.cnic)){best=r;break}if(!best)best=r}}
+b.disabled=false;b.innerHTML='<span style="font-size:1.1rem">🔍</span><span>SEARCH NOW</span>';
+if(!best){sm(m,'❌ All formats failed. Manual try:\n'+API+l,'err');return}
+LD=best.data;LR=best.raw;rd(best.data,best.q);$('acts').style.display='flex'}
+
+function rd(d,q){
+const s=d.sim_data||[],t=d.truecaller_data||[];
+$('scn').textContent=s.length;
+$('sb').innerHTML=s.length?s.map((x,i)=>`${i>0?'<hr class="dv">':''}
+<div class="f"><span class="k">Number</span><span class="v ${x.number?'hl':'em'}">${x.number||'—'}</span></div>
+<div class="f"><span class="k">Name</span><span class="v ${x.name?'':'em'}">${x.name||'—'}</span></div>
+<div class="f"><span class="k">CNIC</span><span class="v ${x.cnic?'hl':'em'}">${fc(x.cnic)||'—'}</span></div>
+<div class="f"><span class="k">Address</span><span class="v ${x.address?'':'em'}">${x.address||'—'}</span></div>
+<div class="f"><span class="k">Network</span><span class="v ${x.network?'':'em'}">${x.network||'—'}</span></div>`).join(''):'<div class="f"><span class="v em">No SIM data</span></div>';
+$('tcn').textContent=t.length;
+$('tb').innerHTML=t.length?t.map((x,i)=>`${i>0?'<hr class="dv">':''}
+<div class="f"><span class="k">Number</span><span class="v">${x.number||'—'}</span></div>
+<div class="f"><span class="k">Name</span><span class="v ${x.name&&x.name!=='Unknown'?'':'em'}">${x.name||'—'}</span></div>`).join(''):'<div class="f"><span class="v em">No Truecaller data</span></div>';
+$('sc').classList.add('show');$('tc').classList.add('show');
+const hn=s.some(x=>x.name);
+const c=d.extracted_cnic&&d.extracted_cnic!=='N/A'?fc(d.extracted_cnic):'N/A';
+if(hn){sm($('msg'),'✅ Data Found\n📞 '+q+'\n🆔 CNIC: '+c+'\n📊 Total: '+(d.total_numbers_found||s.length),'ok')}
+else{sm($('msg'),'⚠️ API responded but no name/CNIC\n📞 '+q+'\n\n💡 Number not in their DB\nTry another — e.g. 03111234567','err')}}
+
+function fc(c){if(!c)return'';const s=String(c).replace(/\D/g,'');if(s.length!==13)return c;return s.slice(0,5)+'-'+s.slice(5,12)+'-'+s.slice(12)}
+function sm(e,t,c){e.textContent=t;e.className='msg show '+(c||'')}
+function hc(){['sc','tc'].forEach(i=>$(i).classList.remove('show'));$('acts').style.display='none';$('rwb').classList.remove('show')}
+function rw(){const b=$('rwb');if(b.classList.contains('show')){b.classList.remove('show');return}try{b.textContent=JSON.stringify(JSON.parse(LR),null,2)}catch(_){b.textContent=LR}b.classList.add('show')}
+function cp(){if(!LD)return;let o='=== '+fn($('num').value)+' ===\n\n[SIM DATA]\n';(LD.sim_data||[]).forEach(s=>{o+='Number: '+s.number+'\nName: '+s.name+'\nCNIC: '+fc(s.cnic)+'\nAddress: '+s.address+'\nNetwork: '+s.network+'\n---\n'});o+='\n[TRUECALLER]\n';(LD.truecaller_data||[]).forEach(t=>{o+='Number: '+t.number+'\nName: '+t.name+'\n'});o+='\nExtracted CNIC: '+(LD.extracted_cnic||'N/A');
+navigator.clipboard.writeText(o).then(()=>{const b=event.target,ol=b.innerHTML;b.innerHTML='✅ Copied!';setTimeout(()=>b.innerHTML=ol,1300)})}
+function cl(){$('num').value='';$('pv').textContent='';$('msg').className='msg';hc();LD=null;LR=''}
+</script></body></html>
