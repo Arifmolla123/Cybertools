@@ -159,13 +159,13 @@ window.VIP_TOOLS = [
   "desc": "Pakistan SIM owner lookup",
   "icon": "fas fa-mobile-alt",
   "url": "vip tools/Pakistan-sim.html"
-}
+},
+  {
+    title: "Video Dawnloader",
+    desc: "You can download YouTube, Facebook, Instagram, TikTok videos with links.",
+    icon: "fas fa- download",
+    url: "vip tools/Video-Downloader.html"
+  }
   
-  // Example — add a new VIP tool:
-  // {
-  //   title: "WiFi Cracker",
-  //   desc: "Recover WiFi password with dictionary attack",
-  //   icon: "fas fa-wifi",
-  //   url: "vip tools/wifi-cracker.html"
-  // },
+
 ];
