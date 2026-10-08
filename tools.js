@@ -163,7 +163,7 @@ window.VIP_TOOLS = [
   {
     title: "Video Dawnloader",
     desc: "You can download YouTube, Facebook, Instagram, TikTok videos with links.",
-    icon: "fas fa- download",
+    icon: "fas fa-download",
     url: "vip tools/Video-Downloader.html"
   }
   
