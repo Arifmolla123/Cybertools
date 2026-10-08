@@ -162,7 +162,7 @@ window.VIP_TOOLS = [
 },
   {
     title: "Video Dawnloader",
-    desc: "You can download YouTube, Facebook, Instagram, TikTok videos with links.",
+    desc: "YT, FB, IG,Tiktok downloader tools",
     icon: "fas fa-download",
     url: "vip tools/Video-Downloader.html"
   }
