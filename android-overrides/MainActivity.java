@@ -7,7 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Base64;
-import android.view.WindowManager;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
@@ -29,11 +29,8 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        getWindow().setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-        );
+        
+        hideSystemUI(); // ফুল স্ক্রিন মোড অন করা হলো
 
         this.bridge.getWebView().post(new Runnable() {
             @Override
@@ -41,6 +38,26 @@ public class MainActivity extends BridgeActivity {
                 setupWebView();
             }
         });
+    }
+
+    // এই মেথডটি সিস্টেম নেভিগেশন ও স্ট্যাটাস বার লুকিয়ে রাখে
+    private void hideSystemUI() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI(); // স্ক্রিনে টাচ করলেও বারগুলো লুকানো থাকবে
+        }
     }
 
     private void setupWebView() {
@@ -214,4 +231,4 @@ public class MainActivity extends BridgeActivity {
             super.onBackPressed();
         }
     }
-  }
+            }
