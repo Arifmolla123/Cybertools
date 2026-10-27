@@ -5,18 +5,18 @@ import android.app.DownloadManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Base64;
-import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
 import android.webkit.URLUtil;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -83,6 +83,10 @@ public class MainActivity extends BridgeActivity {
         settings.setAllowContentAccess(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        
+        // নতুন উইন্ডো (target="_blank") সাপোর্ট করার জন্য
+        settings.setSupportMultipleWindows(true);
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
 
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
@@ -90,7 +94,9 @@ public class MainActivity extends BridgeActivity {
         webView.addJavascriptInterface(new NativeDownloadBridge(this, webView), "AndroidDownload");
         webView.addJavascriptInterface(new ClipboardBridge(this), "AndroidClipboard");
 
-        // ✅ নেটিভ ডাউনলোড লিসেনার
+        // ফাইল আপলোড বা পপআপ হ্যান্ডেল করার জন্য
+        webView.setWebChromeClient(new WebChromeClient());
+
         webView.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
@@ -110,36 +116,31 @@ public class MainActivity extends BridgeActivity {
         
         webView.setHapticFeedbackEnabled(false);
 
-        // কিবোর্ড বা ফোকাস ঠিক রাখার জন্য
-        webView.requestFocus(View.FOCUS_DOWN);
-        webView.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_UP) {
-                if (!v.hasFocus()) {
-                    v.requestFocus();
-                }
-            }
-            return false;
-        });
-
-        // 🌟 গ্লোবাল ক্লিপবোর্ড ফিক্স (নতুন আপডেট) 🌟
         webView.setWebViewClient(new BridgeWebViewClient(bridge) {
             @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                injectClipboardScript(view); // পেজ লোড হওয়া শুরু হলেই স্ক্রিপ্ট ঢুকিয়ে দিচ্ছি
+                injectWebScripts(view);
             }
-
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                injectClipboardScript(view); // ওয়েবসাইটের কোড রান হওয়ার পর আরেকবার নিশ্চিত করছি
+                injectWebScripts(view);
+            }
+
+            // 🌟 নতুন ফিক্স: সব লিংক অ্যাপের ভেতরেই ওপেন হবে
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                // return false মানে হলো WebView নিজেই লিংকটি লোড করবে
+                return false; 
             }
         });
     }
 
-    private void injectClipboardScript(WebView view) {
+    private void injectWebScripts(WebView view) {
         String js = "(function() {" +
             "  if (typeof window.AndroidClipboard === 'undefined') return;" +
+            // ১. ক্লিপবোর্ড ফিক্স
             "  try {" +
             "    Object.defineProperty(navigator, 'clipboard', {" +
             "      value: {" +
@@ -154,6 +155,33 @@ public class MainActivity extends BridgeActivity {
             "      writeText: function(text) { window.AndroidClipboard.copy(text); return Promise.resolve(); }" +
             "    };" +
             "  }" +
+            // ২. ডাউনলোড ইন্টারসেপ্টর
+            "  if (typeof window.AndroidDownload !== 'undefined') {" +
+            "    if (!window.originalAnchorClick) {" +
+            "      window.originalAnchorClick = HTMLAnchorElement.prototype.click;" +
+            "      HTMLAnchorElement.prototype.click = function() {" +
+            "        if ((this.href.startsWith('data:') || this.href.startsWith('blob:')) && this.download) {" +
+            "          window.AndroidDownload.download(this.href, this.download);" +
+            "        } else {" +
+            "          window.originalAnchorClick.apply(this, arguments);" +
+            "        }" +
+            "      };" +
+            "    }" +
+            "    document.addEventListener('click', function(e) {" +
+            "      var a = e.target.closest('a');" +
+            "      if (a && a.href && (a.href.startsWith('data:') || a.href.startsWith('blob:'))) {" +
+            "        e.preventDefault();" +
+            "        window.AndroidDownload.download(a.href, a.download || 'download.png');" +
+            "      }" +
+            "    }, true);" +
+            "  }" +
+            // ৩. target="_blank" ফিক্স (নতুন ট্যাবে ওপেন হওয়া বন্ধ করে একই পেজে লোড করবে)
+            "  document.addEventListener('click', function(e) {" +
+            "    var a = e.target.closest('a');" +
+            "    if (a && a.target === '_blank') {" +
+            "      a.target = '_self';" +
+            "    }" +
+            "  }, true);" +
             "})();";
         view.evaluateJavascript(js, null);
     }
@@ -271,4 +299,4 @@ public class MainActivity extends BridgeActivity {
             super.onBackPressed();
         }
     }
-}
+            }
