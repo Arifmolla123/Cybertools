@@ -5,11 +5,13 @@ import android.app.DownloadManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Base64;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
@@ -108,32 +110,50 @@ public class MainActivity extends BridgeActivity {
         
         webView.setHapticFeedbackEnabled(false);
 
-        // 🌟 গ্লোবাল ক্লিপবোর্ড ফিক্স 🌟
-        // প্রতিবার নতুন পেজ লোড হলে ক্লিপবোর্ড স্ক্রিপ্টটি ইনজেক্ট হবে
+        // কিবোর্ড বা ফোকাস ঠিক রাখার জন্য
+        webView.requestFocus(View.FOCUS_DOWN);
+        webView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_UP) {
+                if (!v.hasFocus()) {
+                    v.requestFocus();
+                }
+            }
+            return false;
+        });
+
+        // 🌟 গ্লোবাল ক্লিপবোর্ড ফিক্স (নতুন আপডেট) 🌟
         webView.setWebViewClient(new BridgeWebViewClient(bridge) {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                injectClipboardScript(view); // পেজ লোড হওয়া শুরু হলেই স্ক্রিপ্ট ঢুকিয়ে দিচ্ছি
+            }
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                injectClipboardScript(view);
+                injectClipboardScript(view); // ওয়েবসাইটের কোড রান হওয়ার পর আরেকবার নিশ্চিত করছি
             }
         });
     }
 
     private void injectClipboardScript(WebView view) {
         String js = "(function() {" +
-            "  if (!navigator.clipboard) { navigator.clipboard = {}; }" +
-            "  navigator.clipboard.readText = function() {" +
-            "    return new Promise(function(resolve, reject) {" +
-            "      try { resolve(window.AndroidClipboard.paste()); }" +
-            "      catch(e) { reject(e); }" +
+            "  if (typeof window.AndroidClipboard === 'undefined') return;" +
+            "  try {" +
+            "    Object.defineProperty(navigator, 'clipboard', {" +
+            "      value: {" +
+            "        readText: function() { return Promise.resolve(window.AndroidClipboard.paste()); }," +
+            "        writeText: function(text) { window.AndroidClipboard.copy(text); return Promise.resolve(); }" +
+            "      }," +
+            "      configurable: true, writable: true" +
             "    });" +
-            "  };" +
-            "  navigator.clipboard.writeText = function(text) {" +
-            "    return new Promise(function(resolve, reject) {" +
-            "      try { window.AndroidClipboard.copy(text); resolve(); }" +
-            "      catch(e) { reject(e); }" +
-            "    });" +
-            "  };" +
+            "  } catch(e) {" +
+            "    navigator.clipboard = {" +
+            "      readText: function() { return Promise.resolve(window.AndroidClipboard.paste()); }," +
+            "      writeText: function(text) { window.AndroidClipboard.copy(text); return Promise.resolve(); }" +
+            "    };" +
+            "  }" +
             "})();";
         view.evaluateJavascript(js, null);
     }
@@ -251,4 +271,4 @@ public class MainActivity extends BridgeActivity {
             super.onBackPressed();
         }
     }
-            }
+}
