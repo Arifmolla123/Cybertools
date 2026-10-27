@@ -5,7 +5,7 @@ import android.app.DownloadManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.graphics.Color; // ✅ সাদা স্ক্রিন ঠিক করার জন্য
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,6 +20,7 @@ import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.getcapacitor.BridgeActivity;
+import com.getcapacitor.BridgeWebViewClient;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,7 +34,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // ✅ সাদা স্ক্রিন দূর করার জন্য WebView-এর ব্যাকগ্রাউন্ড কালো করা হলো
+        // সাদা স্ক্রিন দূর করার জন্য WebView-এর ব্যাকগ্রাউন্ড কালো করা হলো
         this.getBridge().getWebView().setBackgroundColor(Color.BLACK);
         
         hideSystemUI();
@@ -87,6 +88,7 @@ public class MainActivity extends BridgeActivity {
         webView.addJavascriptInterface(new NativeDownloadBridge(this, webView), "AndroidDownload");
         webView.addJavascriptInterface(new ClipboardBridge(this), "AndroidClipboard");
 
+        // ✅ নেটিভ ডাউনলোড লিসেনার
         webView.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
@@ -105,6 +107,35 @@ public class MainActivity extends BridgeActivity {
         });
         
         webView.setHapticFeedbackEnabled(false);
+
+        // 🌟 গ্লোবাল ক্লিপবোর্ড ফিক্স 🌟
+        // প্রতিবার নতুন পেজ লোড হলে ক্লিপবোর্ড স্ক্রিপ্টটি ইনজেক্ট হবে
+        webView.setWebViewClient(new BridgeWebViewClient(bridge) {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                injectClipboardScript(view);
+            }
+        });
+    }
+
+    private void injectClipboardScript(WebView view) {
+        String js = "(function() {" +
+            "  if (!navigator.clipboard) { navigator.clipboard = {}; }" +
+            "  navigator.clipboard.readText = function() {" +
+            "    return new Promise(function(resolve, reject) {" +
+            "      try { resolve(window.AndroidClipboard.paste()); }" +
+            "      catch(e) { reject(e); }" +
+            "    });" +
+            "  };" +
+            "  navigator.clipboard.writeText = function(text) {" +
+            "    return new Promise(function(resolve, reject) {" +
+            "      try { window.AndroidClipboard.copy(text); resolve(); }" +
+            "      catch(e) { reject(e); }" +
+            "    });" +
+            "  };" +
+            "})();";
+        view.evaluateJavascript(js, null);
     }
 
     private void handleHttpDownload(String url, String userAgent, String contentDisposition, String mimetype) {
@@ -188,7 +219,6 @@ public class MainActivity extends BridgeActivity {
         }
     }
 
-    // ✅ ক্লিপবোর্ড ব্রিজ - JS থেকে কল করা যাবে
     public class ClipboardBridge {
         Context context;
         ClipboardBridge(Context c) { this.context = c; }
@@ -198,6 +228,18 @@ public class MainActivity extends BridgeActivity {
             ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("Copied Text", text);
             if (clipboard != null) clipboard.setPrimaryClip(clip);
+        }
+
+        @JavascriptInterface
+        public String paste() {
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            if (clipboard != null && clipboard.hasPrimaryClip()) {
+                ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+                if (item != null && item.getText() != null) {
+                    return item.getText().toString();
+                }
+            }
+            return "";
         }
     }
 
