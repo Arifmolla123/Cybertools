@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -26,55 +26,66 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # এই লাইনটি 'tools' প্যাকেজ এরর ফিক্স করে
+          packages: ''
 
-      - name: Install npm dependencies
+      - name: Install NPM Dependencies
         run: npm install
 
-      - name: Verify www folder
-        run: |
-          if [ ! -f www/index.html ]; then
-            echo "ERROR: www/index.html missing"
-            exit 1
-          fi
-          echo "OK: www/index.html found"
-
-      - name: Add Android platform
+      - name: Add Android Platform
         run: npx cap add android
 
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Copy MainActivity.java override
+      - name: Copy Custom MainActivity
         run: |
           MAIN_PATH=$(find android/app/src/main/java -name "MainActivity.java" | head -n 1)
-          echo "Found MainActivity at: $MAIN_PATH"
+          echo "Replacing MainActivity at: $MAIN_PATH"
           cp android-overrides/MainActivity.java "$MAIN_PATH"
-          echo "Replaced with custom MainActivity"
 
-      - name: Update AndroidManifest.xml
+      - name: Update Android Manifest
         run: |
-          python3 .github/scripts/update_manifest.py
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          
+          # Permissions যোগ করা
+          sed -i 's|</manifest>||' $MANIFEST
+          cat >> $MANIFEST << 'EOF'
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+              <uses-permission android:name="android.permission.CAMERA" />
+              <uses-permission android:name="android.permission.RECORD_AUDIO" />
+              <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+              <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+              <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+              <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+              <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+              <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+          </manifest>
+          EOF
+          
+          # Application ট্যাগে cleartext ও hardware acceleration যোগ করা
+          sed -i 's|<application|<application android:usesCleartextTraffic="true" android:hardwareAccelerated="true" android:largeHeap="true"|' $MANIFEST
 
-      - name: Update variables.gradle
+      - name: Update Gradle Variables
         run: |
           GRADLE_FILE="android/variables.gradle"
           sed -i 's/minSdkVersion = .*/minSdkVersion = 23/' $GRADLE_FILE
           sed -i 's/compileSdkVersion = .*/compileSdkVersion = 34/' $GRADLE_FILE
           sed -i 's/targetSdkVersion = .*/targetSdkVersion = 34/' $GRADLE_FILE
-          cat $GRADLE_FILE
 
-      - name: Make gradlew executable
+      - name: Make Gradlew Executable
         run: chmod +x android/gradlew
 
       - name: Build Debug APK
         working-directory: ./android
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew clean assembleDebug
 
-      - name: Copy and rename APK
+      - name: Rename and Prepare APK
         run: |
           mkdir -p output
           cp android/app/build/outputs/apk/debug/app-debug.apk output/CyberTools.apk
-          ls -lh output/
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
