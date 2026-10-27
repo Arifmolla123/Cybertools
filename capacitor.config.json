@@ -3,6 +3,9 @@
   "appName": "Cyber Tools",
   "webDir": "www",
   "bundledWebRuntime": false,
+  "server": {
+    "allowNavigation": ["*"]
+  },
   "android": {
     "allowMixedContent": true,
     "captureInput": true,
@@ -22,4 +25,4 @@
       "showSpinner": false
     }
   }
-}
+  }
