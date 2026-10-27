@@ -38,38 +38,32 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Set Custom Launcher Icon
+      - name: Generate Custom Icons
         run: |
-          ICON_FILE="www/icon.png"
-          if [ -f "$ICON_FILE" ]; then
-            echo "Cleaning old launcher icons..."
-            # পুরোনো সব লঞ্চার আইকন ফাইল ডিলিট করা (xml, png, webp)
-            find android/app/src/main/res -name "ic_launcher*" -delete
-            
-            echo "Copying new icon..."
-            # নতুন আইকনটি সব mipmap ডেনসিটি ফোল্ডারে কপি করা
-            for dir in android/app/src/main/res/mipmap-*; do
-              if [ -d "$dir" ]; then
-                cp "$ICON_FILE" "$dir/ic_launcher.png"
-                cp "$ICON_FILE" "$dir/ic_launcher_round.png"
-              fi
-            done
-            echo "✅ Custom icon applied successfully!"
+          # @capacitor/assets ইনস্টল করা
+          npm install -g @capacitor/assets
+          
+          # resources ফোল্ডার তৈরি করা (assets জেনারেটরের জন্য)
+          mkdir -p resources
+          
+          # আপনার www/icon.png কে resources/icon.png হিসেবে কপি করা
+          if [ -f "www/icon.png" ]; then
+            cp www/icon.png resources/icon.png
+            # আইকন জেনারেট করা (কালো ব্যাকগ্রাউন্ড সহ)
+            capacitor-assets generate --android --iconBackgroundColor '#000000' --iconBackgroundColorDark '#000000' --splashBackgroundColor '#000000' --splashBackgroundColorDark '#000000'
+            echo "✅ Icons Generated Automatically"
           else
-            echo "⚠️ www/icon.png not found. Using default Capacitor icon."
+            echo "⚠️ www/icon.png not found. Using default icon."
           fi
 
       - name: Copy Custom MainActivity
         run: |
           MAIN_PATH=$(find android/app/src/main/java -name "MainActivity.java" | head -n 1)
-          echo "Replacing MainActivity at: $MAIN_PATH"
           cp android-overrides/MainActivity.java "$MAIN_PATH"
 
       - name: Update Android Manifest
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
-          
-          # Permissions যোগ করা
           sed -i 's|</manifest>||' $MANIFEST
           cat >> $MANIFEST << 'EOF'
               <uses-permission android:name="android.permission.INTERNET" />
@@ -84,8 +78,6 @@ jobs:
               <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
           </manifest>
           EOF
-          
-          # Application ট্যাগে cleartext ও hardware acceleration যোগ করা
           sed -i 's|<application|<application android:usesCleartextTraffic="true" android:hardwareAccelerated="true" android:largeHeap="true"|' $MANIFEST
 
       - name: Update Gradle Variables
