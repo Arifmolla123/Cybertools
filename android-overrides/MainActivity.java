@@ -2,6 +2,8 @@ package com.arif.cybertools;
 
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,7 +32,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        hideSystemUI(); // ফুল স্ক্রিন মোড অন করা হলো
+        hideSystemUI();
 
         this.bridge.getWebView().post(new Runnable() {
             @Override
@@ -40,7 +42,6 @@ public class MainActivity extends BridgeActivity {
         });
     }
 
-    // এই মেথডটি সিস্টেম নেভিগেশন ও স্ট্যাটাস বার লুকিয়ে রাখে
     private void hideSystemUI() {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
@@ -55,9 +56,7 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            hideSystemUI(); // স্ক্রিনে টাচ করলেও বারগুলো লুকানো থাকবে
-        }
+        if (hasFocus) hideSystemUI();
     }
 
     private void setupWebView() {
@@ -81,16 +80,13 @@ public class MainActivity extends BridgeActivity {
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
-        webView.addJavascriptInterface(
-            new NativeDownloadBridge(this, webView),
-            "AndroidDownload"
-        );
+        // JS Bridges (Download and Clipboard)
+        webView.addJavascriptInterface(new NativeDownloadBridge(this, webView), "AndroidDownload");
+        webView.addJavascriptInterface(new ClipboardBridge(this), "AndroidClipboard");
 
         webView.setDownloadListener(new DownloadListener() {
             @Override
-            public void onDownloadStart(String url, String userAgent,
-                                        String contentDisposition,
-                                        String mimetype, long contentLength) {
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
                 try {
                     if (url.startsWith("data:")) {
                         handleDataUrl(url);
@@ -100,19 +96,16 @@ public class MainActivity extends BridgeActivity {
                         handleHttpDownload(url, userAgent, contentDisposition, mimetype);
                     }
                 } catch (Exception e) {
-                    Toast.makeText(MainActivity.this,
-                        "Download failed: " + e.getMessage(),
-                        Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Download failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
-
-        webView.setOnLongClickListener(v -> true);
+        
+        // ❌ webView.setOnLongClickListener(v -> true); এই লাইনটি সরিয়ে দেওয়া হয়েছে, যাতে পেস্ট মেনু কাজ করে।
         webView.setHapticFeedbackEnabled(false);
     }
 
-    private void handleHttpDownload(String url, String userAgent,
-                                    String contentDisposition, String mimetype) {
+    private void handleHttpDownload(String url, String userAgent, String contentDisposition, String mimetype) {
         try {
             String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
@@ -121,12 +114,8 @@ public class MainActivity extends BridgeActivity {
             request.setDescription("Downloading...");
             request.setTitle(fileName);
             request.allowScanningByMediaScanner();
-            request.setNotificationVisibility(
-                DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
-            );
-            request.setDestinationInExternalPublicDir(
-                Environment.DIRECTORY_DOWNLOADS, fileName
-            );
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
 
             DownloadManager dm = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
             if (dm != null) {
@@ -153,73 +142,59 @@ public class MainActivity extends BridgeActivity {
             String fileName = "cybertools-" + System.currentTimeMillis() + "." + ext;
 
             byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
-            File downloadsDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS
-            );
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             if (!downloadsDir.exists()) downloadsDir.mkdirs();
             File outFile = new File(downloadsDir, fileName);
             FileOutputStream fos = new FileOutputStream(outFile);
             fos.write(bytes);
             fos.close();
 
-            android.media.MediaScannerConnection.scanFile(
-                MainActivity.this,
-                new String[]{outFile.getAbsolutePath()},
-                new String[]{mime},
-                null
-            );
+            android.media.MediaScannerConnection.scanFile(MainActivity.this, new String[]{outFile.getAbsolutePath()}, new String[]{mime}, null);
 
-            Toast.makeText(MainActivity.this,
-                "Saved to Downloads: " + fileName,
-                Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "Saved to Downloads: " + fileName, Toast.LENGTH_LONG).show();
             notifyJS("onNativeDownloadComplete", fileName);
         } catch (Exception e) {
-            Toast.makeText(MainActivity.this,
-                "Save failed: " + e.getMessage(),
-                Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "Save failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
             notifyJS("onNativeDownloadError", e.getMessage());
         }
     }
 
     private void convertBlobAndDownload(final String blobUrl) {
         String js = "(function(){" +
-            "fetch('" + blobUrl + "')" +
-            ".then(r => r.blob())" +
-            ".then(b => {" +
+            "fetch('" + blobUrl + "').then(r => r.blob()).then(b => {" +
             "  const reader = new FileReader();" +
-            "  reader.onloadend = () => {" +
-            "    window.AndroidDownload.download(reader.result, 'cybertools.png');" +
-            "  };" +
+            "  reader.onloadend = () => { window.AndroidDownload.download(reader.result, 'cybertools.png'); };" +
             "  reader.readAsDataURL(b);" +
-            "});" +
-            "})();";
+            "});})();";
         webView.evaluateJavascript(js, null);
     }
 
     private void notifyJS(String method, String arg) {
         final String safeArg = arg.replace("'", "\\'");
-        final String js = "if(typeof window." + method + " === 'function'){ window." +
-                          method + "('" + safeArg + "'); }";
+        final String js = "if(typeof window." + method + " === 'function'){ window." + method + "('" + safeArg + "'); }";
         webView.post(() -> webView.evaluateJavascript(js, null));
     }
 
     public class NativeDownloadBridge {
-        Context context;
-        WebView webView;
-
-        NativeDownloadBridge(Context c, WebView w) {
-            this.context = c;
-            this.webView = w;
-        }
-
+        Context context; WebView webView;
+        NativeDownloadBridge(Context c, WebView w) { this.context = c; this.webView = w; }
         @JavascriptInterface
         public void download(String url, String filename) {
             if (url == null) return;
-            if (url.startsWith("data:")) {
-                handleDataUrl(url);
-            } else {
-                handleHttpDownload(url, "", "", "application/octet-stream");
-            }
+            if (url.startsWith("data:")) handleDataUrl(url);
+            else handleHttpDownload(url, "", "", "application/octet-stream");
+        }
+    }
+
+    public class ClipboardBridge {
+        Context context;
+        ClipboardBridge(Context c) { this.context = c; }
+        
+        @JavascriptInterface
+        public void copy(String text) {
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Copied Text", text);
+            if (clipboard != null) clipboard.setPrimaryClip(clip);
         }
     }
 
