@@ -5,6 +5,7 @@ import android.app.DownloadManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Color; // ✅ সাদা স্ক্রিন ঠিক করার জন্য
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,6 +32,9 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // ✅ সাদা স্ক্রিন দূর করার জন্য WebView-এর ব্যাকগ্রাউন্ড কালো করা হলো
+        this.getBridge().getWebView().setBackgroundColor(Color.BLACK);
         
         hideSystemUI();
 
@@ -80,7 +84,6 @@ public class MainActivity extends BridgeActivity {
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
-        // JS Bridges (Download and Clipboard)
         webView.addJavascriptInterface(new NativeDownloadBridge(this, webView), "AndroidDownload");
         webView.addJavascriptInterface(new ClipboardBridge(this), "AndroidClipboard");
 
@@ -101,7 +104,6 @@ public class MainActivity extends BridgeActivity {
             }
         });
         
-        // ❌ webView.setOnLongClickListener(v -> true); এই লাইনটি সরিয়ে দেওয়া হয়েছে, যাতে পেস্ট মেনু কাজ করে।
         webView.setHapticFeedbackEnabled(false);
     }
 
@@ -186,6 +188,7 @@ public class MainActivity extends BridgeActivity {
         }
     }
 
+    // ✅ ক্লিপবোর্ড ব্রিজ - JS থেকে কল করা যাবে
     public class ClipboardBridge {
         Context context;
         ClipboardBridge(Context c) { this.context = c; }
