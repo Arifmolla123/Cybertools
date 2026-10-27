@@ -38,18 +38,15 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      # ১. সাদা স্ক্রিন ঠিক করার ধাপ
       - name: Fix White Screen Theme
         run: |
           STYLES_XML="android/app/src/main/res/values/styles.xml"
           if [ -f "$STYLES_XML" ]; then
-            # থিমের ব্যাকগ্রাউন্ড কালো করা
             sed -i 's|<item name="android:background">.*</item>|<item name="android:background">@android:color/black</item>|' $STYLES_XML
             sed -i 's|<style name="AppTheme.NoActionBar">|<style name="AppTheme.NoActionBar">\n        <item name="android:windowBackground">@android:color/black</item>|' $STYLES_XML
             echo "✅ Theme background set to black."
           fi
 
-      # ২. আইকন ঠিক করার ধাপ
       - name: Generate Custom Icons
         run: |
           npm install -g @capacitor/assets
@@ -59,7 +56,6 @@ jobs:
             capacitor-assets generate --android --iconBackgroundColor '#000000' --iconBackgroundColorDark '#000000' --splashBackgroundColor '#000000' --splashBackgroundColorDark '#000000'
           fi
 
-      # ৩. নেটিভ কোড বসানোর ধাপ
       - name: Copy Custom MainActivity
         run: |
           MAIN_PATH=$(find android/app/src/main/java -name "MainActivity.java" | head -n 1)
