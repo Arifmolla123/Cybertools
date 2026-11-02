@@ -22,21 +22,10 @@ window.CATEGORIES = [
       }
       
 
-  // To add a new category, uncomment and edit:
-  // {
-  //   name: "Image",
-  //   icon: "fas fa-image",
-  //   url: "category.html?cat=Image"
-  // },
+
 ];
 
-// ---------- TOOLS ----------
-// Add a new { ... } block to add a tool.
-//   title    — card title
-//   desc     — short description
-//   icon     — Font Awesome class (fas / fab)
-//   url      — link to the tool page
-//   category — must match one of CATEGORIES above
+
 window.TOOLS = [
   {
     title: "Device Info",
@@ -49,7 +38,7 @@ window.TOOLS = [
     title: "News Generator",
     desc: "Generate news with your own photos",
     icon: "fas fa-newspaper",
-    url: "tools/news-generator.html",
+    url: "tools/news-generetor.html",
     category: "Web"
   },
   {
@@ -112,11 +101,7 @@ window.TOOLS = [
 
 ];
 
-// ============================================================
-//   VIP PREMIUM TOOLS — separate list
-//   Rendered on vip-tools.html after VIP access check.
-//   Add a new { ... } block to add a premium tool.
-// ============================================================
+
 window.VIP_TOOLS = [
   {
     title: "Premium Apps",
@@ -165,6 +150,12 @@ window.VIP_TOOLS = [
     desc: "YT, FB, IG,Tiktok downloader tools",
     icon: "fas fa-download",
     url: "vip tools/Video-Downloader.html"
+  },
+  {
+    title: "Fb lock profile Dawnloader",
+    desc: "You can download locked profile pictures.",
+    icon: "fas fa-facebook",
+    url: "vip tools/fb-profile-downloader/index.html"
   }
   
 
