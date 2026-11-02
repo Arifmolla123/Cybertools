@@ -38,7 +38,7 @@ window.TOOLS = [
     title: "News Generator",
     desc: "Generate news with your own photos",
     icon: "fas fa-newspaper",
-    url: "tools/news-generetor.html",
+    url: "tools/news- generetor.html",
     category: "Web"
   },
   {
@@ -150,12 +150,6 @@ window.VIP_TOOLS = [
     desc: "YT, FB, IG,Tiktok downloader tools",
     icon: "fas fa-download",
     url: "vip tools/Video-Downloader.html"
-  },
-  {
-    title: "Fb lock profile Dawnloader",
-    desc: "You can download locked profile pictures.",
-    icon: "fab fa-facebook",
-    url: "vip tools/fb-profile-downloader/index.html"
   }
   
 
