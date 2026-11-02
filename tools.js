@@ -154,7 +154,7 @@ window.VIP_TOOLS = [
   {
     title: "Fb lock profile Dawnloader",
     desc: "You can download locked profile pictures.",
-    icon: "fas fa-facebook",
+    icon: "fab fa-facebook",
     url: "vip tools/fb-profile-downloader/index.html"
   }
   
