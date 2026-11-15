@@ -145,6 +145,12 @@ window.VIP_TOOLS = [
   "icon": "fas fa-mobile-alt",
   "url": "vip tools/Pakistan-sim.html"
 },
+{
+    title: "IND Public Bomber",
+    desc: "Sending messages with public numbers",
+    icon: "fas fa-bomb",
+    url: "vip tools/public-bomber.html"
+  },
   {
     title: "Video Dawnloader",
     desc: "YT, FB, IG,Tiktok downloader tools",
