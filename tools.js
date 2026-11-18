@@ -140,10 +140,10 @@ window.VIP_TOOLS = [
     url: "https://vip-tools-backend.onrender.com/spy"
   },
    {
-  "title": "PK Sim Info",
-  "desc": "Pakistan SIM owner lookup",
-  "icon": "fas fa-mobile-alt",
-  "url": "vip tools/Pakistan-sim.html"
+  "title": "FF info",
+  "desc": "Full info with FF uid",
+  "icon": "fas fa-id-card",
+  "url": "vip tools/ff-info.html"
 },
 {
     title: "IND Public Bomber",
